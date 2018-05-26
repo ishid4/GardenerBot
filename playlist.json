@@ -1,0 +1,100 @@
+{
+  "efkhær": {
+    "server": "422091347198214144",
+    "author": "139146539900600320",
+    "songs": [
+      {
+        "url": "https://www.youtube.com/watch?v=4JTz0KgHzSQ",
+        "title": "Bülent Ersoy & Tarkan - Bir Ben Bir Allah Biliyor"
+      }
+    ]
+  },
+  "EROL": {
+    "server": "422091347198214144",
+    "author": "156011966907809792",
+    "songs": [
+      {
+        "url": "https://www.youtube.com/watch?v=Yky--GDMUlw",
+        "title": "Aydın Kurtoğlu - Yak"
+      }
+    ]
+  },
+  "admin": {
+    "server": "422091347198214144",
+    "author": "139144182794027009",
+    "songs": [
+      {
+        "url": "https://www.youtube.com/watch?v=ECWwpmP3spY",
+        "title": "Zhonti feat. NN-Beka - ЗЫН ЗЫН (Полная версия by JKS)"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=FM7MFYoylVs",
+        "title": "The Chainsmokers & Coldplay - Something Just Like This (Lyric)"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=4uTNVumfm84",
+        "title": "Maroon 5 - Wait"
+      }
+    ]
+  },
+  "blacksongs": {
+    "server": "422091347198214144",
+    "author": "139144182794027009",
+    "songs": [
+      {
+        "url": "https://www.youtube.com/watch?v=b8m9zhNAgKs",
+        "title": "Rae Sremmurd - Black Beatles ft. Gucci Mane"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=wv52gOhDq30",
+        "title": "Future - Mask Off (Beave Remix)"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=sV2t3tW_JTQ",
+        "title": "21 Savage - Bank Account (Official Audio)"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=K44j-sb1SRY",
+        "title": "DRAM - Broccoli feat. Lil Yachty (Official Music Video)"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=gGOMuIffC2k",
+        "title": "Sickick - G.O.M.D."
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=4NJlUribp3c",
+        "title": "Desiigner - Panda (Audio)"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=J7IMwop3RHs",
+        "title": "Rob $tone - Chill Bill ft. J.Davis & Spooks (Dir. Alex Vibe)"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=H77fRz1rybs",
+        "title": "James Brown - It's A Man's Man's Man's World"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=CB2VB2kafpA",
+        "title": "Westside Connection - Hoo' Bangin' (WSCG Style) ft. K-Dee, The Komrads & Allfrumtha (lyrics)"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=xpVfcZ0ZcFM",
+        "title": "Drake - God's Plan"
+      }
+    ]
+  },
+  "günlük": {
+    "server": "422091347198214144",
+    "author": "142721934772273152",
+    "songs": [
+      {
+        "url": "https://www.youtube.com/watch?v=Mt7GHWm9EJQ",
+        "title": "AH SESİ REMİX GÜLME KRİZİ İÇERİR"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=QY5RUW0vBEA",
+        "title": "Tolga Online  - Çilekli Lolipop"
+      }
+    ]
+  }
+}
