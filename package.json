@@ -1,10 +1,10 @@
 {
   "name": "Test",
   "description": "Test",
-  "version": "0.0.0",
-  "main": "bot.js",
+  "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "discord.js": "11.1.0",
