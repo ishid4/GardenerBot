@@ -761,9 +761,10 @@ bot.on('message', message => {
       }
       if (args[1] > 100) {
         server.dispatcher.setVolume(args[1] / 100);
-        setInterval(function() {
+        setTimeout(function() {
           server.dispatcher.setVolume(guilds[message.guild.id].volume);
-        }, 5000);
+        }, 6500);
+
         message.channel.send(`:speaker: vOlUmE: ${Math.round(server.dispatcher.volume*100)}%`);
       }
       break;
