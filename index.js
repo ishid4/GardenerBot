@@ -1145,7 +1145,14 @@ bot.on('message', message => {
       break;
       case "lang":
 
-         message.reply(lang_tr["str1"]);
+        if(args[1] == "tr"){
+            message.reply("TR seçildi.");
+        }else if(args[1] == "en"){
+            message.reply("EN chosen.");
+        }else
+        {
+          message.reply("Use "+prefix+"lang tr or"+prefix+"lang en");
+        }
 
        break;
     default:
