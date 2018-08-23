@@ -68,7 +68,7 @@ var lang = {
   str33: "This Playlist is empty! Add some with `" + prefix + "playlist add " + args[2] + " <url>`",
   str34: "**[" + song.title + "](" + song.url + ")** has been added to the queue.",
   str35: "All song(s) alrready in the queue.",
-  str36: `\`${args[2]}\`` + " Playlist has been started. " + added_songs + " songs added to the queue.",
+  str36: " Playlist has been started. " + added_songs + " songs added to the queue.",
   str37: `You must add a YouTube video url. Example: ${prefix}playlist add <url>`,
   str38: ':no_entry_sign: Invalid YouTube Link: ' + err,
   str39: ':no_entry_sign: You can just add at least 10 songs to playlist.',
@@ -78,10 +78,10 @@ var lang = {
   str43: ":no_entry_sign: Already exist.",
   str44: ":no_entry_sign: You can't create playlist more than **1**",
   str45: "*Creating...*",
-  str46: `:white_check_mark: ${args[2]} Playlist created.`,
+  str46: ":white_check_mark: ${args[2]} Playlist created.",
   str47: ":no_entry_sign: Playlist is not exist.",
   str48: "This Playlist is empty! Add some with `" + prefix + "playlist add " + args[2] + " <url>`",
-  str49: `\`${args[2]}\` Music Playlist: Currently **${tosend.length}** songs in it ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n`,
+  str49: "Music Playlist: Currently **${tosend.length}** songs in it ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n",
   str50: ""
 };
 
@@ -1240,7 +1240,7 @@ bot.on('message', message => {
             str33: "This Playlist is empty! Add some with `" + prefix + "playlist add " + args[2] + " <url>`",
             str34: "**[" + song.title + "](" + song.url + ")** has been added to the queue.",
             str35: "All song(s) alrready in the queue.",
-            str36: `\`${args[2]}\`` + " Playlist has been started. " + added_songs + " songs added to the queue.",
+            str36: " Playlist has been started. " + added_songs + " songs added to the queue.",
             str37: `You must add a YouTube video url. Example: ${prefix}playlist add <url>`,
             str38: ':no_entry_sign: Invalid YouTube Link: ' + err,
             str39: ':no_entry_sign: You can just add at least 10 songs to playlist.',
@@ -1250,10 +1250,10 @@ bot.on('message', message => {
             str43: ":no_entry_sign: Already exist.",
             str44: ":no_entry_sign: You can't create playlist more than **1**",
             str45: "*Creating...*",
-            str46: `:white_check_mark: ${args[2]} Playlist created.`,
+            str46: ":white_check_mark: ${args[2]} Playlist created.",
             str47: ":no_entry_sign: Playlist is not exist.",
             str48: "This Playlist is empty! Add some with `" + prefix + "playlist add " + args[2] + " <url>`",
-            str49: `\`${args[2]}\` Music Playlist: Currently **${tosend.length}** songs in it ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n`,
+            str49: "Music Playlist: Currently **${tosend.length}** songs in it ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n",
             str50: ""
           };
         }
@@ -1295,7 +1295,7 @@ bot.on('message', message => {
             str33: "This Playlist is empty! Add some with `" + prefix + "playlist add " + args[2] + " <url>`",
             str34: "**[" + song.title + "](" + song.url + ")** has been added to the queue.",
             str35: "All song(s) alrready in the queue.",
-            str36: `\`${args[2]}\`` + " Playlist has been started. " + added_songs + " songs added to the queue.",
+            str36: " Playlist has been started. " + added_songs + " songs added to the queue.",
             str37: `You must add a YouTube video url. Example: ${prefix}playlist add <url>`,
             str38: ':no_entry_sign: Invalid YouTube Link: ' + err,
             str39: ':no_entry_sign: You can just add at least 10 songs to playlist.',
@@ -1305,10 +1305,10 @@ bot.on('message', message => {
             str43: ":no_entry_sign: Already exist.",
             str44: ":no_entry_sign: You can't create playlist more than **1**",
             str45: "*Creating...*",
-            str46: `:white_check_mark: ${args[2]} Playlist created.`,
+            str46: ":white_check_mark: ${args[2]} Playlist created.",
             str47: ":no_entry_sign: Playlist is not exist.",
             str48: "This Playlist is empty! Add some with `" + prefix + "playlist add " + args[2] + " <url>`",
-            str49: `\`${args[2]}\` Music Playlist: Currently **${tosend.length}** songs in it ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n`,
+            str49: "Music Playlist: Currently **${tosend.length}** songs in it ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n",
             str50: ""
           };
         }
