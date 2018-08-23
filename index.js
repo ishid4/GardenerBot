@@ -1144,8 +1144,8 @@ bot.on('message', message => {
       break;
 
       case 'lang':
-            message.reply('Chose a language. Type ' + prefix + 'lang tr, en.');
-                message.reply(string_tr[str_1]);
+            message.reply("Chose a language. Type " + prefix + "lang tr, en.");
+
 
       break;
     default:
