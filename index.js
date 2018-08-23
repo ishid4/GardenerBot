@@ -31,15 +31,6 @@ http.createServer(function(request, response)
 }).listen(3000);*/
 
 
-var string_tr = [
-  str_1 : "a_tr",
-  str_2 : "b_tr",
-];
-
-var string_en = [
-  str_1 : "a_en",
-  str_2 : "b_en",
-];
 
 
 
@@ -1141,12 +1132,6 @@ bot.on('message', message => {
         default:
           message.author.send("It's easy to find out! You can do it with your brain!");
       }
-      break;
-
-      case 'lang':
-            message.reply("Chose a language. Type " + prefix + "lang tr, en.");
-
-
       break;
     default:
       message.reply("Ne boş adamsın aq");
