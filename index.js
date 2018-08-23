@@ -30,61 +30,6 @@ http.createServer(function(request, response)
 	response.end('Discord bot is active now \n');
 }).listen(3000);*/
 
-var language = "tr";
-
-var lang = {
-  str1: "Şuan çalıyor",
-  str2: "Geçmek için tıkla ⏭",
-  str3: "Title",
-  str4: "Duration",
-  str5: "Who Put Dis?",
-  str6: "<@" + reaction.users.last().id + "> wants to skip. **" + votes_need + " votes** need to skip.",
-  str7: "<@" + reaction.users.last().id + "> wants to skip. **One more vote** need to skip.",
-  str8: "<@" + reaction.users.last().id + "> skipped the song.",
-  str9: video.durationSeconds / 60) + " mins " + video.durationSeconds % 60 + " secs",
-  str10: "Current Prefix: " + prefix + "\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type " + prefix + "help",
-  str11: "You can not use this in DM",
-  str12: "You must be in a voice channel",
-  str13: "my channel Text Channel id: " + message.channel.id,
-  str14: "my channel voiceChannel id: " + message.member.voiceChannel.id,
-  str15: "You can not use this in DM",
-  str16: "Where is the **Thing** you want to play?",
-  str17: "You must be in a voice channel",
-  str18: "You must be in the same Text Channel with Bot.",
-  str19: "You must be in the same Voice Channel with Bot.",
-  str20: "You must be in the <#" + music_channel_id + ">",
-  str21: "Corrupted URL.",
-  str22: "Live Videos are not allowed."),
-  str23: "Already in the queue.",
-  str24: "**[" + video.title + "](" + args[1] + ")** started firstly.",
-  str25: "**[" + video.title + "](" + args[1] + ")** has been added to the queue.",
-  str26: "We couldn't find the actual video.",
-  str27: "Live Videos are not supported.",
-  str28: "**[" + video.title + "](" + video.url + ")** started firstly.",
-  str29: "**[" + video.title + "](" + video.url + ")** has been added to the queue.",
-  str30: "'s Playlists",
-  str31: "Playlist Names",
-  str32: ":no_entry_sign: Playlist is not exist.",
-  str33: "This Playlist is empty! Add some with " + prefix + "playlist add " + args[2] + " <url>",
-  str34: "**[" + song.title + "](" + song.url + ")** has been added to the queue.",
-  str35: "All song(s) alrready in the queue.",
-  str36: " Playlist has been started. " + added_songs + " songs added to the queue.",
-  str37: "You must add a YouTube video url. Example: ${prefix}playlist add <url>",
-  str38: ":no_entry_sign: Invalid YouTube Link: " + err,
-  str39: ":no_entry_sign: You can just add at least 10 songs to playlist.",
-  str40: ":no_entry_sign: Already have this song. ",
-  str41: "*Adding...*",
-  str42: ":white_check_mark: Added **${info.title}** to **${args[2]}** named playlist.",
-  str43: ":no_entry_sign: Already exist.",
-  str44: ":no_entry_sign: You can't create playlist more than **1**",
-  str45: "*Creating...*",
-  str46: ":white_check_mark: ${args[2]} Playlist created.",
-  str47: ":no_entry_sign: Playlist is not exist.",
-  str48: "This Playlist is empty! Add some with " + prefix + "playlist add " + args[2] + " <url>",
-  str49: "Music Playlist: Currently",
-  str50: ""
-};
-
 var bot = new Discord.Client({
   autoReconnect: true,
   max_message_cache: 0
@@ -98,15 +43,15 @@ function generateHex() {
 
 async function embedmusic(info, duration, who, message, server) {
   var embedmusic = new Discord.RichEmbed()
-    .setAuthor(lang["str1"], "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
+    .setAuthor("Playing Now", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
     .setColor(16098851)
-    .setFooter(lang["str2"])
+    .setFooter("Click ⏭ to Skip")
     .setImage(info.maxRes.url)
     .setThumbnail("https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
     .setTimestamp()
-    .addField(lang["str3"], "**[" + info.title + "](" + info.url + ")**")
-    .addField(lang["str4"], duration, true)
-    .addField(lang["str5"], who, true);
+    .addField("Title", "**[" + info.title + "](" + info.url + ")**")
+    .addField("Duration", duration, true)
+    .addField("Who Put Dis?", who, true);
 
   let embedmain = await message.channel.send(embedmusic);
   server.lastmusicembed = embedmain;
@@ -137,7 +82,7 @@ async function embedmusic(info, duration, who, message, server) {
           server.dispatcher.end();
       } else {
         async function vote_info() {
-          let inf = await message.channel.send(lang["str6"]);
+          let inf = await message.channel.send("<@" + reaction.users.last().id + "> wants to skip. **" + votes_need + " votes** need to skip.");
           await inf.delete(10000);
         }
         vote_info();
@@ -148,7 +93,7 @@ async function embedmusic(info, duration, who, message, server) {
           server.dispatcher.end();
       } else {
         async function vote_info() {
-          let inf = await message.channel.send(lang["str7"]);
+          let inf = await message.channel.send("<@" + reaction.users.last().id + "> wants to skip. **One more vote** need to skip.");
           await inf.delete(10000);
         }
         vote_info();
@@ -158,7 +103,7 @@ async function embedmusic(info, duration, who, message, server) {
         if (server.dispatcher)
           server.dispatcher.end();
         async function vote_info() {
-          let inf = await message.channel.send(lang["str8"]);
+          let inf = await message.channel.send("<@" + reaction.users.last().id + "> skipped the song.");
           //await inf.delete(10000);
         }
         vote_info();
@@ -182,7 +127,7 @@ async function play(connection, message) {
       if (video.durationSeconds < 1) {
         var videoDuration = "Live";
       } else {
-        var videoDuration = Math.floor(lang["str9"];
+        var videoDuration = Math.floor(video.durationSeconds / 60) + " mins " + video.durationSeconds % 60 + " secs";
       }
       embedmusic(video, videoDuration, server.whoputdis[0], message, server); // run function & pass required information
     })
@@ -263,7 +208,7 @@ bot.on('message', message => {
         music_channel_id_fix = "`all`";
 
       if (message.isMentioned(bot.user)) {
-        message.channel.send(lang["str10"]);
+        message.channel.send("Current Prefix: `" + prefix + "`\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type `" + prefix + "help`");
       }
       if (message.guild.me.voiceChannel) {
         if (!servers[message.guild.id])
@@ -356,23 +301,23 @@ bot.on('message', message => {
     case "channel":
       //message.channel.bulkDelete(1, true);
       if (message.channel.type == 'dm')
-        return message.reply(lang["str11"]);
+        return message.reply("You can not use this in DM");
 
       if (!message.member.voiceChannel)
-        return message.reply(lang["str12"]);
+        return message.reply("You must be in a voice channel");
       /*if (!message.guild.me.voiceChannel)
         return message.reply("Bot must be in a voice channel");*/
-      console.log(lang["str13"])
-      console.log(lang["str14"]);
+      console.log('my channel Text Channel id: ' + message.channel.id)
+      console.log('my channel voiceChannel id: ' + message.member.voiceChannel.id);
       //console.log("bot's voiceChannel channel id: " + message.guild.me.voiceChannel.id);
       break;
     case "play":
       if (message.channel.type == 'dm')
-        return message.reply(lang["str15"]);
+        return message.reply("You can not use this in DM");
       if (!args[1])
-        return message.reply(lang["str16"]);
+        return message.reply("Where is the **Thing** you want to play?");
       if (!message.member.voiceChannel)
-        return message.reply(lang["str17"]);
+        return message.reply("You must be in a voice channel");
       if (!servers[message.guild.id]) {
         servers[message.guild.id] = {
           queue: [],
@@ -388,16 +333,16 @@ bot.on('message', message => {
 
       if (server.queue[0]) {
         if (message.channel.id != server.channel[0])
-          return message.reply(lang["str18"]);
+          return message.reply("You must be in the same Text Channel with Bot.");
         if (message.member.voiceChannel.id != message.guild.me.voiceChannel.id)
-          return message.reply(lang["str19"]);
+          return message.reply("You must be in the same Voice Channel with Bot.");
       } else {
         message.delete();
       }
 
       if (music_channel_id) {
         if (music_channel_id != message.channel.id) {
-          message.reply(lang["str20"]);
+          message.reply("You must be in the <#" + music_channel_id + ">");
           message.delete();
           return;
         }
@@ -408,16 +353,16 @@ bot.on('message', message => {
 
       if (pattern.test(args[1]) || pattern2.test(args[1])) {
         if (!argss[1].match(/^[a-zA-Z0-9-_]{11}$/))
-          return message.reply(lang["str21"]);
+          return message.reply("Corrupted URL.");
 
         youtube.getVideo(args[1])
           .then(video => {
             if (video.durationSeconds < 1)
-              return message.reply(lang["str22"]);
+              return message.reply("Live Videos are not allowed.");
 
             for (var i = 0; i < server.queue.length; i++) {
               if (server.queue[i] == args[1]) {
-                message.reply(lang["str23"]);
+                message.reply('Already in the queue. ');
                 return;
               }
             }
@@ -429,14 +374,14 @@ bot.on('message', message => {
 
             if (!server.queue[1]) {
               const addedqueue = new Discord.RichEmbed()
-                .setDescription(lang["str24"])
+                .setDescription("**[" + video.title + "](" + args[1] + ")** started firstly.")
                 .setColor(16098851)
               message.channel.send(addedqueue);
               //message.reply('The song: **' + video.title + "** started firstly.");
             }
             if (server.queue[1]) {
               const addedqueue = new Discord.RichEmbed()
-                .setDescription(lang["str25"])
+                .setDescription("**[" + video.title + "](" + args[1] + ")** has been added to the queue.")
                 .setColor(16098851)
               message.channel.send(addedqueue);
               //message.reply('The song: **' + video.title + "** has been added to the queue list.");
@@ -452,20 +397,20 @@ bot.on('message', message => {
         youtube.searchVideos(videoname, 1)
           .then(results => {
             if (!results[0])
-              return message.reply(lang["str26"]);
+              return message.reply("We couldn't find the actual video.");;
             youtube.getVideo(results[0].url)
               .then(video => {
                 if (video.durationSeconds < 1)
-                  return message.reply(lang["str27"]);
+                  return message.reply("Live Videos are not supported.");
                 for (var i = 0; i < server.queue.length; i++) {
                   if (server.queue[i] == video.url) {
-                    message.reply(lang["str23"]);
+                    message.reply('Already in the queue. ');
                     return;
                   }
                 }
                 if (!server.queue[0]) {
                   const addedqueue = new Discord.RichEmbed()
-                    .setDescription(lang["str28"])
+                    .setDescription("**[" + video.title + "](" + video.url + ")** started firstly.")
                     .setColor(16098851)
                   message.channel.send(addedqueue);
 
@@ -473,7 +418,7 @@ bot.on('message', message => {
                 }
                 if (server.queue[0]) {
                   const addedqueue = new Discord.RichEmbed()
-                    .setDescription(lang["str29"])
+                    .setDescription("**[" + video.title + "](" + video.url + ")** has been added to the queue.")
                     .setColor(16098851)
                   message.channel.send(addedqueue);
 
@@ -513,23 +458,23 @@ bot.on('message', message => {
         }
         //message.channel.send(`<@${message.author.id}>**'s Playlist List**\n`);
         const user_playlists = new Discord.RichEmbed()
-          .setAuthor(`${message.author.username}` + lang["str30"], "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
+          .setAuthor(`${message.author.username}` + "'s Playlists", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
           .setColor(16098851)
-          .addField(lang["str31"], user_playlist)
+          .addField("Playlist Names", user_playlist)
         message.channel.send(user_playlists);
         return;
       }
       switch (args[1].toLowerCase()) {
         case "start":
           if (message.channel.type == 'dm')
-            return message.reply(lang["str11"]);
+            return message.reply("You can not use this in DM");
 
           if (!message.member.voiceChannel)
-            return message.reply(lang["str12"]);
+            return message.reply("You must be in a voice channel");
 
           if (music_channel_id) {
             if (music_channel_id != message.channel.id) {
-              message.reply(lang["str20"]);
+              message.reply("You must be in the <#" + music_channel_id + ">");
               message.delete();
               return;
             }
@@ -537,10 +482,10 @@ bot.on('message', message => {
 
           if (args[2]) {
             if (!playlist[args[2]])
-              return message.channel.send(lang["str32"]);
+              return message.channel.send(":no_entry_sign: Playlist is not exist.");
           }
           if (!playlist[args[2]].songs.length)
-            return message.channel.send(lang["str33"]);
+            return message.channel.send("This Playlist is empty! Add some with `" + prefix + "playlist add " + args[2] + " <url>`");
           if (!servers[message.guild.id])
             servers[message.guild.id] = {
               queue: [],
@@ -554,9 +499,9 @@ bot.on('message', message => {
           var server = servers[message.guild.id];
           if (server.queue[0]) {
             if (message.channel.id != server.channel[0])
-              return message.reply(lang["str18"]);
+              return message.reply("You must be in the same Text Channel with Bot.");
             if (message.member.voiceChannel.id != message.guild.me.voiceChannel.id)
-              return message.reply(lang["str19"]);
+              return message.reply("You must be in the same Voice Channel with Bot.");
           } else {
             message.delete();
           }
@@ -573,7 +518,7 @@ bot.on('message', message => {
             }
             added_songs = added_songs + 1;
             const addedqueue = new Discord.RichEmbed()
-              .setDescription(lang["str34"])
+              .setDescription("**[" + song.title + "](" + song.url + ")** has been added to the queue.")
               .setColor(16098851)
             message.channel.send(addedqueue);
             //message.reply('The song: **' + song.title + "** has been added to the queue list.");
@@ -584,9 +529,9 @@ bot.on('message', message => {
             server.whoputdis.push("`" + args[2] + "`");
           });
           if (added_songs == 0)
-            message.reply(lang["str35"]);
+            message.reply("All song(s) alrready in the queue.");
           else
-            message.channel.send(lang["str36"]);
+            message.channel.send(`\`${args[2]}\`` + " Playlist has been started. " + added_songs + " songs added to the queue.");
 
           if (!message.guild.voiceConnection)
             message.member.voiceChannel.join().then(function(connection) {
@@ -596,32 +541,32 @@ bot.on('message', message => {
         case "add":
           if (args[2]) {
             if (!playlist[args[2]])
-              return message.channel.send(lang["str32"]);
+              return message.channel.send(":no_entry_sign: Playlist is not exist.");
           }
           if (args[3] == '' || args[3] === undefined)
-            return message.channel.send(lang["str37"]);
+            return message.channel.send(`You must add a YouTube video url. Example: ${prefix}playlist add <url>`);
           YTDL.getInfo(args[3], (err, info) => {
             if (err)
-              return message.channel.send(lang["str38"]);
+              return message.channel.send(':no_entry_sign: Invalid YouTube Link: ' + err);
             if (playlist[args[2]].songs.length > 10)
-              return message.reply(lang["str39"]);
+              return message.reply(':no_entry_sign: You can just add at least 10 songs to playlist.');
             if (playlist[args[2]].songs.length) {
               for (var i = 0; i < playlist[args[2]].songs.length; i++) {
                 if (playlist[args[2]].songs[i].url == args[3]) {
-                  message.channel.send(lang["str40"]);
+                  message.channel.send(':no_entry_sign: Already have this song. ');
                   return;
                 }
               }
             }
             if (info.length_seconds < 1)
-              return message.reply(lang["str22"]);
+              return message.reply(" Live Videos are not allowed.");
             playlist[args[2]].songs.push({
               url: args[3],
               title: info.title
-            });/////////////////////////////////////////////*************************
+            });
             let addingMusic = JSON.stringify(playlist, null, 2);
             fs.writeFileSync(playlist_dir, addingMusic);
-            message.channel.send(lang["str41"]).then(message => {
+            message.channel.send("*Adding...*").then(message => {
               message.edit(`:white_check_mark: Added **${info.title}** to **${args[2]}** named playlist.`);
             });
           });
@@ -1179,151 +1124,13 @@ bot.on('message', message => {
             })
             .catch(() => console.log("DM Error"));
           break;
-
         default:
           message.author.send("It's easy to find out! You can do it with your brain!");
       }
       break;
-
-      case "lang":
-        if(args[1] == "tr"){
-            message.reply("TR seçildi.");
-            language = "tr";
-
-        }
-        else if(args[1] == "en"){
-            message.reply("EN chosen.");
-            language = "en";
-        }
-        else
-        {
-          if(language=="tr")
-            message.reply("Use "+prefix+"lang en or "+prefix+"lang tr");
-          else if(language=="en")
-            message.reply("Kullanım şekli "+prefix+"lang tr yada "+prefix+"lang en");
-        }
-
-        if(language == "tr"){
-          var lang = {
-            str1: "Şuan çalıyor",
-            str2: "Geçmek için tıkla ⏭",
-            str3: "Title",
-            str4: "Duration",
-            str5: "Who Put Dis?",
-            str6: "<@" + reaction.users.last().id + "> wants to skip. **" + votes_need + " votes** need to skip.",
-            str7: "<@" + reaction.users.last().id + "> wants to skip. **One more vote** need to skip.",
-            str8: "<@" + reaction.users.last().id + "> skipped the song.",
-            str9: video.durationSeconds / 60) + " mins " + video.durationSeconds % 60 + " secs",
-            str10: "Current Prefix: " + prefix + "\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type " + prefix + "help",
-            str11: "You can not use this in DM",
-            str12: "You must be in a voice channel",
-            str13: "my channel Text Channel id: " + message.channel.id,
-            str14: "my channel voiceChannel id: " + message.member.voiceChannel.id,
-            str15: "You can not use this in DM",
-            str16: "Where is the **Thing** you want to play?",
-            str17: "You must be in a voice channel",
-            str18: "You must be in the same Text Channel with Bot.",
-            str19: "You must be in the same Voice Channel with Bot.",
-            str20: "You must be in the <#" + music_channel_id + ">",
-            str21: "Corrupted URL.",
-            str22: "Live Videos are not allowed."),
-            str23: "Already in the queue.",
-            str24: "**[" + video.title + "](" + args[1] + ")** started firstly.",
-            str25: "**[" + video.title + "](" + args[1] + ")** has been added to the queue.",
-            str26: "We couldn't find the actual video.",
-            str27: "Live Videos are not supported.",
-            str28: "**[" + video.title + "](" + video.url + ")** started firstly.",
-            str29: "**[" + video.title + "](" + video.url + ")** has been added to the queue.",
-            str30: "'s Playlists",
-            str31: "Playlist Names",
-            str32: ":no_entry_sign: Playlist is not exist.",
-            str33: "This Playlist is empty! Add some with " + prefix + "playlist add " + args[2] + " <url>",
-            str34: "**[" + song.title + "](" + song.url + ")** has been added to the queue.",
-            str35: "All song(s) alrready in the queue.",
-            str36: " Playlist has been started. " + added_songs + " songs added to the queue.",
-            str37: "You must add a YouTube video url. Example: ${prefix}playlist add <url>",
-            str38: ":no_entry_sign: Invalid YouTube Link: " + err,
-            str39: ":no_entry_sign: You can just add at least 10 songs to playlist.",
-            str40: ":no_entry_sign: Already have this song. ",
-            str41: "*Adding...*",
-            str42: ":white_check_mark: Added **${info.title}** to **${args[2]}** named playlist.",
-            str43: ":no_entry_sign: Already exist.",
-            str44: ":no_entry_sign: You can't create playlist more than **1**",
-            str45: "*Creating...*",
-            str46: ":white_check_mark: ${args[2]} Playlist created.",
-            str47: ":no_entry_sign: Playlist is not exist.",
-            str48: "This Playlist is empty! Add some with " + prefix + "playlist add " + args[2] + " <url>",
-            str49: "Music Playlist: Currently",
-            str50: ""
-          };
-        }
-
-        else if(language == "en"){
-          var lang = {
-            str1: "Şuan çalıyor",
-            str2: "Geçmek için tıkla ⏭",
-            str3: "Title",
-            str4: "Duration",
-            str5: "Who Put Dis?",
-            str6: "<@" + reaction.users.last().id + "> wants to skip. **" + votes_need + " votes** need to skip.",
-            str7: "<@" + reaction.users.last().id + "> wants to skip. **One more vote** need to skip.",
-            str8: "<@" + reaction.users.last().id + "> skipped the song.",
-            str9: video.durationSeconds / 60) + " mins " + video.durationSeconds % 60 + " secs",
-            str10: "Current Prefix: " + prefix + "\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type " + prefix + "help",
-            str11: "You can not use this in DM",
-            str12: "You must be in a voice channel",
-            str13: "my channel Text Channel id: " + message.channel.id,
-            str14: "my channel voiceChannel id: " + message.member.voiceChannel.id,
-            str15: "You can not use this in DM",
-            str16: "Where is the **Thing** you want to play?",
-            str17: "You must be in a voice channel",
-            str18: "You must be in the same Text Channel with Bot.",
-            str19: "You must be in the same Voice Channel with Bot.",
-            str20: "You must be in the <#" + music_channel_id + ">",
-            str21: "Corrupted URL.",
-            str22: "Live Videos are not allowed."),
-            str23: "Already in the queue.",
-            str24: "**[" + video.title + "](" + args[1] + ")** started firstly.",
-            str25: "**[" + video.title + "](" + args[1] + ")** has been added to the queue.",
-            str26: "We couldn't find the actual video.",
-            str27: "Live Videos are not supported.",
-            str28: "**[" + video.title + "](" + video.url + ")** started firstly.",
-            str29: "**[" + video.title + "](" + video.url + ")** has been added to the queue.",
-            str30: "'s Playlists",
-            str31: "Playlist Names",
-            str32: ":no_entry_sign: Playlist is not exist.",
-            str33: "This Playlist is empty! Add some with " + prefix + "playlist add " + args[2] + " <url>",
-            str34: "**[" + song.title + "](" + song.url + ")** has been added to the queue.",
-            str35: "All song(s) alrready in the queue.",
-            str36: " Playlist has been started. " + added_songs + " songs added to the queue.",
-            str37: "You must add a YouTube video url. Example: ${prefix}playlist add <url>",
-            str38: ":no_entry_sign: Invalid YouTube Link: " + err,
-            str39: ":no_entry_sign: You can just add at least 10 songs to playlist.",
-            str40: ":no_entry_sign: Already have this song. ",
-            str41: "*Adding...*",
-            str42: ":white_check_mark: Added **${info.title}** to **${args[2]}** named playlist.",
-            str43: ":no_entry_sign: Already exist.",
-            str44: ":no_entry_sign: You can't create playlist more than **1**",
-            str45: "*Creating...*",
-            str46: ":white_check_mark: ${args[2]} Playlist created.",
-            str47: ":no_entry_sign: Playlist is not exist.",
-            str48: "This Playlist is empty! Add some with " + prefix + "playlist add " + args[2] + " <url>",
-            str49: "Music Playlist: Currently",
-            str50: ""
-          };
-        }
-
-          message.reply(lang["str1"]);
-
-
-
-       break;
     default:
       message.reply("Ne boş adamsın aq");
   }
-
-
-
 });
 
 bot.login(process.env.BOT_TOKEN);
