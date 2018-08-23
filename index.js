@@ -1152,6 +1152,7 @@ bot.on('message', message => {
           message.author.send("It's easy to find out! You can do it with your brain!");
       }
       break;
+
       case "lang":
 
         if(args[1] == "tr"){
@@ -1163,12 +1164,16 @@ bot.on('message', message => {
             language = "en";
         }else
         {
-          if(lang=="tr")
+          if(language=="tr")
             message.reply("Use "+prefix+"lang en or "+prefix+"lang tr");
-          else if(lang=="en")
+          else if(language=="en")
             message.reply("Kullanım şekli "+prefix+"lang tr yada "+prefix+"lang en");
         }
+
           message.reply(lang["str1"]);
+
+
+
        break;
     default:
       message.reply("Ne boş adamsın aq");
