@@ -33,8 +33,8 @@ http.createServer(function(request, response)
 var language = "tr";
 
 var lang = {
-  str1: "Playing Now",
-  str2: "Click ⏭ to Skip",
+  str1: "Şuan çalıyor",
+  str2: "Geçmek için tıkla ⏭",
   str3: "Title",
   str4: "Duration",
   str5: "Who Put Dis?",
@@ -45,8 +45,8 @@ var lang = {
   str10: "Current Prefix: " + prefix + "\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type " + prefix + "help",
   str11: "You can not use this in DM",
   str12: "You must be in a voice channel",
-  str13: 'my channel Text Channel id: ' + message.channel.id,
-  str14: 'my channel voiceChannel id: ' + message.member.voiceChannel.id,
+  str13: "my channel Text Channel id: " + message.channel.id,
+  str14: "my channel voiceChannel id: " + message.member.voiceChannel.id,
   str15: "You can not use this in DM",
   str16: "Where is the **Thing** you want to play?",
   str17: "You must be in a voice channel",
@@ -70,9 +70,9 @@ var lang = {
   str35: "All song(s) alrready in the queue.",
   str36: " Playlist has been started. " + added_songs + " songs added to the queue.",
   str37: "You must add a YouTube video url. Example: ${prefix}playlist add <url>",
-  str38: ':no_entry_sign: Invalid YouTube Link: ' + err,
-  str39: ':no_entry_sign: You can just add at least 10 songs to playlist.',
-  str40: ':no_entry_sign: Already have this song. ',
+  str38: ":no_entry_sign: Invalid YouTube Link: " + err,
+  str39: ":no_entry_sign: You can just add at least 10 songs to playlist.",
+  str40: ":no_entry_sign: Already have this song. ",
   str41: "*Adding...*",
   str42: ":white_check_mark: Added **${info.title}** to **${args[2]}** named playlist.",
   str43: ":no_entry_sign: Already exist.",
@@ -81,7 +81,7 @@ var lang = {
   str46: ":white_check_mark: ${args[2]} Playlist created.",
   str47: ":no_entry_sign: Playlist is not exist.",
   str48: "This Playlist is empty! Add some with " + prefix + "playlist add " + args[2] + " <url>",
-  str49: "Music Playlist: Currently **${tosend.length}** songs in it ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n",
+  str49: "Music Playlist: Currently",
   str50: ""
 };
 
@@ -1217,8 +1217,8 @@ bot.on('message', message => {
             str10: "Current Prefix: " + prefix + "\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type " + prefix + "help",
             str11: "You can not use this in DM",
             str12: "You must be in a voice channel",
-            str13: 'my channel Text Channel id: ' + message.channel.id,
-            str14: 'my channel voiceChannel id: ' + message.member.voiceChannel.id,
+            str13: "my channel Text Channel id: " + message.channel.id,
+            str14: "my channel voiceChannel id: " + message.member.voiceChannel.id,
             str15: "You can not use this in DM",
             str16: "Where is the **Thing** you want to play?",
             str17: "You must be in a voice channel",
@@ -1242,9 +1242,9 @@ bot.on('message', message => {
             str35: "All song(s) alrready in the queue.",
             str36: " Playlist has been started. " + added_songs + " songs added to the queue.",
             str37: "You must add a YouTube video url. Example: ${prefix}playlist add <url>",
-            str38: ':no_entry_sign: Invalid YouTube Link: ' + err,
-            str39: ':no_entry_sign: You can just add at least 10 songs to playlist.',
-            str40: ':no_entry_sign: Already have this song. ',
+            str38: ":no_entry_sign: Invalid YouTube Link: " + err,
+            str39: ":no_entry_sign: You can just add at least 10 songs to playlist.",
+            str40: ":no_entry_sign: Already have this song. ",
             str41: "*Adding...*",
             str42: ":white_check_mark: Added **${info.title}** to **${args[2]}** named playlist.",
             str43: ":no_entry_sign: Already exist.",
@@ -1253,15 +1253,15 @@ bot.on('message', message => {
             str46: ":white_check_mark: ${args[2]} Playlist created.",
             str47: ":no_entry_sign: Playlist is not exist.",
             str48: "This Playlist is empty! Add some with " + prefix + "playlist add " + args[2] + " <url>",
-            str49: "Music Playlist: Currently **${tosend.length}** songs in it ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n",
+            str49: "Music Playlist: Currently",
             str50: ""
           };
         }
 
         else if(language == "en"){
           var lang = {
-            str1: "Playing Now",
-            str2: "Click ⏭ to Skip",
+            str1: "Şuan çalıyor",
+            str2: "Geçmek için tıkla ⏭",
             str3: "Title",
             str4: "Duration",
             str5: "Who Put Dis?",
@@ -1272,8 +1272,8 @@ bot.on('message', message => {
             str10: "Current Prefix: " + prefix + "\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type " + prefix + "help",
             str11: "You can not use this in DM",
             str12: "You must be in a voice channel",
-            str13: 'my channel Text Channel id: ' + message.channel.id,
-            str14: 'my channel voiceChannel id: ' + message.member.voiceChannel.id,
+            str13: "my channel Text Channel id: " + message.channel.id,
+            str14: "my channel voiceChannel id: " + message.member.voiceChannel.id,
             str15: "You can not use this in DM",
             str16: "Where is the **Thing** you want to play?",
             str17: "You must be in a voice channel",
@@ -1297,9 +1297,9 @@ bot.on('message', message => {
             str35: "All song(s) alrready in the queue.",
             str36: " Playlist has been started. " + added_songs + " songs added to the queue.",
             str37: "You must add a YouTube video url. Example: ${prefix}playlist add <url>",
-            str38: ':no_entry_sign: Invalid YouTube Link: ' + err,
-            str39: ':no_entry_sign: You can just add at least 10 songs to playlist.',
-            str40: ':no_entry_sign: Already have this song. ',
+            str38: ":no_entry_sign: Invalid YouTube Link: " + err,
+            str39: ":no_entry_sign: You can just add at least 10 songs to playlist.",
+            str40: ":no_entry_sign: Already have this song. ",
             str41: "*Adding...*",
             str42: ":white_check_mark: Added **${info.title}** to **${args[2]}** named playlist.",
             str43: ":no_entry_sign: Already exist.",
@@ -1308,7 +1308,7 @@ bot.on('message', message => {
             str46: ":white_check_mark: ${args[2]} Playlist created.",
             str47: ":no_entry_sign: Playlist is not exist.",
             str48: "This Playlist is empty! Add some with " + prefix + "playlist add " + args[2] + " <url>",
-            str49: "Music Playlist: Currently **${tosend.length}** songs in it ${(tosend.length > 15 ? '*[Only next 15 shown]*' : '')}\n",
+            str49: "Music Playlist: Currently",
             str50: ""
           };
         }
