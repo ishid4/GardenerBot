@@ -39,6 +39,8 @@ var language = "tr";
 
 
 
+
+
 var bot = new Discord.Client({
   autoReconnect: true,
   max_message_cache: 0
@@ -1140,25 +1142,6 @@ bot.on('message', message => {
       break;
 
       case "lang":
-
-        function getLang(){
-          if(language == "tr"){
-            var lang = {
-              str1: "Merhaba.",
-              str2: "Nasılsın?",
-              str3: "İyiyim."
-            };
-          }
-
-          else if(language == "en"){
-            var lang = {
-              str1: "Hello.",
-              str2: "How are you?",
-              str3: "Fine."
-            };
-          }
-        }
-
         if(args[1] == "tr"){
             message.reply("TR seçildi.");
             language = "tr";
@@ -1175,7 +1158,23 @@ bot.on('message', message => {
           else if(language=="en")
             message.reply("Kullanım şekli "+prefix+"lang tr yada "+prefix+"lang en");
         }
-        getLang();
+
+        if(language == "tr"){
+          var lang = {
+            str1: "Merhaba.",
+            str2: "Nasılsın?",
+            str3: "İyiyim."
+          };
+        }
+
+        else if(language == "en"){
+          var lang = {
+            str1: "Hello.",
+            str2: "How are you?",
+            str3: "Fine."
+          };
+        }
+        
           message.reply(lang["str1"]);
 
 
