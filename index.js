@@ -30,17 +30,26 @@ http.createServer(function(request, response)
 	response.end('Discord bot is active now \n');
 }).listen(3000);*/
 
-var lang_tr = {
-  str1: "Merhaba.",
-  str2: "Nasılsın?",
-  str3: "İyiyim."
-};
+var language = "tr";
 
-var lang_en = {
-  str1: "Hello.",
-  str2: "How are you?",
-  str3: "Fine."
-};
+if(language == "tr"){
+  var lang = {
+    str1: "Merhaba.",
+    str2: "Nasılsın?",
+    str3: "İyiyim."
+  };
+}
+else if(language == "en"){
+  var lang = {
+    str1: "Hello.",
+    str2: "How are you?",
+    str3: "Fine."
+  };
+}
+
+
+
+
 
 
 
@@ -1147,13 +1156,19 @@ bot.on('message', message => {
 
         if(args[1] == "tr"){
             message.reply("TR seçildi.");
+            language = "tr";
+
         }else if(args[1] == "en"){
             message.reply("EN chosen.");
+            language = "en";
         }else
         {
-          message.reply("Use "+prefix+"lang tr or"+prefix+"lang en");
+          if(lang=="tr")
+            message.reply("Use "+prefix+"lang en or "+prefix+"lang tr");
+          else if(lang=="en")
+            message.reply("Kullanım şekli "+prefix+"lang tr yada "+prefix+"lang en");
         }
-
+          message.reply(lang["str1"]);
        break;
     default:
       message.reply("Ne boş adamsın aq");
