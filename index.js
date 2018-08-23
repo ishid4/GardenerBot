@@ -1145,7 +1145,7 @@ bot.on('message', message => {
       break;
       case "lang":
 
-         message.reply('Lang yaz');
+         message.reply(lang_tr["str1"]);
 
        break;
     default:
