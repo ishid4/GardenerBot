@@ -32,26 +32,29 @@ http.createServer(function(request, response)
 
 var language = "tr";
 
-if(language == "tr"){
-  var lang = {
-    str1: "Merhaba.",
-    str2: "Nasılsın?",
-    str3: "İyiyim."
-  };
+
+
+function callMyLang(language) {
+
+  if(language == "tr"){
+    var lang = {
+      str1: "Merhaba.",
+      str2: "Nasılsın?",
+      str3: "İyiyim."
+    };
+  }
+
+  else if(language == "en"){
+    var lang = {
+      str1: "Hello.",
+      str2: "How are you?",
+      str3: "Fine."
+    };
+  }
+
 }
-else if(language == "en"){
-  var lang = {
-    str1: "Hello.",
-    str2: "How are you?",
-    str3: "Fine."
-  };
-}
 
-
-
-
-
-
+callMyLang(language);
 
 var bot = new Discord.Client({
   autoReconnect: true,
@@ -1169,7 +1172,7 @@ bot.on('message', message => {
           else if(language=="en")
             message.reply("Kullanım şekli "+prefix+"lang tr yada "+prefix+"lang en");
         }
-
+          callMyLang(language);
           message.reply(lang["str1"]);
 
 
