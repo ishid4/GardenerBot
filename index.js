@@ -1138,14 +1138,15 @@ bot.on('message', message => {
             })
             .catch(() => console.log("DM Error"));
           break;
-         case "lang":
-          //lang_en[str1]
-            message.reply(lang_en[str1] + " = " + lang_tr[str1]);
-          break;
+
         default:
           message.author.send("It's easy to find out! You can do it with your brain!");
       }
       break;
+      case "lang":
+       //lang_en[str1]
+         message.reply(lang_en[str1] + " = " + lang_tr[str1]);
+       break;
     default:
       message.reply("Ne boş adamsın aq");
   }
