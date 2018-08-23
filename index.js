@@ -30,8 +30,17 @@ http.createServer(function(request, response)
 	response.end('Discord bot is active now \n');
 }).listen(3000);*/
 
+var lang_tr = {
+  str1: "Merhaba.",
+  str2: "Nasılsın?",
+  str3: "İyiyim."
+};
 
-
+var lang_en = {
+  str1: "Hello.",
+  str2: "How are you?",
+  str3: "Fine."
+};
 
 
 
@@ -1128,6 +1137,10 @@ bot.on('message', message => {
               }
             })
             .catch(() => console.log("DM Error"));
+          break;
+         case "lang":
+          //lang_en[str1]
+            message.reply(lang_en[str1] + " = " + lang_tr[str1]);
           break;
         default:
           message.author.send("It's easy to find out! You can do it with your brain!");
