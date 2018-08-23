@@ -1144,8 +1144,9 @@ bot.on('message', message => {
       }
       break;
       case "lang":
-       //lang_en[str1]
-         message.reply(lang_en[str1] + " = " + lang_tr[str1]);
+
+         message.reply('Lang yaz');
+
        break;
     default:
       message.reply("Ne boş adamsın aq");
