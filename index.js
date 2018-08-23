@@ -1141,6 +1141,24 @@ bot.on('message', message => {
 
       case "lang":
 
+        function getLang(){
+          if(language == "tr"){
+            var lang = {
+              str1: "Merhaba.",
+              str2: "Nasılsın?",
+              str3: "İyiyim."
+            };
+          }
+
+          else if(language == "en"){
+            var lang = {
+              str1: "Hello.",
+              str2: "How are you?",
+              str3: "Fine."
+            };
+          }
+        }
+
         if(args[1] == "tr"){
             message.reply("TR seçildi.");
             language = "tr";
@@ -1167,23 +1185,7 @@ bot.on('message', message => {
       message.reply("Ne boş adamsın aq");
   }
 
-    function getLang(){
-      if(language == "tr"){
-        var lang = {
-          str1: "Merhaba.",
-          str2: "Nasılsın?",
-          str3: "İyiyim."
-        };
-      }
 
-      else if(language == "en"){
-        var lang = {
-          str1: "Hello.",
-          str2: "How are you?",
-          str3: "Fine."
-        };
-      }
-    }
 
 });
 
