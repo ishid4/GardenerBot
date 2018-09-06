@@ -13,13 +13,9 @@ const guilds = JSON.parse(fs.readFileSync('./guilds.json'));
 const guilds_dir = './guilds.json';
 
 const ytdlOptions = {
-  filter: "audioonly"
-};
-
-/*const ytdlOptions = {
   filter: "audioonly",
   quality: "lowest"
-};*/
+};
 
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube('AIzaSyBMW9D6z_8wOQKqxsCSiL7_DQJXr3Oi_zY');
