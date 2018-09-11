@@ -1,0 +1,67 @@
+{
+  "scripts": {
+    "start": "node index.js"
+  },
+  "requires": true,
+  "lockfileVersion": 1,
+  "dependencies": {
+    "async": "^2.6.1",
+    "async-limiter": {
+      "integrity": "sha512-jp/uFnooOiO+L211eZOoSyzpOITMXx1rBITauYykG3BRYPu8h0UcxsPNB04RR5vo4Tyz3+ay17tR6JVf9qzYWg==",
+      "resolved": "https://registry.npmjs.org/async-limiter/-/async-limiter-1.0.0.tgz",
+      "version": "1.0.0"
+    },
+    "discord.js": "^11.4.2",
+    "express": "^4.16.3",
+    "ffmpeg-binaries": "^3.2.2",
+    "fs": "0.0.1-security",
+    "get-artist-title": "^1.1.1",
+    "http": "0.0.0",
+    "long": {
+      "integrity": "sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==",
+      "resolved": "https://registry.npmjs.org/long/-/long-4.0.0.tgz",
+      "version": "4.0.0"
+    },
+    "lyric-get": "^1.0.3",
+    "lyrics-fetcher": "^1.0.2",
+    "node-lyrics": "^1.0.0",
+    "npm": "^6.4.1",
+    "opusscript": "0.0.6",
+    "performance-now": "^2.1.0",
+    "prism-media": {
+      "integrity": "sha512-L6yc8P5NVG35ivzvfI7bcTYzqFV+K8gTfX9YaJbmIFfMXTs71RMnAupvTQPTCteGsiOy9QcNLkQyWjAafY/hCQ==",
+      "resolved": "https://registry.npmjs.org/prism-media/-/prism-media-0.0.2.tgz",
+      "version": "0.0.2"
+    },
+    "safe-buffer": {
+      "integrity": "sha512-kKvNJn6Mm93gAczWVJg7wH+wGYWNrDHdWvpUmHyEsgCtIwwo3bqPtV4tR5tuPaUhTOo/kvhVwd8XwwOllGYkbg==",
+      "resolved": "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.1.tgz",
+      "version": "5.1.1"
+    },
+    "simple-youtube-api": "^5.0.2",
+    "snekfetch": {
+      "integrity": "sha512-NjxjITIj04Ffqid5lqr7XdgwM7X61c/Dns073Ly170bPQHLm6jkmelye/eglS++1nfTWktpP6Y2bFXjdPlQqdw==",
+      "resolved": "https://registry.npmjs.org/snekfetch/-/snekfetch-3.6.4.tgz",
+      "version": "3.6.4"
+    },
+    "tweetnacl": {
+      "integrity": "sha1-cT2LgY2kIGh0C/aDhtBHnmb8ins=",
+      "resolved": "https://registry.npmjs.org/tweetnacl/-/tweetnacl-1.0.0.tgz",
+      "version": "1.0.0"
+    },
+    "ws": {
+      "integrity": "sha512-ZGh/8kF9rrRNffkLFV4AzhvooEclrOH0xaugmqGsIfFgOE/pIz4fMc4Ef+5HSQqTEug2S9JZIWDR47duDSLfaA==",
+      "requires": {
+        "async-limiter": "1.0.0",
+        "safe-buffer": "5.1.1"
+      },
+      "resolved": "https://registry.npmjs.org/ws/-/ws-4.1.0.tgz",
+      "version": "4.1.0"
+    },
+    "xmlhttprequest": "^1.8.0",
+    "youtube-api-search": "0.0.5",
+    "youtube-info": "^1.2.0",
+    "ytdl": "^0.10.3",
+    "ytdl-core": "^0.20.4"
+  }
+}
