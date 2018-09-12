@@ -9,7 +9,6 @@
   "dependencies": {
     "async": "^2.6.1",
     "discord.js": "^11.4.2",
-    "ffmepg": "^0.0.2-security",
     "ffmpeg-binaries": "^4.0.0",
     "fs": "^0.0.1-security",
     "get-artist-title": "^1.1.1",
