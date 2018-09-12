@@ -18,10 +18,6 @@
     "simple-youtube-api": "^5.0.2",
     "ytdl-core": "^0.25.2"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Macbeth",
   "license": "ISC"
 }
