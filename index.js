@@ -698,8 +698,8 @@ bot.on('message', message => {
       }
       break;
     case "stop":
-    case "siktirgit"
-    case "fuckoff"
+    case "siktirgit":
+    case "fuckoff":
       if (message.channel.type == 'dm')
         return message.reply("You can not use this in DM");
       if (!message.member.hasPermission("MANAGE_GUILD"))
