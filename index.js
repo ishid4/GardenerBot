@@ -141,17 +141,21 @@ bot.on('ready', function() {
 
 bot.on('message', message => {
 
+
+
     if (message.author.equals(bot.user))
       return;
 
 
-      if (message.channel.type == 'dm')
+      if (message.channel.type == 'dm'){
         var prefix = "";
+      }
       else
       { // Channel messages
+var prefix= "!";
         if (!message.content.startsWith(prefix))
           return;
-
+console.log("kanal geldi");
           if (!guilds[message.guild.id]) {
             guilds[message.guild.id] = {
               name: message.guild.name,
@@ -200,6 +204,8 @@ bot.on('message', message => {
           var argss = args[1].split("?v=");
           var videoname = message.content.substring(prefix.length).split("play");
           var url = message.content.substring(prefix.length).split("playlistadd");
+
+          console.log(args);
 
           switch (args[0].toLowerCase()) {
 
