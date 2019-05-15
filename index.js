@@ -141,8 +141,6 @@ bot.on('ready', function() {
 
 bot.on('message', message => {
 
-
-
     if (message.author.equals(bot.user))
       return;
 
@@ -152,10 +150,10 @@ bot.on('message', message => {
       }
       else
       { // Channel messages
-var prefix= "!";
+        var prefix= "!";
         if (!message.content.startsWith(prefix))
           return;
-console.log("kanal geldi");
+
           if (!guilds[message.guild.id]) {
             guilds[message.guild.id] = {
               name: message.guild.name,
@@ -201,7 +199,7 @@ console.log("kanal geldi");
 
 
           var args = message.content.substring(prefix.length).split(" ");
-          var argss = args[1].split("?v=");
+          var argss = message.content.substring(prefix.length).split("?v=");
           var videoname = message.content.substring(prefix.length).split("play");
           var url = message.content.substring(prefix.length).split("playlistadd");
 
@@ -215,6 +213,19 @@ console.log("kanal geldi");
 
               if (!message.member.voiceChannel)
                 return message.reply("You must be in a voice channel");
+
+              if (!servers[message.guild.id]) {
+                servers[message.guild.id] = {
+                  queue: [],
+                  whoputdis: [],
+                  videolengh: [],
+                  videotitle: [],
+                  playing: [],
+                  channel: [],
+                  lastmusicembed: []
+                };
+              }
+              var server = servers[message.guild.id];
 
               if (server.queue[0]) {
                 if (message.channel.id != server.channel[0])
@@ -236,53 +247,51 @@ console.log("kanal geldi");
               var pattern = new RegExp("(https*:\/\/)*(www.){0,1}youtube.com\/(.*)");
               var pattern2 = new RegExp("(https*:\/\/)*(www.){0,1}youtu.be\/(.*)");
 
-              // For URLS
-              if (pattern.test(args[1]) || pattern2.test(args[1])) {
-                  var vUrl = args[1];
-              } else {
-                // Youtube video searching
-                youtube.searchVideos(videoname, 1)
-                  .then(results => {
+
+              youtube.searchVideos(videoname, 1)
+                .then(results => {
                     if (!results[0])
                       return message.reply("We couldn't find the actual video.");
 
-                    var vUrl = results[0].url;
+                    if (pattern.test(args[1]) || pattern2.test(args[1]))
+                        var vUrl = args[1];
+                    else
+                        var vUrl = results[0].url;
+
+                  youtube.getVideo(vUrl)
+                    .then(video => {
+                      if (video.durationSeconds < 1)
+                        return message.reply("Live Videos are not allowed.");
+
+                      if (server.queue.indexOf(vUrl) >= 0)
+                        return message.reply('Already in the queue. ');
+
+                      server.queue.push(vUrl);
+                      server.channel.push(message.channel.id);
+                      server.whoputdis.push(message.author.username);
+                      server.videolengh.push(video.durationSeconds);
+                      server.videotitle.push(video.title);
+
+                      if (!server.queue[0]) {
+                        const addedqueue = new Discord.RichEmbed()
+                          .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
+                          .setColor(16098851)
+                        message.channel.send(addedqueue);
+                      }else if (server.queue[0]) {
+                        const addedqueue = new Discord.RichEmbed()
+                          .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
+                          .setColor(16098851)
+                        message.channel.send(addedqueue);
+                        //message.reply('The song: **' + video.title + "** has been added to the queue list.");
+                      }
+
+                      if (!message.guild.voiceConnection)
+                        message.member.voiceChannel.join().then(function(connection) {
+                          play(connection, message);
+                        }).catch(console.error);
+                    })
+                    .catch(console.error);
                 }).catch(console.log);
-              }
-
-              youtube.getVideo(vUrl)
-                .then(video => {
-                  if (video.durationSeconds < 1)
-                    return message.reply("Live Videos are not allowed.");
-
-                  if (server.queue.indexOf(args[1]) >= 0)
-                    return message.reply('Already in the queue. ');
-
-                  server.queue.push(args[1]);
-                  server.channel.push(message.channel.id);
-                  server.whoputdis.push(message.author.username);
-                  server.videolengh.push(video.durationSeconds);
-                  server.videotitle.push(video.title);
-
-                  if (!server.queue[0]) {
-                    const addedqueue = new Discord.RichEmbed()
-                      .setDescription("**[" + video.title + "](" + args[1] + ")** started firstly.")
-                      .setColor(16098851)
-                    message.channel.send(addedqueue);
-                  }else if (server.queue[0]) {
-                    const addedqueue = new Discord.RichEmbed()
-                      .setDescription("**[" + video.title + "](" + args[1] + ")** has been added to the queue.")
-                      .setColor(16098851)
-                    message.channel.send(addedqueue);
-                    //message.reply('The song: **' + video.title + "** has been added to the queue list.");
-                  }
-
-                  if (!message.guild.voiceConnection)
-                    message.member.voiceChannel.join().then(function(connection) {
-                      play(connection, message);
-                    }).catch(console.error);
-                })
-                .catch(console.error);
               break;
 
               case "skip":
