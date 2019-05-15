@@ -9,6 +9,7 @@ const {
   token,
   youtubeToken
 } = require('./config.json');
+
 const lang = JSON.parse(fs.readFileSync('./language.json'));
 var defaultLang = "en";
 
@@ -18,7 +19,6 @@ const Discord = require('discord.js');
 // Youtube Token
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(yotubeToken);
-
 
 // Youtube downloader framework
 const YTDL = require('ytdl-core');
@@ -241,6 +241,7 @@ bot.on('message', message => {
                       return message.reply("We couldn't find the actual video.");
 
                     var vUrl = results[0].url;
+                }).catch(console.log);
               }
 
               youtube.getVideo(vUrl)
@@ -248,7 +249,7 @@ bot.on('message', message => {
                   if (video.durationSeconds < 1)
                     return message.reply("Live Videos are not allowed.");
 
-                  if (server.queue.indexOf(args[1])>=0)
+                  if (server.queue.indexOf(args[1]) >= 0)
                     return message.reply('Already in the queue. ');
 
                   server.queue.push(args[1]);
@@ -276,7 +277,6 @@ bot.on('message', message => {
                     }).catch(console.error);
                 })
                 .catch(console.error);
-
               break;
 
               case "skip":
@@ -323,7 +323,6 @@ bot.on('message', message => {
                     message.channel.send(`:speaker: vOlUmE: ${Math.round(server.dispatcher.volume*100)}%`);
                   }
                 }
-
                 break;
 
               case "stop":
@@ -347,9 +346,9 @@ bot.on('message', message => {
                 message.edit(`${message.content} Ms: ${new Date().getTime() - sent}.`);
               });
               break;
+
             default:
               message.reply("Command doesn't exist.");
-
           }
 
 
