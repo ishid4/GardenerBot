@@ -18,7 +18,7 @@ const Discord = require('discord.js');
 
 // Youtube Token
 const YouTube = require('simple-youtube-api');
-const youtube = new YouTube(yotubeToken);
+const youtube = new YouTube("AIzaSyBMW9D6z_8wOQKqxsCSiL7_DQJXr3Oi_zY");
 
 // Youtube downloader framework
 const YTDL = require('ytdl-core');
@@ -356,4 +356,4 @@ bot.on('message', message => {
 
 });
 
-bot.login(process.env.BOT_TOKEN);
+bot.login("NDIyMDkwNjE5ODU5NjMyMTY4.DYWuDA.k_H-WcDTB_Df672iG-LaX4tY9NM");
