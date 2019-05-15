@@ -1,6 +1,6 @@
 // Requirements
 const opus = require('opusscript');
-const ffmepg = require('ffmepg-libraries');
+const ffmepg = require('ffmpeg-binaries');
 
 const fs = require('fs');
 const async = require('async');
@@ -22,9 +22,6 @@ const youtube = new YouTube(yotubeToken);
 
 // Youtube downloader framework
 const YTDL = require('ytdl-core');
-
-// Server status.
-const now = require('performance-now');
 
 // Role configs
 const roles = JSON.parse(fs.readFileSync('./roles.json'));
