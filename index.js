@@ -17,6 +17,8 @@ const ytdlOptions = {
   quality: "lowest"
 };
 
+const var i;
+
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube('AIzaSyBMW9D6z_8wOQKqxsCSiL7_DQJXr3Oi_zY');
 
