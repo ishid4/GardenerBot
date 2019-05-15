@@ -1,4 +1,7 @@
-//Requirements.
+// Requirements
+const opus = require('opusscript');
+const ffmepg = require('ffmepg-libraries');
+
 const fs = require('fs');
 const async = require('async');
 const guilds_dir = './guilds.json';
@@ -9,15 +12,15 @@ const {
 const lang = JSON.parse(fs.readFileSync('./language.json'));
 var defaultLang = "en";
 
-//Discord framework
+// Discord framework
 const Discord = require('discord.js');
 
-//Youtube Token
+// Youtube Token
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(yotubeToken);
 
 
-//Youtube downloader framework.
+// Youtube downloader framework
 const YTDL = require('ytdl-core');
 
 // Server status.
@@ -45,7 +48,7 @@ var bot = new Discord.Client({
 
 var servers = {};
 
-//Playing now music procedures.
+// Playing now music
 async function embedmusic(info, duration, who, message, server) {
   var embedmusic = new Discord.RichEmbed()
     .setAuthor("Playing Now", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
@@ -68,7 +71,7 @@ async function embedmusic(info, duration, who, message, server) {
     maxUsers: 10,
     time: 700000
   });
-  //emoji pull
+  // emoji collecting
   r.on('collect', (reaction, reactionCollector, user) => {
 
     if (bot.user.id == reaction.users.last().id)
@@ -91,7 +94,7 @@ async function embedmusic(info, duration, who, message, server) {
       vote_info();
     }
   });
-}//embedMusic
+} // embedMusic
 
 async function play(connection, message) {
   var server = servers[message.guild.id];
@@ -140,19 +143,15 @@ bot.on('ready', function() {
 });
 
 bot.on('message', message => {
-//DM'ye mi mesaj geldi
 
     if (message.author.equals(bot.user))
       return;
 
 
       if (message.channel.type == 'dm')
-      {//DM mesajları
         var prefix = "";
-
-      }//DM mesajları
       else
-      {//Kullanıcı mesajları
+      { // Channel messages
         if (!message.content.startsWith(prefix))
           return;
 
@@ -205,11 +204,9 @@ bot.on('message', message => {
           var videoname = message.content.substring(prefix.length).split("play");
           var url = message.content.substring(prefix.length).split("playlistadd");
 
-
-
           switch (args[0].toLowerCase()) {
 
-            case "play": //burada kaldık
+            case "play":
               if (!args[1])
                 return message.reply("Where is the **Thing** you want to play?");
 
@@ -236,11 +233,11 @@ bot.on('message', message => {
               var pattern = new RegExp("(https*:\/\/)*(www.){0,1}youtube.com\/(.*)");
               var pattern2 = new RegExp("(https*:\/\/)*(www.){0,1}youtu.be\/(.*)");
 
-              // Link yollanırsa
+              // For URLS
               if (pattern.test(args[1]) || pattern2.test(args[1])) {
                   var vUrl = args[1];
               } else {
-                //Yazı olarak geldiyse
+                // Youtube video searching
                 youtube.searchVideos(videoname, 1)
                   .then(results => {
                     if (!results[0])
@@ -329,7 +326,7 @@ bot.on('message', message => {
                     message.channel.send(`:speaker: vOlUmE: ${Math.round(server.dispatcher.volume*100)}%`);
                   }
                 }
-                
+
                 break;
 
               case "stop":
@@ -359,7 +356,7 @@ bot.on('message', message => {
           }
 
 
-      }//Kullanıcı Mesajları
+      } // Channel messages END
 
 });
 
