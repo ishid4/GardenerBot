@@ -1,36 +1,42 @@
-const Discord = require('discord.js');
-const {
-  token
-} = require('./config.json');
-const YTDL = require('ytdl-core');
+//Requirements.
 const fs = require('fs');
 const async = require('async');
+const guilds_dir = './guilds.json';
+const {
+  token,
+  youtubeToken
+} = require('./config.json');
+const lang = JSON.parse(fs.readFileSync('./language.json'));
+var defaultLang = "en";
+
+//Discord framework
+const Discord = require('discord.js');
+
+//Youtube Token
+const YouTube = require('simple-youtube-api');
+const youtube = new YouTube(yotubeToken);
+
+
+//Youtube downloader framework.
+const YTDL = require('ytdl-core');
+
+// Server status.
 const now = require('performance-now');
-const playlist = JSON.parse(fs.readFileSync('./playlist.json'));
-const playlist_dir = './playlist.json';
+
+// Role configs
 const roles = JSON.parse(fs.readFileSync('./roles.json'));
 const guilds = JSON.parse(fs.readFileSync('./guilds.json'));
-const guilds_dir = './guilds.json';
 
+// Options
 const ytdlOptions = {
   filter: "audioonly",
   quality: "lowest"
 };
 
-const var i;
-
-const YouTube = require('simple-youtube-api');
-const youtube = new YouTube('AIzaSyBMW9D6z_8wOQKqxsCSiL7_DQJXr3Oi_zY');
-
+// Lyrics codes
 const l = require("lyric-get");
 const getArtistTitle = require('get-artist-title');
 
-/*const http = require('http');
-http.createServer(function(request, response)
-{
-	response.writeHead(200, {'Content-Type': 'text/plain'});
-	response.end('Discord bot is active now \n');
-}).listen(3000);*/
 
 var bot = new Discord.Client({
   autoReconnect: true,
@@ -39,10 +45,7 @@ var bot = new Discord.Client({
 
 var servers = {};
 
-function generateHex() {
-  return "#" + Math.floor(Math.random() * 16777215).toString(16);
-}
-
+//Playing now music procedures.
 async function embedmusic(info, duration, who, message, server) {
   var embedmusic = new Discord.RichEmbed()
     .setAuthor("Playing Now", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
@@ -60,63 +63,35 @@ async function embedmusic(info, duration, who, message, server) {
   embedmain.react('⏭');
 
   const filter = (reaction) => reaction.emoji.name === '⏭';
-  /*let r = await embedmain.awaitReactions(filter, { maxUsers: 10, max: 2});
-  let yes = r.get("⏭").users.size;
-  if (yes == 2) {
-  if (server.dispatcher) server.dispatcher.end();
-  }*/
+
   let r = await embedmain.createReactionCollector(filter, {
     maxUsers: 10,
     time: 700000
   });
+  //emoji pull
   r.on('collect', (reaction, reactionCollector, user) => {
+
     if (bot.user.id == reaction.users.last().id)
       return;
+
     var channel_users = message.guild.me.voiceChannel.members.size - 1;
+
     var votes = reaction.users.size - 1;
-    var votes_need = channel_users - votes;
-    //console.log("votes :" + votes);
-    //console.log("channel users : " + channel_users);
 
-    if (channel_users >= 3) {
-      if (votes == 3) {
-        if (server.dispatcher)
-          server.dispatcher.end();
-      } else {
-        async function vote_info() {
-          let inf = await message.channel.send("<@" + reaction.users.last().id + "> wants to skip. **" + votes_need + " votes** need to skip.");
-          await inf.delete(10000);
-        }
-        vote_info();
-      }
-    } else if (channel_users == 2) {
-      if (votes == 2) {
-        if (server.dispatcher)
-          server.dispatcher.end();
-      } else {
-        async function vote_info() {
-          let inf = await message.channel.send("<@" + reaction.users.last().id + "> wants to skip. **One more vote** need to skip.");
-          await inf.delete(10000);
-        }
-        vote_info();
-      }
+    var votes_need = Math.ceil(channel_users*2/10) - votes;
+
+    if (votes >= votes_need) {
+      if (server.dispatcher)
+        server.dispatcher.end();
     } else {
-      if (votes == 1) {
-        if (server.dispatcher)
-          server.dispatcher.end();
-        async function vote_info() {
-          let inf = await message.channel.send("<@" + reaction.users.last().id + "> skipped the song.");
-          //await inf.delete(10000);
-        }
-        vote_info();
+      async function vote_info() {
+        let inf = await message.channel.send("<@" + reaction.users.last().id + "> wants to skip. **" + votes_need + " votes** need to skip.");
+        await inf.delete(10000);
       }
+      vote_info();
     }
-    //console.log(reaction.users.last().username);
-    //console.log(reaction.users.filter(u => u.id !== bot.user.id).map(u => u.username).join("\n"));
-    //console.log(`Collected ${reaction.emoji.name}`);
   });
-
-}
+}//embedMusic
 
 async function play(connection, message) {
   var server = servers[message.guild.id];
@@ -164,30 +139,13 @@ bot.on('ready', function() {
   });
 });
 
-/*bot.on("guildMemberAdd", function(member) {
-  member.guild.channels.find("name", "general").send(member.toString() + " What's up Boii");
-
-  role = member.guild.roles.find("name", "BITCH");
-  member.addRole(role).catch(console.error);
-
-  member.guild.createRole({
-  name: member.user.username,
-  color: generateHex(),
-  permissions: []
-  }).then(function(role) {
-  member.addRole(role);
-  });
-
-});*/
 
 bot.on('message', message => {
-  /*if (message.author.id == "142721934772273152") {
-  message.delete(3000);
-  message.channel.send("**göt veren erdem ignored**")
-  return;
-  }*/
+
   if (!message.author.equals(bot.user)) {
+
     if (message.channel.type != 'dm') {
+      //Server settings.
       if (!guilds[message.guild.id]) {
         guilds[message.guild.id] = {
           name: message.guild.name,
@@ -200,7 +158,7 @@ bot.on('message', message => {
         let guildUpdate = JSON.stringify(guilds, null, 2);
         fs.writeFileSync(guilds_dir, guildUpdate);
       }
-      //Prefix
+
       var prefix = guilds[message.guild.id].prefix;
       var music_channel_id = guilds[message.guild.id].music_channel_id;
       var music_channel_id_fix = "<#" + music_channel_id + ">";
@@ -212,6 +170,8 @@ bot.on('message', message => {
       if (message.isMentioned(bot.user)) {
         message.channel.send("Current Prefix: `" + prefix + "`\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type `" + prefix + "help`");
       }
+
+
       if (message.guild.me.voiceChannel) {
         if (!servers[message.guild.id])
           servers[message.guild.id] = {
@@ -229,11 +189,13 @@ bot.on('message', message => {
             message.delete();
         }
       }
+
     }
   }
-  if (message.channel.type == 'dm') {
+
+  if (message.channel.type == 'dm')
     var prefix = "";
-  }
+
   if (message.author.equals(bot.user))
     return;
 
@@ -241,85 +203,27 @@ bot.on('message', message => {
     return;
 
   var args = message.content.substring(prefix.length).split(" ");
-  var argss = message.content.substring(prefix.length).split("?v=");
+  var argss = args[1].split("?v=");
   var videoname = message.content.substring(prefix.length).split("play");
   var url = message.content.substring(prefix.length).split("playlistadd");
 
-  //if(args[0].toLowerCase() != "help") message.delete(10000);
-
   switch (args[0].toLowerCase()) {
-    case "maleren":
-      message.channel.send("malerol");
-      break;
-    case "ping2":
-      let start = now();
-      message.channel.send("*Pinging...*").then(message => {
-        let end = now();
-        message.edit(`Pong! **${(end - start).toFixed(0)}ms**`);
-      });
-      break;
+
     case "ping":
       var sent = new Date().getTime();
-      message.channel.send("Heartbeat **" + Math.trunc(bot.ping) + "ms.**").then(message => {
-        message.edit(`${message.content} Pong! **${new Date().getTime() - sent} ms.**`);
+      message.channel.send("Bot ping: " + Math.trunc(bot.ping) + "ms.").then(message => {
+        message.edit(`${message.content} Ms: ${new Date().getTime() - sent}.`);
       });
       break;
-    case "try":
-      console.log("Channel ID: " + message.channel.name);
-      var txtchn;
-      for (var i = 0; i < message.guild.channels.array().length; i++) {
-        if (message.guild.channels.array()[i].type === "text")
-          if (message.guild.channels.array()[i].name === "music")
-            txtchn = message.guild.channels.array()[i].name;
-      }
-      console.log(txtchn);
-      if (!txtchn) {
-        message.guild.createChannel('music', 'text')
-          .then()
-          .catch(console.error);
-      }
-      break;
-    case "meyve":
-      var meyveler = [
-        "elma",
-        "armut",
-        "maydanoz",
-        "şeftali",
-        "muz",
-        "roka"
-      ];
-      var sebzeler = [
-        "maydanoz",
-        "roka",
-        "marul",
-      ];
-      for (var i = 0; i < meyveler.length; i++) {
-        if (sebzeler.includes(meyveler[i])) {
-          meyveler.splice(i, 1);
-        }
-      }
-      console.log(meyveler);
-      break;
-    case "channel":
-      //message.channel.bulkDelete(1, true);
-      if (message.channel.type == 'dm')
-        return message.reply("You can not use this in DM");
 
-      if (!message.member.voiceChannel)
-        return message.reply("You must be in a voice channel");
-      /*if (!message.guild.me.voiceChannel)
-        return message.reply("Bot must be in a voice channel");*/
-      console.log('my channel Text Channel id: ' + message.channel.id)
-      console.log('my channel voiceChannel id: ' + message.member.voiceChannel.id);
-      //console.log("bot's voiceChannel channel id: " + message.guild.me.voiceChannel.id);
-      break;
-    case "play":
+    case "play": //burada kaldık
       if (message.channel.type == 'dm')
         return message.reply("You can not use this in DM");
       if (!args[1])
         return message.reply("Where is the **Thing** you want to play?");
       if (!message.member.voiceChannel)
         return message.reply("You must be in a voice channel");
+
       if (!servers[message.guild.id]) {
         servers[message.guild.id] = {
           queue: [],
@@ -743,7 +647,7 @@ bot.on('message', message => {
 
       async function settingvolume() {
         const embedvolume = new Discord.RichEmbed()
-          .setDescription(":speaker: **Volume:** "+ guilds[message.guild.id].volume * 100 + "%")
+          .setDescription(":speaker: **Volume:** " + guilds[message.guild.id].volume * 100 + "%")
           .setColor(16098851)
         let volumeset = await message.channel.send(embedvolume);
         volumeset.delete(30000);
