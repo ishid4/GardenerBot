@@ -5,10 +5,7 @@ const ffmepg = require('ffmpeg-binaries');
 const fs = require('fs');
 const async = require('async');
 const guilds_dir = './guilds.json';
-const {
-  token,
-  youtubeToken
-} = require('./config.json');
+const configs = require('./config.json');
 
 const lang = JSON.parse(fs.readFileSync('./language.json'));
 var defaultLang = "en";
@@ -18,7 +15,7 @@ const Discord = require('discord.js');
 
 // Youtube Token
 const YouTube = require('simple-youtube-api');
-const youtube = new YouTube("AIzaSyBMW9D6z_8wOQKqxsCSiL7_DQJXr3Oi_zY");
+const youtube = new YouTube(configs.youtubeToken);
 
 // Youtube downloader framework
 const YTDL = require('ytdl-core');
@@ -78,7 +75,7 @@ async function embedmusic(info, duration, who, message, server) {
 
     var votes = reaction.users.size - 1;
 
-    var votes_need = Math.ceil(channel_users*2/10) - votes;
+    var votes_need = Math.ceil(channel_users * 2 / 10) - votes;
 
     if (votes >= votes_need) {
       if (server.dispatcher)
@@ -141,234 +138,229 @@ bot.on('ready', function() {
 
 bot.on('message', message => {
 
-    if (message.author.equals(bot.user))
+  if (message.author.equals(bot.user))
+    return;
+
+
+  if (message.channel.type == 'dm') {
+    var prefix = "";
+  } else { // Channel messages
+    var prefix = "!";
+    if (!message.content.startsWith(prefix))
       return;
 
+    if (!guilds[message.guild.id]) {
+      guilds[message.guild.id] = {
+        name: message.guild.name,
+        owner: message.guild.owner.user.id,
+        prefix: "!",
+        volume: "100",
+        music_channel_id: "",
+        music_channel_name: ""
+      };
+      let guildUpdate = JSON.stringify(guilds, null, 2);
+      fs.writeFileSync(guilds_dir, guildUpdate);
+    }
 
-      if (message.channel.type == 'dm'){
-        var prefix = "";
+    var prefix = guilds[message.guild.id].prefix;
+    var music_channel_id = guilds[message.guild.id].music_channel_id;
+    var music_channel_id_fix = "<#" + music_channel_id + ">";
+    var music_channel_name = guilds[message.guild.id].music_channel_name;
+
+    if (!music_channel_id)
+      music_channel_id_fix = "`all`";
+
+    if (message.isMentioned(bot.user)) {
+      message.channel.send("Current Prefix: `" + prefix + "`\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type `" + prefix + "help`");
+    }
+
+    if (message.guild.me.voiceChannel) {
+      if (!servers[message.guild.id])
+        servers[message.guild.id] = {
+          queue: [],
+          whoputdis: [],
+          videolengh: [],
+          videotitle: [],
+          playing: [],
+          channel: [],
+          lastmusicembed: []
+        };
+      var server = servers[message.guild.id];
+      if (server.queue[0]) {
+        if (message.channel.id == server.channel[0])
+          message.delete();
       }
-      else
-      { // Channel messages
-        var prefix= "!";
-        if (!message.content.startsWith(prefix))
-          return;
+    }
 
-          if (!guilds[message.guild.id]) {
-            guilds[message.guild.id] = {
-              name: message.guild.name,
-              owner: message.guild.owner.user.id,
-              prefix: "!",
-              volume: "100",
-              music_channel_id: "",
-              music_channel_name: ""
-            };
-            let guildUpdate = JSON.stringify(guilds, null, 2);
-            fs.writeFileSync(guilds_dir, guildUpdate);
+    var args = message.content.substring(prefix.length).split(" ");
+    var argss = message.content.substring(prefix.length).split("?v=");
+    var videoname = message.content.substring(prefix.length).split("play");
+    var url = message.content.substring(prefix.length).split("playlistadd");
+
+    console.log(args);
+
+    switch (args[0].toLowerCase()) {
+
+      case "play":
+        if (!args[1])
+          return message.reply("Where is the **Thing** you want to play?");
+
+        if (!message.member.voiceChannel)
+          return message.reply("You must be in a voice channel");
+
+        if (!servers[message.guild.id]) {
+          servers[message.guild.id] = {
+            queue: [],
+            whoputdis: [],
+            videolengh: [],
+            videotitle: [],
+            playing: [],
+            channel: [],
+            lastmusicembed: []
+          };
+        }
+        var server = servers[message.guild.id];
+
+        if (server.queue[0]) {
+          if (message.channel.id != server.channel[0])
+            return message.reply("You must be in the same Text Channel with Bot.");
+          if (message.member.voiceChannel.id != message.guild.me.voiceChannel.id)
+            return message.reply("You must be in the same Voice Channel with Bot.");
+        } else {
+          message.delete();
+        }
+
+        if (music_channel_id) {
+          if (music_channel_id != message.channel.id) {
+            message.reply("You must be in the <#" + music_channel_id + ">");
+            message.delete();
+            return;
           }
+        }
 
-          var prefix = guilds[message.guild.id].prefix;
-          var music_channel_id = guilds[message.guild.id].music_channel_id;
-          var music_channel_id_fix = "<#" + music_channel_id + ">";
-          var music_channel_name = guilds[message.guild.id].music_channel_name;
+        //var pattern = new RegExp("(https*:\/\/)*(www.){0,1}youtube.com\/(.*)");
+        //var pattern2 = new RegExp("(https*:\/\/)*(www.){0,1}youtu.be\/(.*)");
+        var pattern = new RegExp("^(http(s)??\:\/\/)?(www\.)?((youtube\.com\/watch\?v=)|(youtu.be\/))([a-zA-Z0-9\-_])+$");
 
-          if (!music_channel_id)
-            music_channel_id_fix = "`all`";
+        youtube.searchVideos(videoname, 1)
+          .then(results => {
+            if (!results[0])
+              return message.reply("We couldn't find the actual video.");
 
-          if (message.isMentioned(bot.user)) {
-            message.channel.send("Current Prefix: `" + prefix + "`\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type `" + prefix + "help`");
-          }
+            if (pattern.test(args[1]))
+              var vUrl = args[1];
+            else
+              var vUrl = results[0].url;
 
-          if (message.guild.me.voiceChannel) {
-            if (!servers[message.guild.id])
-              servers[message.guild.id] = {
-                queue: [],
-                whoputdis: [],
-                videolengh: [],
-                videotitle: [],
-                playing: [],
-                channel: [],
-                lastmusicembed: []
-              };
-            var server = servers[message.guild.id];
-            if (server.queue[0]) {
-              if (message.channel.id == server.channel[0])
-                message.delete();
-            }
-          }
+            youtube.getVideo(vUrl)
+              .then(video => {
+                if (video.durationSeconds < 1)
+                  return message.reply("Live Videos are not allowed.");
 
+                if (server.queue.indexOf(vUrl) >= 0)
+                  return message.reply('Already in the queue. ');
 
-          var args = message.content.substring(prefix.length).split(" ");
-          var argss = message.content.substring(prefix.length).split("?v=");
-          var videoname = message.content.substring(prefix.length).split("play");
-          var url = message.content.substring(prefix.length).split("playlistadd");
+                server.queue.push(vUrl);
+                server.channel.push(message.channel.id);
+                server.whoputdis.push(message.author.username);
+                server.videolengh.push(video.durationSeconds);
+                server.videotitle.push(video.title);
 
-          console.log(args);
-
-          switch (args[0].toLowerCase()) {
-
-            case "play":
-              if (!args[1])
-                return message.reply("Where is the **Thing** you want to play?");
-
-              if (!message.member.voiceChannel)
-                return message.reply("You must be in a voice channel");
-
-              if (!servers[message.guild.id]) {
-                servers[message.guild.id] = {
-                  queue: [],
-                  whoputdis: [],
-                  videolengh: [],
-                  videotitle: [],
-                  playing: [],
-                  channel: [],
-                  lastmusicembed: []
-                };
-              }
-              var server = servers[message.guild.id];
-
-              if (server.queue[0]) {
-                if (message.channel.id != server.channel[0])
-                  return message.reply("You must be in the same Text Channel with Bot.");
-                if (message.member.voiceChannel.id != message.guild.me.voiceChannel.id)
-                  return message.reply("You must be in the same Voice Channel with Bot.");
-              } else {
-                message.delete();
-              }
-
-              if (music_channel_id) {
-                if (music_channel_id != message.channel.id) {
-                  message.reply("You must be in the <#" + music_channel_id + ">");
-                  message.delete();
-                  return;
-                }
-              }
-
-              //var pattern = new RegExp("(https*:\/\/)*(www.){0,1}youtube.com\/(.*)");
-              //var pattern2 = new RegExp("(https*:\/\/)*(www.){0,1}youtu.be\/(.*)");
-              var pattern = new RegExp("^(http(s)??\:\/\/)?(www\.)?((youtube\.com\/watch\?v=)|(youtu.be\/))([a-zA-Z0-9\-_])+$");
-
-              youtube.searchVideos(videoname, 1)
-                .then(results => {
-                    if (!results[0])
-                      return message.reply("We couldn't find the actual video.");
-
-                    if (pattern.test(args[1]))
-                      var vUrl = args[1];
-                    else
-                      var vUrl = results[0].url;
-
-                  youtube.getVideo(vUrl)
-                    .then(video => {
-                      if (video.durationSeconds < 1)
-                        return message.reply("Live Videos are not allowed.");
-
-                      if (server.queue.indexOf(vUrl) >= 0)
-                        return message.reply('Already in the queue. ');
-
-                      server.queue.push(vUrl);
-                      server.channel.push(message.channel.id);
-                      server.whoputdis.push(message.author.username);
-                      server.videolengh.push(video.durationSeconds);
-                      server.videotitle.push(video.title);
-
-                      if (!server.queue[0]) {
-                        const addedqueue = new Discord.RichEmbed()
-                          .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
-                          .setColor(16098851)
-                        message.channel.send(addedqueue);
-                      }else if (server.queue[0]) {
-                        const addedqueue = new Discord.RichEmbed()
-                          .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
-                          .setColor(16098851)
-                        message.channel.send(addedqueue);
-                        //message.reply('The song: **' + video.title + "** has been added to the queue list.");
-                      }
-
-                      if (!message.guild.voiceConnection)
-                        message.member.voiceChannel.join().then(function(connection) {
-                          play(connection, message);
-                        }).catch(console.error);
-                    })
-                    .catch(console.error);
-                }).catch(console.log);
-              break;
-
-              case "skip":
-                if (!message.member.hasPermission("MANAGE_GUILD"))
-                  return message.author.send("Insufficient permission.");
-
-                var server = servers[message.guild.id];
-                if (message.guild.voiceConnection) {
-                  if (message.guild.me.voiceChannel)
-                    server.dispatcher.end();
-                }
-                break;
-
-              case "volume":
-                if (!message.member.hasPermission("MANAGE_GUILD"))
-                  return message.author.send("Yetkin yok amk köylüsü");
-
-
-                var server = servers[message.guild.id];
-
-                async function settingvolume() {
-                  const embedvolume = new Discord.RichEmbed()
-                    .setDescription(":speaker: **Volume:** " + guilds[message.guild.id].volume * 100 + "%")
+                if (!server.queue[0]) {
+                  const addedqueue = new Discord.RichEmbed()
+                    .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
                     .setColor(16098851)
-                  let volumeset = await message.channel.send(embedvolume);
-                  volumeset.delete(30000);
+                  message.channel.send(addedqueue);
+                } else if (server.queue[0]) {
+                  const addedqueue = new Discord.RichEmbed()
+                    .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
+                    .setColor(16098851)
+                  message.channel.send(addedqueue);
+                  //message.reply('The song: **' + video.title + "** has been added to the queue list.");
                 }
 
-                if (!args[1]){
-                  settingvolume();
-                }else{
-                  if (args[1] <= 100) {
-                    guilds[message.guild.id].volume = Math.max(args[1] / 100);
-                    let settingMusicVolume = JSON.stringify(guilds, null, 2);
-                    fs.writeFileSync(guilds_dir, settingMusicVolume);
-                    server.dispatcher.setVolume(guilds[message.guild.id].volume);
-                    settingvolume();
-                  }else if (args[1] > 100) {
+                if (!message.guild.voiceConnection)
+                  message.member.voiceChannel.join().then(function(connection) {
+                    play(connection, message);
+                  }).catch(console.error);
+              })
+              .catch(console.error);
+          }).catch(console.log);
+        break;
 
-                    server.dispatcher.setVolume(args[1] / 100);
-                    setTimeout(function() {
-                      server.dispatcher.setVolume(guilds[message.guild.id].volume);
-                    }, 6500);
-                    message.channel.send(`:speaker: vOlUmE: ${Math.round(server.dispatcher.volume*100)}%`);
-                  }
-                }
-                break;
+      case "skip":
+        if (!message.member.hasPermission("MANAGE_GUILD"))
+          return message.author.send("Insufficient permission.");
 
-              case "stop":
-                if (!message.member.hasPermission("MANAGE_GUILD"))
-                  return message.author.send("Insufficient permission.");
+        var server = servers[message.guild.id];
+        if (message.guild.voiceConnection) {
+          if (message.guild.me.voiceChannel)
+            server.dispatcher.end();
+        }
+        break;
 
-                var server = servers[message.guild.id];
+      case "volume":
+        if (!message.member.hasPermission("MANAGE_GUILD"))
+          return message.author.send("Yetkin yok amk köylüsü");
 
-                if (message.guild.voiceConnection && message.guild.me.voiceChannel) {
-                    server.queue = [];
-                    server.videotitle = [];
-                    server.whoputdis = [];
-                    server.channel = [];
-                    server.dispatcher.end();
-                }
-                break;
 
-            case "ping":
-              var sent = new Date().getTime();
-              message.channel.send("Bot ping: " + Math.trunc(bot.ping) + "ms.").then(message => {
-                message.edit(`${message.content} Ms: ${new Date().getTime() - sent}.`);
-              });
-              break;
+        var server = servers[message.guild.id];
 
-            default:
-              message.reply("Command doesn't exist.");
+        async function settingvolume() {
+          const embedvolume = new Discord.RichEmbed()
+            .setDescription(":speaker: **Volume:** " + guilds[message.guild.id].volume * 100 + "%")
+            .setColor(16098851)
+          let volumeset = await message.channel.send(embedvolume);
+          volumeset.delete(30000);
+        }
+
+        if (!args[1]) {
+          settingvolume();
+        } else {
+          if (args[1] <= 100) {
+            guilds[message.guild.id].volume = Math.max(args[1] / 100);
+            let settingMusicVolume = JSON.stringify(guilds, null, 2);
+            fs.writeFileSync(guilds_dir, settingMusicVolume);
+            server.dispatcher.setVolume(guilds[message.guild.id].volume);
+            settingvolume();
+          } else if (args[1] > 100) {
+            server.dispatcher.setVolume(args[1] / 100);
+            setTimeout(function() {
+              server.dispatcher.setVolume(guilds[message.guild.id].volume);
+            }, 6500);
+            message.channel.send(`:speaker: vOlUmE: ${Math.round(server.dispatcher.volume*100)}%`);
           }
+        }
+        break;
 
+      case "stop":
+        if (!message.member.hasPermission("MANAGE_GUILD"))
+          return message.author.send("Insufficient permission.");
 
-      } // Channel messages END
+        var server = servers[message.guild.id];
+
+        if (message.guild.voiceConnection && message.guild.me.voiceChannel) {
+          server.queue = [];
+          server.videotitle = [];
+          server.whoputdis = [];
+          server.channel = [];
+          server.dispatcher.end();
+        }
+        break;
+
+      case "ping":
+        var sent = new Date().getTime();
+        message.channel.send("Bot ping: " + Math.trunc(bot.ping) + "ms.").then(message => {
+          message.edit(`${message.content} Ms: ${new Date().getTime() - sent}.`);
+        });
+        break;
+
+      default:
+        message.reply("Command doesn't exist.");
+    }
+
+  } // Channel messages END
 
 });
 
-bot.login("NDIyMDkwNjE5ODU5NjMyMTY4.DYWuDA.k_H-WcDTB_Df672iG-LaX4tY9NM");
+bot.login(configs.token);
