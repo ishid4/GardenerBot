@@ -244,19 +244,19 @@ bot.on('message', message => {
                 }
               }
 
-              var pattern = new RegExp("(https*:\/\/)*(www.){0,1}youtube.com\/(.*)");
-              var pattern2 = new RegExp("(https*:\/\/)*(www.){0,1}youtu.be\/(.*)");
-
+              //var pattern = new RegExp("(https*:\/\/)*(www.){0,1}youtube.com\/(.*)");
+              //var pattern2 = new RegExp("(https*:\/\/)*(www.){0,1}youtu.be\/(.*)");
+              var pattern = new RegExp("^(http(s)??\:\/\/)?(www\.)?((youtube\.com\/watch\?v=)|(youtu.be\/))([a-zA-Z0-9\-_])+$");
 
               youtube.searchVideos(videoname, 1)
                 .then(results => {
                     if (!results[0])
                       return message.reply("We couldn't find the actual video.");
 
-                    if (pattern.test(args[1]) || pattern2.test(args[1]))
-                        var vUrl = args[1];
+                    if (pattern.test(args[1]))
+                      var vUrl = args[1];
                     else
-                        var vUrl = results[0].url;
+                      var vUrl = results[0].url;
 
                   youtube.getVideo(vUrl)
                     .then(video => {
