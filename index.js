@@ -18,7 +18,7 @@ const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(configs.youtubeToken);
 
 // Youtube downloader framework
-const YTDL = require('ytdl-core');
+const YTDL = require('ytdl-core-discord');
 
 // Role configs
 const roles = JSON.parse(fs.readFileSync('./roles.json'));
@@ -27,7 +27,7 @@ const guilds = JSON.parse(fs.readFileSync('./guilds.json'));
 // Options
 const ytdlOptions = {
   filter: "audioonly",
-  quality: "lowest"
+  quality: "highestaudio" // quality: "lowest"
 };
 
 // Lyrics codes
@@ -95,7 +95,10 @@ async function play(connection, message) {
   var streamOptions = {
     volume: guilds[message.guild.id].volume
   };
-  server.dispatcher = connection.playStream(YTDL(server.queue[0], ytdlOptions), streamOptions);
+
+  server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
+  //server.dispatcher = connection.playStream(YTDL(server.queue[0], ytdlOptions), streamOptions);
+
   youtube.getVideo(server.queue[0])
     .then(video => {
       if (video.durationSeconds < 1) {
@@ -104,8 +107,7 @@ async function play(connection, message) {
         var videoDuration = Math.floor(video.durationSeconds / 60) + " mins " + video.durationSeconds % 60 + " secs";
       }
       embedmusic(video, videoDuration, server.whoputdis[0], message, server); // run function & pass required information
-    })
-    .catch(console.error);
+    }).catch(console.error);
 
   server.dispatcher.on("end", function() {
     if (server.lastmusicembed) {
@@ -141,7 +143,6 @@ bot.on('message', message => {
   if (message.author.equals(bot.user))
     return;
 
-
   if (message.channel.type == 'dm') {
     var prefix = "";
   } else { // Channel messages
@@ -154,7 +155,7 @@ bot.on('message', message => {
         name: message.guild.name,
         owner: message.guild.owner.user.id,
         prefix: "!",
-        volume: "100",
+        volume: "1",
         music_channel_id: "",
         music_channel_name: ""
       };
@@ -197,7 +198,7 @@ bot.on('message', message => {
     var videoname = message.content.substring(prefix.length).split("play");
     var url = message.content.substring(prefix.length).split("playlistadd");
 
-    console.log(args);
+    //console.log(args);
 
     switch (args[0].toLowerCase()) {
 
@@ -260,12 +261,6 @@ bot.on('message', message => {
                 if (server.queue.indexOf(vUrl) >= 0)
                   return message.reply('Already in the queue. ');
 
-                server.queue.push(vUrl);
-                server.channel.push(message.channel.id);
-                server.whoputdis.push(message.author.username);
-                server.videolengh.push(video.durationSeconds);
-                server.videotitle.push(video.title);
-
                 if (!server.queue[0]) {
                   const addedqueue = new Discord.RichEmbed()
                     .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
@@ -276,15 +271,19 @@ bot.on('message', message => {
                     .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
                     .setColor(16098851)
                   message.channel.send(addedqueue);
-                  //message.reply('The song: **' + video.title + "** has been added to the queue list.");
                 }
+
+                server.queue.push(vUrl);
+                server.channel.push(message.channel.id);
+                server.whoputdis.push(message.author.username);
+                server.videolengh.push(video.durationSeconds);
+                server.videotitle.push(video.title);
 
                 if (!message.guild.voiceConnection)
                   message.member.voiceChannel.join().then(function(connection) {
                     play(connection, message);
                   }).catch(console.error);
-              })
-              .catch(console.error);
+              }).catch(console.error);
           }).catch(console.log);
         break;
 
@@ -302,7 +301,6 @@ bot.on('message', message => {
       case "volume":
         if (!message.member.hasPermission("MANAGE_GUILD"))
           return message.author.send("Yetkin yok amk köylüsü");
-
 
         var server = servers[message.guild.id];
 
