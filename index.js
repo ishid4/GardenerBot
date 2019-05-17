@@ -1,3 +1,7 @@
+// TODOS
+// Fix the volume. It's not working.
+
+
 // Requirements
 const opus = require('opusscript');
 const ffmepg = require('ffmpeg-binaries');
@@ -95,7 +99,7 @@ async function play(connection, message) {
   var streamOptions = {
     volume: guilds[message.guild.id].volume
   };
-
+  console.log(guilds[message.guild.id].volume);
   server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
   //server.dispatcher = connection.playStream(YTDL(server.queue[0], ytdlOptions), streamOptions);
 
