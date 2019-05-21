@@ -1,16 +1,19 @@
 // TODOS
 // Fix the volume. It's not working.
+// DM Help menu
+// Faster embedmusic
+// Maybe, playlist will rise again?
 
 
 // Requirements
-const opus = require('opusscript');
+const opus = require('opusscript'); // nodeopus is better
 const ffmepg = require('ffmpeg-binaries');
 
 const fs = require('fs');
 const async = require('async');
+
 const guilds_dir = './guilds.json';
 const configs = require('./config.json');
-
 const lang = JSON.parse(fs.readFileSync('./language.json'));
 var defaultLang = "en";
 
@@ -101,14 +104,13 @@ async function play(connection, message) {
   };
   console.log(guilds[message.guild.id].volume);
   server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
-  //server.dispatcher = connection.playStream(YTDL(server.queue[0], ytdlOptions), streamOptions);
 
   youtube.getVideo(server.queue[0])
     .then(video => {
       if (video.durationSeconds < 1) {
         var videoDuration = "Live";
       } else {
-        var videoDuration = Math.floor(video.durationSeconds / 60) + " mins " + video.durationSeconds % 60 + " secs";
+        var videoDuration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
       }
       embedmusic(video, videoDuration, server.whoputdis[0], message, server); // run function & pass required information
     }).catch(console.error);
@@ -150,9 +152,19 @@ bot.on('message', message => {
   if (message.channel.type == 'dm') {
     var prefix = "";
   } else { // Channel messages
-    var prefix = "!";
-    if (!message.content.startsWith(prefix))
-      return;
+    if (message.guild.me.voiceChannel) {
+      if (!servers[message.guild.id])
+        servers[message.guild.id] = {
+          queue: [],
+          whoputdis: [],
+          videolengh: [],
+          videotitle: [],
+          playing: [],
+          channel: [],
+          lastmusicembed: []
+        };
+      var server = servers[message.guild.id];
+    }
 
     if (!guilds[message.guild.id]) {
       guilds[message.guild.id] = {
@@ -172,37 +184,23 @@ bot.on('message', message => {
     var music_channel_id_fix = "<#" + music_channel_id + ">";
     var music_channel_name = guilds[message.guild.id].music_channel_name;
 
+    if (server.queue[0])
+      if (message.channel.id == server.channel[0])
+        message.delete();
+
+    if (message.isMentioned(bot.user))
+      message.channel.send("Current Prefix: `" + guilds[message.guild.id].prefix + "`\nCurrent Music Channel: " + "<#" + guilds[message.guild.id].music_channel_id + ">" + "\nIf you need any help, Just DM me `help`");
+
+    // After prefix
+    if (!message.content.startsWith(prefix))
+      return;
+
     if (!music_channel_id)
       music_channel_id_fix = "`all`";
-
-    if (message.isMentioned(bot.user)) {
-      message.channel.send("Current Prefix: `" + prefix + "`\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just type `" + prefix + "help`");
-    }
-
-    if (message.guild.me.voiceChannel) {
-      if (!servers[message.guild.id])
-        servers[message.guild.id] = {
-          queue: [],
-          whoputdis: [],
-          videolengh: [],
-          videotitle: [],
-          playing: [],
-          channel: [],
-          lastmusicembed: []
-        };
-      var server = servers[message.guild.id];
-      if (server.queue[0]) {
-        if (message.channel.id == server.channel[0])
-          message.delete();
-      }
-    }
 
     var args = message.content.substring(prefix.length).split(" ");
     var argss = message.content.substring(prefix.length).split("?v=");
     var videoname = message.content.substring(prefix.length).split("play");
-    var url = message.content.substring(prefix.length).split("playlistadd");
-
-    //console.log(args);
 
     switch (args[0].toLowerCase()) {
 
@@ -224,7 +222,6 @@ bot.on('message', message => {
             lastmusicembed: []
           };
         }
-        var server = servers[message.guild.id];
 
         if (server.queue[0]) {
           if (message.channel.id != server.channel[0])
@@ -295,7 +292,6 @@ bot.on('message', message => {
         if (!message.member.hasPermission("MANAGE_GUILD"))
           return message.author.send("Insufficient permission.");
 
-        var server = servers[message.guild.id];
         if (message.guild.voiceConnection) {
           if (message.guild.me.voiceChannel)
             server.dispatcher.end();
@@ -304,9 +300,7 @@ bot.on('message', message => {
 
       case "volume":
         if (!message.member.hasPermission("MANAGE_GUILD"))
-          return message.author.send("Yetkin yok amk köylüsü");
-
-        var server = servers[message.guild.id];
+          return message.author.send("Insufficient permission.");
 
         async function settingvolume() {
           const embedvolume = new Discord.RichEmbed()
@@ -339,14 +333,180 @@ bot.on('message', message => {
         if (!message.member.hasPermission("MANAGE_GUILD"))
           return message.author.send("Insufficient permission.");
 
-        var server = servers[message.guild.id];
-
         if (message.guild.voiceConnection && message.guild.me.voiceChannel) {
           server.queue = [];
           server.videotitle = [];
           server.whoputdis = [];
           server.channel = [];
           server.dispatcher.end();
+        }
+        break;
+
+      case "pause":
+        if (message.guild.me.voiceChannel)
+          server.dispatcher.pause();
+        message.reply("Music paused.");
+        break;
+
+      case "resume":
+        if (message.guild.me.voiceChannel)
+          server.dispatcher.resume();
+        break;
+
+      case "lyrics":
+        if (!server.queue[0])
+          return message.reply("Nothing is playing right now.");
+
+        youtube.getVideo('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+          .then(video => {
+            if (!video)
+              return;
+
+            let [artist, title] = getArtistTitle(video.title, {
+              defaultArtist: "null"
+            });
+
+            l.get(artist, title, function(err, res) {
+              if (err)
+                return message.author.send("Debug: " + artist + " | " + title + ". We couldn't find the lyrics of that song...");
+
+              const song_lyrics = new Discord.RichEmbed()
+                .setColor(16098851)
+                .setTitle("**Lyrics:** " + video.title)
+                .setDescription(res.substring(0, 2048))
+              message.author.send(song_lyrics);
+              if (res.length > 2048) {
+                const song_lyrics2 = new Discord.RichEmbed()
+                  .setColor(16098851)
+                  .setDescription(res.substring(2048, 4096))
+                message.author.send(song_lyrics2);
+              }
+            });
+          }).catch(console.error);
+        break;
+
+      case "shuffle":
+        if (!server.queue[0])
+          return message.reply("Nothing is playing.");
+        if (server.queue.length < 3)
+          return message.channel.send("I can't shuffle less than 3 songs.");
+
+        var originalQueue = server.queue;
+
+        function shuffle(a, b, c) {
+          var j, x, i;
+          for (i = a.length - 1; i > 0; i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            if (j == 0)
+              return;
+            x = a[i];
+            a[i] = a[j];
+            a[j] = x;
+
+            x = b[i];
+            b[i] = b[j];
+            b[j] = x;
+
+            x = c[i];
+            c[i] = c[j];
+            c[j] = x;
+          }
+        }
+        shuffle(server.queue, server.videotitle, server.whoputdis);
+        if (server.queue == originalQueue)
+          shuffle(server.queue, server.videotitle, server.whoputdis);
+        message.channel.send('Shuffled queue.');
+        break;
+
+      case "queue":
+        if (!server.queue[0])
+          return message.reply("Nothing is playing.");
+        if (!server.queue.length)
+          return message.reply("Add some music nigga");
+        if (server.queue[1]) {
+          var tracksInfos = "";
+          for (var i = 1; i < server.queue.length && i <= 7; i++) {
+            tracksInfos += i + ". [" + server.videotitle[i] + "](" + server.queue[i] + ") (by " + server.whoputdis[i] + ")\n";
+          }
+          if (server.queue.length > 8)
+            tracksInfos += " **- " + (server.queue.length - 8) + " more in queue -**";
+
+          if (tracksInfos.length > 1024)
+            return message.reply("Too many characters...");
+          const embedqueue = new Discord.RichEmbed()
+            .setAuthor("Queue List", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
+            .addField("Playing Now", "[" + server.videotitle[0].substring(0, 40) + ".." + "](" + server.queue[0] + ") (by " + server.whoputdis[0] + ")")
+            .setColor(16098851)
+            .addField("Queue", tracksInfos)
+          message.channel.send(embedqueue);
+        } else {
+          const embedqueue = new Discord.RichEmbed()
+            .setAuthor("Queue List", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
+            .addField("Playing Now", "[" + server.videotitle[0].substring(0, 40) + ".." + "](" + server.queue[0] + ") (by " + server.whoputdis[0] + ")")
+            .setColor(16098851)
+          message.channel.send(embedqueue);
+        }
+        break;
+
+      case "feedback":
+        var feedback = message.content.substring(prefix.length + 8);
+        if (!feedback[1] || feedback.length < 10)
+          return message.author.send("Please, write your feedback carefully.");
+
+        message.delete();
+        message.channel.createInvite()
+          .then(invite => za(invite.code))
+          .catch(console.error);
+
+        function za(invite) {
+          const feedback_embed = new Discord.RichEmbed()
+            .setColor(16312092)
+            .setTitle("Feedback")
+            .setDescription(feedback)
+            .setFooter("Sent by " + message.author.username + ":" + message.author.id + " -> " + invite)
+          bot.users.get("139144182794027009").send(feedback_embed);
+          message.author.send("Thanks for your Feedback! Developer will read these.");
+        }
+        break;
+
+      case "settings":
+        if (!args[1]) {
+          return;
+        }
+        switch (args[1].toLowerCase()) {
+          case "setprefix":
+            if (!message.member.hasPermission("MANAGE_GUILD"))
+              return message.author.send("Insufficient permission.");
+            if (!args[2] || args[2].length > 3 || args[2].length <= 0) {
+              return message.channel.send("Prefix should be between 1-3 characters.");
+            } else {
+              guilds[message.guild.id].prefix = args[2];
+              message.channel.send("Prefix changed to `" + args[2] + "`");
+              bot.users.get(message.guild.owner.user.id).send("Prefix changed to `" + args[2] + "` in **" + message.guild.name + "**");
+              let settingPrefix = JSON.stringify(guilds, null, 2);
+              fs.writeFileSync(guilds_dir, settingPrefix);
+            }
+            break;
+          case "setchannel":
+            if (!message.member.hasPermission("MANAGE_GUILD"))
+              return message.author.send("Insufficient permission.");
+            if (message.channel.id == guilds[message.guild.id].music_channel_id) {
+              guilds[message.guild.id].music_channel_id = "";
+              guilds[message.guild.id].music_channel_name = "";
+              message.channel.send("Music Channel changed to `all`");
+              let settingMusicChannel = JSON.stringify(guilds, null, 2);
+              fs.writeFileSync(guilds_dir, settingMusicChannel);
+              return;
+            }
+            guilds[message.guild.id].music_channel_id = message.channel.id;
+            guilds[message.guild.id].music_channel_name = message.channel.name;
+            message.channel.send("Music Channel changed to `" + message.channel.name + "`");
+            bot.users.get(message.guild.owner.user.id).send("Music Channel changed to `" + message.channel.name + "` in **" + message.guild.name + "**");
+            let settingMusicChannel = JSON.stringify(guilds, null, 2);
+            fs.writeFileSync(guilds_dir, settingMusicChannel);
+            break;
+          default:
+            message.author.send("Try help!");
         }
         break;
 
@@ -360,7 +520,6 @@ bot.on('message', message => {
       default:
         message.reply("Command doesn't exist.");
     }
-
   } // Channel messages END
 
 });
