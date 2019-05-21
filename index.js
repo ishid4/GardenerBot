@@ -135,7 +135,8 @@ async function play(connection, message) {
 
 bot.on('uncaughtException', (err) => {
   console.error(err);
-})
+});
+
 bot.on('ready', function() {
   console.log("Bot is up and running in " + bot.guilds.size + " servers");
   bot.user.setActivity("help", {
@@ -199,7 +200,6 @@ bot.on('message', message => {
     var videoname = message.content.substring(prefix.length).split("play");
 
     switch (args[0].toLowerCase()) {
-
       case "play":
         if (!args[1])
           return message.reply("Where is the **Thing** you want to play?");
