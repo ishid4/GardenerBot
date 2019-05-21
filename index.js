@@ -1,7 +1,7 @@
 // TODOS
 // Fix the volume. It's not working.
 // DM Help menu
-// Faster embedmusic
+// Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
 
 
@@ -40,7 +40,6 @@ const ytdlOptions = {
 // Lyrics codes
 const l = require("lyric-get");
 const getArtistTitle = require('get-artist-title');
-
 
 var bot = new Discord.Client({
   autoReconnect: true,
@@ -178,7 +177,7 @@ bot.on('message', message => {
 
     var prefix = guilds[message.guild.id].prefix;
     var music_channel_id = guilds[message.guild.id].music_channel_id;
-    //var music_channel_id_fix = "<#" + music_channel_id + ">";
+    var music_channel_id_fix = "<#" + music_channel_id + ">";
     var music_channel_name = guilds[message.guild.id].music_channel_name;
 
     if (server.queue[0])
@@ -186,7 +185,7 @@ bot.on('message', message => {
         message.delete();
 
     if (message.isMentioned(bot.user))
-      message.channel.send("Current Prefix: `" + guilds[message.guild.id].prefix + "`\nCurrent Music Channel: " + "<#" + guilds[message.guild.id].music_channel_id + ">" + "\nIf you need any help, Just DM me `help`");
+      message.channel.send("Current Prefix: `" + prefix + "`\nCurrent Music Channel: " + "<#" + music_channel_id_fix + ">" + "\nIf you need any help, Just `" + prefix + "help`");
 
     // After prefix
     if (!message.content.startsWith(prefix))
@@ -457,9 +456,9 @@ bot.on('message', message => {
         break;
 
       case "settings":
-        if (!args[1]) {
+        if (!args[1])
           return;
-        }
+
         switch (args[1].toLowerCase()) {
           case "setprefix":
             if (!message.member.hasPermission("MANAGE_GUILD"))
@@ -474,6 +473,7 @@ bot.on('message', message => {
               fs.writeFileSync(guilds_dir, settingPrefix);
             }
             break;
+
           case "setchannel":
             if (!message.member.hasPermission("MANAGE_GUILD"))
               return message.author.send("Insufficient permission.");
