@@ -348,32 +348,26 @@ bot.on('message', message => {
         if (!server.queue[0])
           return message.reply("Nothing is playing right now.");
 
-        youtube.getVideo('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-          .then(video => {
-            if (!video)
-              return;
+        let [artist, title] = getArtistTitle(server.videotitle[0], {
+          defaultArtist: "null"
+        });
 
-            let [artist, title] = getArtistTitle(video.title, {
-              defaultArtist: "null"
-            });
+        l.get(artist, title, function(err, res) {
+          if (err)
+            return message.author.send("Debug: " + artist + " | " + title + ". We couldn't find the lyrics of that song...");
 
-            l.get(artist, title, function(err, res) {
-              if (err)
-                return message.author.send("Debug: " + artist + " | " + title + ". We couldn't find the lyrics of that song...");
-
-              const song_lyrics = new Discord.RichEmbed()
-                .setColor(16098851)
-                .setTitle("**Lyrics:** " + video.title)
-                .setDescription(res.substring(0, 2048))
-              message.author.send(song_lyrics);
-              if (res.length > 2048) {
-                const song_lyrics2 = new Discord.RichEmbed()
-                  .setColor(16098851)
-                  .setDescription(res.substring(2048, 4096))
-                message.author.send(song_lyrics2);
-              }
-            });
-          }).catch(console.error);
+          const song_lyrics = new Discord.RichEmbed()
+            .setColor(16098851)
+            .setTitle("**Lyrics:** " + server.videotitle[0])
+            .setDescription(res.substring(0, 2048))
+          message.author.send(song_lyrics);
+          if (res.length > 2048) {
+            const song_lyrics2 = new Discord.RichEmbed()
+              .setColor(16098851)
+              .setDescription(res.substring(2048, 4096))
+            message.author.send(song_lyrics2);
+          }
+        });
         break;
 
       case "shuffle":
