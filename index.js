@@ -228,50 +228,55 @@ bot.on('message', message => {
         //var pattern2 = new RegExp("(https*:\/\/)*(www.){0,1}youtu.be\/(.*)");
         var pattern = new RegExp("^(http(s)??\:\/\/)?(www\.)?((youtube\.com\/watch\?v=)|(youtu.be\/))([a-zA-Z0-9\-_])+$");
 
-        youtube.searchVideos(videoname, 1)
-          .then(results => {
-            if (!results[0])
-              return message.reply("We couldn't find the actual video.");
+        if (!pattern.test(args[1])) {
+          youtube.searchVideos(videoname, 1)
+            .then(results => {
+              if (!results[0])
+                return message.reply("We couldn't find the actual video.");
 
-            if (pattern.test(args[1]))
-              var vUrl = args[1];
-            else
               var vUrl = results[0].url;
+              videoPush(vUrl);
+            }).catch(console.log);
+        } else {
+          var vUrl = args[1];
+          videoPush(vUrl);
+        }
 
-            youtube.getVideo(vUrl)
-              .then(video => {
-                if (video.durationSeconds < 1)
-                  return message.reply("Live Videos are not allowed.");
+        function videoPush(vUrl) {
+          youtube.getVideo(vUrl)
+            .then(video => {
+              if (video.durationSeconds < 1)
+                return message.reply("Live Videos are not allowed.");
 
-                if (server.queue.indexOf(vUrl) >= 0)
-                  return message.reply('Already in the queue. ');
+              if (server.queue.indexOf(vUrl) >= 0)
+                return message.reply('Already in the queue. ');
 
-                if (!server.queue[0]) {
-                  const addedqueue = new Discord.RichEmbed()
-                    .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
-                    .setColor(16098851)
-                  message.channel.send(addedqueue);
-                } else if (server.queue[0]) {
-                  const addedqueue = new Discord.RichEmbed()
-                    .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
-                    .setColor(16098851)
-                  message.channel.send(addedqueue);
-                }
+              if (!server.queue[0]) {
+                const addedqueue = new Discord.RichEmbed()
+                  .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
+                  .setColor(16098851)
+                message.channel.send(addedqueue);
+              } else if (server.queue[0]) {
+                const addedqueue = new Discord.RichEmbed()
+                  .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
+                  .setColor(16098851)
+                message.channel.send(addedqueue);
+              }
 
-                var duration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
+              var duration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
 
-                server.queue.push(vUrl);
-                server.channel.push(message.channel.id);
-                server.videolength.push(duration);
-                server.whoputdis.push(message.author.username);
-                server.videotitle.push(video.title);
+              server.queue.push(vUrl);
+              server.channel.push(message.channel.id);
+              server.videolength.push(duration);
+              server.whoputdis.push(message.author.username);
+              server.videotitle.push(video.title);
 
-                if (!message.guild.voiceConnection)
-                  message.member.voiceChannel.join().then(function(connection) {
-                    play(connection, message);
-                  }).catch(console.error);
-              }).catch(console.error);
-          }).catch(console.log);
+              if (!message.guild.voiceConnection)
+                message.member.voiceChannel.join().then(function(connection) {
+                  play(connection, message);
+                }).catch(console.error);
+            }).catch(console.error);
+        }
         break;
 
       case "skip":
@@ -405,10 +410,8 @@ bot.on('message', message => {
         break;
 
       case "queue":
-        if (!server.queue[0])
-          return message.reply("Nothing is playing.");
         if (!server.queue.length)
-          return message.reply("Add some music nigga");
+          return message.reply("Add some music nibba");
         if (server.queue[1]) {
           var tracksInfos = "";
           for (var i = 1; i < server.queue.length && i <= 7; i++) {
