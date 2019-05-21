@@ -102,8 +102,6 @@ async function play(connection, message) {
   var streamOptions = {
     volume: guilds[message.guild.id].volume
   };
-  console.log(guilds[message.guild.id].volume);
-  server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
 
   youtube.getVideo(server.queue[0])
     .then(video => {
@@ -115,6 +113,8 @@ async function play(connection, message) {
       embedmusic(video, videoDuration, server.whoputdis[0], message, server); // run function & pass required information
     }).catch(console.error);
 
+  server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
+
   server.dispatcher.on("end", function() {
     if (server.lastmusicembed) {
       server.lastmusicembed.delete();
@@ -123,7 +123,7 @@ async function play(connection, message) {
     server.queue.shift();
     server.whoputdis.shift();
     server.videotitle.shift();
-    server.videolengh.shift();
+    server.videolength.shift();
 
     if (server.queue[0]) {
       play(connection, message);
@@ -152,19 +152,16 @@ bot.on('message', message => {
   if (message.channel.type == 'dm') {
     var prefix = "";
   } else { // Channel messages
-    if (message.guild.me.voiceChannel) {
-      if (!servers[message.guild.id])
-        servers[message.guild.id] = {
-          queue: [],
-          whoputdis: [],
-          videolengh: [],
-          videotitle: [],
-          playing: [],
-          channel: [],
-          lastmusicembed: []
-        };
-      var server = servers[message.guild.id];
-    }
+    if (!servers[message.guild.id])
+      servers[message.guild.id] = {
+        queue: [],
+        whoputdis: [],
+        videolength: [],
+        videotitle: [],
+        channel: [],
+        lastmusicembed: []
+      };
+    var server = servers[message.guild.id];
 
     if (!guilds[message.guild.id]) {
       guilds[message.guild.id] = {
@@ -181,7 +178,7 @@ bot.on('message', message => {
 
     var prefix = guilds[message.guild.id].prefix;
     var music_channel_id = guilds[message.guild.id].music_channel_id;
-    var music_channel_id_fix = "<#" + music_channel_id + ">";
+    //var music_channel_id_fix = "<#" + music_channel_id + ">";
     var music_channel_name = guilds[message.guild.id].music_channel_name;
 
     if (server.queue[0])
@@ -210,18 +207,6 @@ bot.on('message', message => {
 
         if (!message.member.voiceChannel)
           return message.reply("You must be in a voice channel");
-
-        if (!servers[message.guild.id]) {
-          servers[message.guild.id] = {
-            queue: [],
-            whoputdis: [],
-            videolengh: [],
-            videotitle: [],
-            playing: [],
-            channel: [],
-            lastmusicembed: []
-          };
-        }
 
         if (server.queue[0]) {
           if (message.channel.id != server.channel[0])
@@ -274,10 +259,12 @@ bot.on('message', message => {
                   message.channel.send(addedqueue);
                 }
 
+                var duration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
+
                 server.queue.push(vUrl);
                 server.channel.push(message.channel.id);
+                server.videolength.push(duration);
                 server.whoputdis.push(message.author.username);
-                server.videolengh.push(video.durationSeconds);
                 server.videotitle.push(video.title);
 
                 if (!message.guild.voiceConnection)
