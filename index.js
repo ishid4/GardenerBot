@@ -96,7 +96,7 @@ function videoPush3(vUrl) {
       const channel = bot.channels.get(kanal);
       if (!channel.guild.voiceConnection)
       channel.join().then(function(connection) {
-        play(connection, "");
+        play(connection, server);
       }).catch(console.error);
     }).catch(console.error);
 }
