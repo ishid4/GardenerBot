@@ -74,16 +74,18 @@ function videoPush3(vUrl) {
 
   youtube.getVideo(vUrl)
     .then(video => {
+      const textChannel = bot.channels.get("519468740325408789");
+
       if (!server.queue[0]) {
         const addedqueue = new Discord.RichEmbed()
           .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
           .setColor(16098851)
-        me.channel.send(addedqueue);
+        textChannel.send(addedqueue);
       } else if (server.queue[0]) {
         const addedqueue = new Discord.RichEmbed()
           .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
           .setColor(16098851)
-        me.channel.send(addedqueue);
+        textChannel.channel.send(addedqueue);
       }
 
       server.queue.push(vUrl);
