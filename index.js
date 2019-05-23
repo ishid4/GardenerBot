@@ -226,41 +226,6 @@ async function play(connection, message) {
   });
 }
 
-/*
-async function play_web(connection) {
-
-  var server = servers[422091347198214144];
-  var streamOptions = {
-    volume: 100
-  };
-
-  youtube.getVideo(server.queue[0])
-    .then(video => {
-      var videoDuration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
-      embedmusic(video, videoDuration, "Web_user", message, server); // run function & pass required information
-    }).catch(console.error);
-
-  server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
-  server.dispatcher.on("end", function() {
-    if (server.lastmusicembed) {
-      server.lastmusicembed.delete();
-      server.lastmusicembed = [];
-    }
-    server.queue.shift();
-    server.whoputdis.shift();
-    server.videotitle.shift();
-    server.videolength.shift();
-
-    if (server.queue[0]) {
-      play_web(connection);
-    } else {
-      server.channel = [];
-      connection.disconnect();
-    }
-  });
-}
-*/
-
 bot.on('uncaughtException', (err) => {
   console.error(err);
 });
