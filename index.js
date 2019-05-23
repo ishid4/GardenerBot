@@ -134,7 +134,7 @@ async function embedmusic(info, duration, who, message, server) {
     .addField("Duration", duration, true)
     .addField("Who Put Dis?", who, true);
 
-  let embedmain = await message.channel.send(embedmusic);
+  let embedmain = await bot.user.channel.send(embedmusic);
   server.lastmusicembed = embedmain;
   embedmain.react('⏭');
 
