@@ -45,22 +45,6 @@ app.get('/', function(req, res) {});
 app.listen(app.get('port'), function() {
   console.log('Mounted ' + app.get('port'));
 });
-app.post('/', function(req, res) {
-  if (req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    req.on('end', () => {
-      console.log(body);
-      var post = body.split("=");
-      if (post[0] == "link") {
-        videoPush(post[1] + "=" + post[2]);
-        res.end('Added queue.');
-      }
-    });
-  }
-});
 
 // Lyrics codes
 const l = require("lyric-get");
@@ -72,6 +56,68 @@ var bot = new Discord.Client({
 });
 
 var servers = {};
+
+function videoPush3(vUrl) {
+  var guildid = "422091347198214144";
+  var kanal = "579027412780711966";
+
+  if (!servers[guildid])
+    servers[guildid] = {
+      queue: [],
+      whoputdis: [],
+      videolength: [],
+      videotitle: [],
+      channel: [],
+      lastmusicembed: []
+    };
+  var server = servers[guildid];
+
+  youtube.getVideo(vUrl)
+    .then(video => {
+      if (!server.queue[0]) {
+        const addedqueue = new Discord.RichEmbed()
+          .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
+          .setColor(16098851)
+        me.channel.send(addedqueue);
+      } else if (server.queue[0]) {
+        const addedqueue = new Discord.RichEmbed()
+          .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
+          .setColor(16098851)
+        me.channel.send(addedqueue);
+      }
+
+      server.queue.push(vUrl);
+      server.channel.push(kanal);
+      server.whoputdis.push("Web_user");
+      server.videotitle.push(video.title);
+
+      const channel = bot.channels.get(kanal);
+      if (!channel.guild.voiceConnection)
+        channel.join().then(function(connection) {
+          play(connection, message);
+        }).catch(console.error);
+    }).catch(console.error);
+}
+
+app.post('/', function(req, res) {
+  if (req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      console.log(body);
+      var post = body.split("=");
+      if (post[0] == "link") {
+        var vUrl = post[1] + "=" + post[2];
+        videoPush3(vUrl);
+        //play_web(post[1] + "=" + post[2]);
+        //play_web(vUrl);
+        res.end('Added queue.');
+      }
+    });
+  }
+});
 
 // Playing now music
 async function embedmusic(info, duration, who, message, server) {
@@ -159,6 +205,7 @@ async function play(connection, message) {
   });
 }
 
+/*
 async function play_web(connection) {
 
   var server = servers[422091347198214144];
@@ -186,13 +233,12 @@ async function play_web(connection) {
     if (server.queue[0]) {
       play_web(connection);
     } else {
-      server.channel = [422091347198214144];
+      server.channel = [];
       connection.disconnect();
     }
   });
 }
-
-
+*/
 
 bot.on('uncaughtException', (err) => {
   console.error(err);
@@ -206,9 +252,6 @@ bot.on('ready', function() {
 });
 
 bot.on('message', message => {
-
-
-
   if (message.author.equals(bot.user))
     return;
 
@@ -564,55 +607,41 @@ bot.on('message', message => {
         });
         break;
 
-        case "try":
+      case "try":
+        function videoPush2(vUrl) {
+          var guildid = "422091347198214144";
+          var kanal = "579027412780711966";
 
-            //////////////////
-          function videoPush2(vUrl) {
-            var guildid = "422091347198214144";
-            var kanal = "422091347693010951";
+          youtube.getVideo(vUrl)
+            .then(video => {
+              if (!server.queue[0]) {
+                const addedqueue = new Discord.RichEmbed()
+                  .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
+                  .setColor(16098851)
+                message.channel.send(addedqueue);
+              } else if (server.queue[0]) {
+                const addedqueue = new Discord.RichEmbed()
+                  .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
+                  .setColor(16098851)
+                message.channel.send(addedqueue);
+              }
 
-            servers[guildid] = {
-              queue: [],
-              whoputdis: [],
-              videolength: [],
-              videotitle: [],
-              channel: [],
-              lastmusicembed: []
-            };
+              server.queue.push(vUrl);
+              server.channel.push(kanal);
+              server.whoputdis.push("Web_user");
+              server.videotitle.push(video.title);
 
-            var server = servers[guildid];
+              const channel = bot.channels.get(kanal);
+              if (!channel.guild.voiceConnection)
+                channel.join().then(function(connection) {
+                  play(connection, message);
+                }).catch(console.error);
+            }).catch(console.error);
+        }
 
-            youtube.getVideo(vUrl)
-              .then(video => {
-                if (!server.queue[0]) {
-                  const addedqueue = new Discord.RichEmbed()
-                    .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
-                    .setColor(16098851)
-                  message.channel.send(addedqueue);
-                } else if (server.queue[0]) {
-                  const addedqueue = new Discord.RichEmbed()
-                    .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
-                    .setColor(16098851)
-                  message.channel.send(addedqueue);
-                }
+        videoPush2("https://www.youtube.com/watch?v=wd1vXQJ0XVY");
 
-                server.queue.push(vUrl);
-                server.channel.push(kanal);
-                server.whoputdis.push("Web_user");
-                server.videotitle.push(video.title);
-
-
-                const channel = bot.channels.get(kanal);
-                if (!channel.guild.voiceConnection)
-                  channel.join().then(function(connection) {
-                    play_web(connection,message);
-                  }).catch(console.error);
-              }).catch(console.error);
-          }
-
-          videoPush2("https://www.youtube.com/watch?v=wd1vXQJ0XVY");
-
-          break;
+        break;
 
       default:
         message.reply("Command doesn't exist.");
