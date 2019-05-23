@@ -4,6 +4,9 @@
   },
   "name": "gardenerbot",
   "version": "1.0.0",
+  "engines": {
+    "node": "6.2.0"
+  },
   "description": "Just trying the Github with Heroku",
   "main": "index.js",
   "scripts": {
