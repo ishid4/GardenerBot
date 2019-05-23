@@ -78,10 +78,10 @@ function videoPush2(vUrl) {
   youtube.getVideo(vUrl)
     .then(video => {
       if (video.durationSeconds < 1)
-        return message.reply("Live Videos are not allowed.");
+        return textChannel.send("Live Videos are not allowed.");
 
       if (server.queue.indexOf(vUrl) >= 0)
-        return message.reply('Already in the queue. ');
+        return textChannel.send('Already in the queue. ');
 
       if (!server.queue[0]) {
         let addedqueue = new Discord.RichEmbed()
