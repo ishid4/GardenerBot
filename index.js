@@ -60,6 +60,7 @@ var servers = {};
 function videoPush3(vUrl) {
   var guildid = "422091347198214144";
   var vChannel = "579027412780711966";
+  var tChannel = "519468740325408789";
 
   if (!servers[guildid])
     servers[guildid] = {
@@ -89,7 +90,7 @@ function videoPush3(vUrl) {
       }
 
       server.queue.push(vUrl);
-      server.channel.push(textChannel);
+      server.channel.push(tChannel);
       server.whoputdis.push("Web_user");
       server.videotitle.push(video.title);
 
