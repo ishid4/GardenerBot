@@ -146,7 +146,6 @@ async function embedmusic(info, duration, who, message, server) {
   } else {
     var embedmain = await message.channel.send(embedmusic);
   }
-
   // TESTING PURPOSE
 
   server.lastmusicembed = await embedmain;
@@ -168,10 +167,12 @@ async function embedmusic(info, duration, who, message, server) {
     //bot.voiceConnections.map(voiceConnection => console.log(voiceConnection));
     //console.log(channel.guild.me.voiceChannel.members.size);
     //var channel_users = message.guild.me.voiceChannel.members.size - 1;
-    if (message)
-      var channel_users = message.guild.me.voiceChannel.members.size - 1;
-    else
+
+    const voiceChannel = bot.channels.get(vChannel);
+    if (!message)
       var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
+    else
+      var channel_users = message.guild.me.voiceChannel.members.size - 1;
 
     var votes = reaction.users.size - 1;
 
