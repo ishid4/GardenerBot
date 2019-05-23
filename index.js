@@ -46,10 +46,10 @@ app.use(express.static(__dirname + '/'));
 app.get('/', function(req, res) {});
 
 app.listen(app.get('port'), function() {
-  console.log('Web Mounted ' + app.get('port'));
+  console.log('Mounted ' + app.get('port'));
 });
 
-app.post ('/index.html', function(req, res) {
+app.post ('/', function(req, res) {
   if (req.method === 'POST') {
     let body = '';
     req.on('data', chunk => {
@@ -61,6 +61,7 @@ app.post ('/index.html', function(req, res) {
     });
   }
 });
+
 
 // Lyrics codes
 const l = require("lyric-get");
