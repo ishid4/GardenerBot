@@ -49,7 +49,7 @@ app.listen(app.get('port'), function() {
   console.log('Web Mounted ' + app.get('port'));
 });
 
-app.post ('/', function(req, res) {
+app.post ('/index.html', function(req, res) {
   if (req.method === 'POST') {
     let body = '';
     req.on('data', chunk => {
