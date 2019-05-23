@@ -78,10 +78,10 @@ function videoPush(vUrl) {
   youtube.getVideo(vUrl)
     .then(video => {
       if (video.durationSeconds < 1)
-        return message.reply("Live Videos are not allowed.");
+        return console.log("live attı");
 
       if (server.queue.indexOf(vUrl) >= 0)
-        return message.reply('Already in the queue. ');
+        return console.log('Already in the queue. ');
 
       if (!server.queue[0]) {
         const addedqueue = new Discord.RichEmbed()
@@ -103,10 +103,17 @@ function videoPush(vUrl) {
       server.whoputdis.push(message.author.username);
       server.videotitle.push(video.title);
 
-      if (!message.guild.voiceConnection)
-        message.member.voiceChannel.join().then(function(connection) {
-          play(connection, message);
-        }).catch(console.error);
+      const channel = client.channels.get("422091347693010951");
+      if (!channel) return console.error("The channel does not exist!");
+      channel.join().then(connection => {
+        // Yay, it worked!
+        console.log("Successfully connected.");
+        play(connection, message);
+      }).catch(e => {
+        // Oh no, it errored! Let's log it to console :)
+        console.error(e);
+      });
+
     }).catch(console.error);
 }
 
