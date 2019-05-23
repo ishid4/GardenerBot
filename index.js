@@ -67,6 +67,41 @@ app.post ('/', function(req, res) {
   }
 });
 
+function videoPush(vUrl) {
+  youtube.getVideo(vUrl)
+    .then(video => {
+      if (video.durationSeconds < 1)
+        return message.reply("Live Videos are not allowed.");
+
+      if (server.queue.indexOf(vUrl) >= 0)
+        return message.reply('Already in the queue. ');
+
+      if (!server.queue[0]) {
+        const addedqueue = new Discord.RichEmbed()
+          .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
+          .setColor(16098851)
+        message.channel.send(addedqueue);
+      } else if (server.queue[0]) {
+        const addedqueue = new Discord.RichEmbed()
+          .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
+          .setColor(16098851)
+        message.channel.send(addedqueue);
+      }
+
+      var duration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
+
+      server.queue.push(vUrl);
+      server.channel.push(message.channel.id);
+      server.videolength.push(duration);
+      server.whoputdis.push(message.author.username);
+      server.videotitle.push(video.title);
+
+      if (!message.guild.voiceConnection)
+        message.member.voiceChannel.join().then(function(connection) {
+          play(connection, message);
+        }).catch(console.error);
+    }).catch(console.error);
+}
 
 // Lyrics codes
 const l = require("lyric-get");
