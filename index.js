@@ -1,5 +1,6 @@
 // TODOS
 // Fix the volume. It's not working.
+// Reaction collector rework. Check if user in the voicechannel..
 // DM Help menu
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
@@ -137,13 +138,12 @@ async function embedmusic(info, duration, who, message, server) {
 
 
   // TESTING PURPOSE
-  if(!message){
+  if (!message) {
     const textChannel = bot.channels.get("519468740325408789");
     var vChannel = "579027412780711966";
     const voiceChannel = bot.channels.get(vChannel);
     var embedmain = await textChannel.send(embedmusic);
-  }
-  else{
+  } else {
     var embedmain = await message.channel.send(embedmusic);
   }
 
@@ -168,7 +168,7 @@ async function embedmusic(info, duration, who, message, server) {
     //bot.voiceConnections.map(voiceConnection => console.log(voiceConnection));
     //console.log(channel.guild.me.voiceChannel.members.size);
     //var channel_users = message.guild.me.voiceChannel.members.size - 1;
-    if(message)
+    if (message)
       var channel_users = message.guild.me.voiceChannel.members.size - 1;
     else
       var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
@@ -191,7 +191,7 @@ async function embedmusic(info, duration, who, message, server) {
 } // embedMusic
 
 async function play(connection, message) {
-  if(message)
+  if (message)
     var server = servers[message.guild.id];
   else
     var server = servers["422091347198214144"];
