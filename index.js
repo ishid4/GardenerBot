@@ -153,7 +153,7 @@ async function embedmusic(info, duration, who, message, server) {
     if (bot.user.id == reaction.users.last().id)
       return;
 
-    var channel_users = bot.guild.me.voiceChannel.members.size - 1;
+    var channel_users = bot.user.me.voiceChannel.members.size - 1;
 
     var votes = reaction.users.size - 1;
 
@@ -299,7 +299,7 @@ bot.on('message', message => {
         message.delete();
 
     if (message.isMentioned(bot.user))
-      message.channel.send("Current Prefix: `" + prefix + "`\nCurrent Music Channel: " + "<#" + music_channel_id_fix + ">" + "\nIf you need any help, Just `" + prefix + "help`");
+      message.channel.send("Current Prefix: `" + prefix + "`\nCurrent Music Channel: " + music_channel_id_fix + "\nIf you need any help, Just `" + prefix + "help`");
 
     // After prefix
     if (!message.content.startsWith(prefix))
