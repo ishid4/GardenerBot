@@ -89,7 +89,7 @@ function videoPush3(vUrl) {
       }
 
       server.queue.push(vUrl);
-      server.channel.push(vChannel);
+      server.channel.push(textChannel);
       server.whoputdis.push("Web_user");
       server.videotitle.push(video.title);
 
@@ -136,6 +136,8 @@ async function embedmusic(info, duration, who, message, server) {
     .addField("Who Put Dis?", who, true);
 
   const textChannel = bot.channels.get("519468740325408789"); // TESTING PURPOSE
+  var vChannel = "579027412780711966";
+  const channel = bot.channels.get(vChannel);
 
   let embedmain = await textChannel.send(embedmusic);
   server.lastmusicembed = embedmain;
@@ -153,7 +155,11 @@ async function embedmusic(info, duration, who, message, server) {
     if (bot.user.id == reaction.users.last().id)
       return;
 
-    var channel_users = bot.user.me.voiceChannel.members.size - 1;
+    //bot.voiceConnections.map(voiceConnection => console.log(voiceConnection));
+    console.log(channel.guild.me.voiceChannel.members.size);
+
+    //var channel_users = message.guild.me.voiceChannel.members.size - 1;
+    var channel_users = 3;
 
     var votes = reaction.users.size - 1;
 
