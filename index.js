@@ -58,7 +58,19 @@ app.post ('/', function(req, res) {
     });
     req.on('end', () => {
         console.log(body);
-        res.end('ok');
+        var post = body.split("0");
+
+        if (post[0]=="link") {
+          console.log("link geldi");
+        }
+
+        //link = https://www.youtube.com/watch?v=JZjAg6fK-BQ
+
+      //  videoPush(vUrl);
+
+
+
+        res.end('Added que.');
     });
   }
 });
