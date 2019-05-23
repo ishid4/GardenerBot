@@ -58,7 +58,7 @@ app.post ('/', function(req, res) {
     });
     req.on('end', () => {
         console.log(body);
-        var post = body.split("0");
+        var post = body.split("=");
 
         if (post[0]=="link") {
           console.log("link geldi");
