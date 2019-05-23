@@ -37,31 +37,6 @@ const ytdlOptions = {
   quality: "highestaudio" // quality: "lowest"
 };
 
-var express = require('express');
-var app = express();
-
-app.set('port', (process.env.PORT || 3000));
-
-app.use(express.static(__dirname + '/web/'));  
-
-app.get('/', function(req, res) {});
-
-app.listen(app.get('port'), function() {
-  console.log('Mounted ' + app.get('port'));
-});
-
-app.post ('/', function(req, res) {
-  if (req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => {
-        body += chunk.toString(); // convert Buffer to string
-    });
-    req.on('end', () => {
-        console.log(body);
-        res.end('ok');
-    });
-  }
-});
 
 
 // Lyrics codes
