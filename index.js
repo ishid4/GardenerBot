@@ -109,14 +109,14 @@ app.post('/', function(req, res) {
       body += chunk.toString();
     });
     req.on('end', () => {
-      console.log(body);
+      //console.log(body);
       var post = body.split("=");
       if (post[0] == "link") {
         var vUrl = post[1] + "=" + post[2];
         videoPush3(vUrl);
+        console.log(vUrl);
         //play_web(post[1] + "=" + post[2]);
         //play_web(vUrl);
-        res.end('Added queue.');
       }
     });
   }
@@ -153,7 +153,7 @@ async function embedmusic(info, duration, who, message, server) {
     if (bot.user.id == reaction.users.last().id)
       return;
 
-    var channel_users = bot.user.guild.me.voiceChannel.members.size - 1;
+    var channel_users = bot.guild.me.voiceChannel.members.size - 1;
 
     var votes = reaction.users.size - 1;
 
