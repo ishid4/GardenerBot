@@ -142,8 +142,6 @@ async function embedmusic(info, duration, who, message, server) {
     var vChannel = "579027412780711966";
     const voiceChannel = bot.channels.get(vChannel);
     var embedmain = await textChannel.send(embedmusic);
-
-
   }
   else{
     var embedmain = await message.channel.send(embedmusic);
@@ -170,8 +168,10 @@ async function embedmusic(info, duration, who, message, server) {
     //bot.voiceConnections.map(voiceConnection => console.log(voiceConnection));
     //console.log(channel.guild.me.voiceChannel.members.size);
     //var channel_users = message.guild.me.voiceChannel.members.size - 1;
-
-    var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
+    if(message)
+      var channel_users = message.guild.me.voiceChannel.members.size - 1;
+    else
+      var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
 
     var votes = reaction.users.size - 1;
 
