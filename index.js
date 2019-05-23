@@ -61,7 +61,8 @@ function videoPush3(vUrl) {
   var guildid = "422091347198214144";
   var vChannel = "579027412780711966";
   var tChannel = "519468740325408789";
-
+  const textChannel = bot.channels.get("519468740325408789"); // TESTING PURPOSE
+  const voiceChannel = bot.channels.get(vChannel);
   if (!servers[guildid])
     servers[guildid] = {
       queue: [],
@@ -72,8 +73,6 @@ function videoPush3(vUrl) {
       lastmusicembed: []
     };
   var server = servers[guildid];
-
-  const textChannel = bot.channels.get("519468740325408789"); // TESTING PURPOSE
 
   youtube.getVideo(vUrl)
     .then(video => {
@@ -94,9 +93,9 @@ function videoPush3(vUrl) {
       server.whoputdis.push("Web_user");
       server.videotitle.push(video.title);
 
-      const channel = bot.channels.get(vChannel);
+
       if (!channel.guild.voiceConnection)
-        channel.join().then(function(connection) {
+        voiceChannel.join().then(function(connection) {
           play(connection);
         }).catch(console.error);
 
@@ -140,7 +139,7 @@ async function embedmusic(info, duration, who, message, server) {
   // TESTING PURPOSE
   const textChannel = bot.channels.get("519468740325408789");
   var vChannel = "579027412780711966";
-  const channel = bot.channels.get(vChannel);
+  const voiceChannel = bot.channels.get(vChannel);
   // TESTING PURPOSE
 
   let embedmain = await textChannel.send(embedmusic);
@@ -163,7 +162,7 @@ async function embedmusic(info, duration, who, message, server) {
     //console.log(channel.guild.me.voiceChannel.members.size);
     //var channel_users = message.guild.me.voiceChannel.members.size - 1;
 
-    var channel_users = channel.guild.me.voiceChannel.members.size - 1;
+    var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
 
     var votes = reaction.users.size - 1;
 
@@ -591,42 +590,6 @@ bot.on('message', message => {
         message.channel.send("Bot ping: " + Math.trunc(bot.ping) + "ms.").then(message => {
           message.edit(`${message.content} Ms: ${new Date().getTime() - sent}.`);
         });
-        break;
-
-      case "try":
-        function videoPush2(vUrl) {
-          var guildid = "422091347198214144";
-          var kanal = "579027412780711966";
-
-          youtube.getVideo(vUrl)
-            .then(video => {
-              if (!server.queue[0]) {
-                const addedqueue = new Discord.RichEmbed()
-                  .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
-                  .setColor(16098851)
-                message.channel.send(addedqueue);
-              } else if (server.queue[0]) {
-                const addedqueue = new Discord.RichEmbed()
-                  .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
-                  .setColor(16098851)
-                message.channel.send(addedqueue);
-              }
-
-              server.queue.push(vUrl);
-              server.channel.push(kanal);
-              server.whoputdis.push("Web_user");
-              server.videotitle.push(video.title);
-
-              const channel = bot.channels.get(kanal);
-              if (!channel.guild.voiceConnection)
-                channel.join().then(function(connection) {
-                  play(connection, message);
-                }).catch(console.error);
-            }).catch(console.error);
-        }
-
-        videoPush2("https://www.youtube.com/watch?v=wd1vXQJ0XVY");
-
         break;
 
       default:
