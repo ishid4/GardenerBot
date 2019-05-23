@@ -170,11 +170,12 @@ async function embedmusic(info, duration, who, message, server) {
 } // embedMusic
 
 async function play(connection, message) {
-  var server = servers[message.guild.id];
-
+  var server = servers[422091347198214144];
+  /*
   var streamOptions = {
     volume: guilds[message.guild.id].volume
   };
+  */
 
   youtube.getVideo(server.queue[0])
     .then(video => {
@@ -186,7 +187,8 @@ async function play(connection, message) {
       embedmusic(video, videoDuration, server.whoputdis[0], message, server); // run function & pass required information
     }).catch(console.error);
 
-  server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
+    server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions));
+    //server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
 
   server.dispatcher.on("end", function() {
     if (server.lastmusicembed) {
