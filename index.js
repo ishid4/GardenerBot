@@ -6,8 +6,8 @@
 
 
 // Requirements
-const opus = require('opusscript'); // nodeopus is better
-const ffmepg = require('ffmpeg-binaries');
+//const opus = require('opusscript'); // nodeopus is better
+//const ffmepg = require('ffmpeg-binaries');
 
 const fs = require('fs');
 const async = require('async');
