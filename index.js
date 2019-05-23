@@ -77,12 +77,12 @@ function videoPush3(vUrl) {
       const textChannel = bot.channels.get("519468740325408789"); // TESTING PURPOSE
 
       if (!server.queue[0]) {
-        const addedqueue = new Discord.RichEmbed()
+        let addedqueue = new Discord.RichEmbed()
           .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
           .setColor(16098851)
         textChannel.send(addedqueue);
       } else if (server.queue[0]) {
-        const addedqueue = new Discord.RichEmbed()
+        let addedqueue = new Discord.RichEmbed()
           .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
           .setColor(16098851)
         textChannel.channel.send(addedqueue);
@@ -95,9 +95,10 @@ function videoPush3(vUrl) {
 
       const channel = bot.channels.get(kanal);
       if (!channel.guild.voiceConnection)
-      channel.join().then(function(connection) {
-        play(connection);
-      }).catch(console.error);
+        channel.join().then(function(connection) {
+          play(connection);
+        }).catch(console.error);
+
     }).catch(console.error);
 }
 
@@ -189,8 +190,8 @@ async function play(connection, message) {
       embedmusic(video, videoDuration, server.whoputdis[0], message, server); // run function & pass required information
     }).catch(console.error);
 
-    server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions));
-    //server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
+  server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions));
+  //server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
 
   server.dispatcher.on("end", function() {
     if (server.lastmusicembed) {
