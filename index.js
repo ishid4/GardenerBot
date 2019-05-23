@@ -59,18 +59,10 @@ app.post ('/', function(req, res) {
     req.on('end', () => {
         console.log(body);
         var post = body.split("=");
-
         if (post[0]=="link") {
-          console.log("link geldi");
+          videoPush(post[1]);
+          res.end('Added que.');
         }
-
-        //link = https://www.youtube.com/watch?v=JZjAg6fK-BQ
-
-      //  videoPush(vUrl);
-
-
-
-        res.end('Added que.');
     });
   }
 });
