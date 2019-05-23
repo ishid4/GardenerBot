@@ -137,12 +137,17 @@ async function embedmusic(info, duration, who, message, server) {
 
 
   // TESTING PURPOSE
-  const textChannel = bot.channels.get("519468740325408789");
-  var vChannel = "579027412780711966";
-  const voiceChannel = bot.channels.get(vChannel);
+  if(!message){
+    const textChannel = bot.channels.get("519468740325408789");
+    var vChannel = "579027412780711966";
+    const voiceChannel = bot.channels.get(vChannel);
+    let embedmain = await textChannel.send(embedmusic);
+  }
+  else
+    let embedmain = await message.channel.send(embedmusic);
   // TESTING PURPOSE
 
-  let embedmain = await textChannel.send(embedmusic);
+
   server.lastmusicembed = embedmain;
   embedmain.react('⏭');
 
