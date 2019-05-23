@@ -58,7 +58,7 @@ var bot = new Discord.Client({
 
 var servers = {};
 
-function videoPush3(vUrl) {
+function videoPush2(vUrl) {
   var guildid = "422091347198214144";
   var vChannel = "579027412780711966";
   var tChannel = "519468740325408789";
@@ -74,6 +74,12 @@ function videoPush3(vUrl) {
       lastmusicembed: []
     };
   var server = servers[guildid];
+
+  if (video.durationSeconds < 1)
+    return message.reply("Live Videos are not allowed.");
+
+  if (server.queue.indexOf(vUrl) >= 0)
+    return message.reply('Already in the queue. ');
 
   youtube.getVideo(vUrl)
     .then(video => {
@@ -114,7 +120,7 @@ app.post('/', function(req, res) {
       var post = body.split("=");
       if (post[0] == "link") {
         var vUrl = post[1] + "=" + post[2];
-        videoPush3(vUrl);
+        videoPush2(vUrl);
         console.log(vUrl);
         //play_web(post[1] + "=" + post[2]);
         //play_web(vUrl);
