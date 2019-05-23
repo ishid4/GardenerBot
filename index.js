@@ -136,9 +136,12 @@ async function embedmusic(info, duration, who, message, server) {
     .addField("Duration", duration, true)
     .addField("Who Put Dis?", who, true);
 
-  const textChannel = bot.channels.get("519468740325408789"); // TESTING PURPOSE
+
+  // TESTING PURPOSE
+  const textChannel = bot.channels.get("519468740325408789");
   var vChannel = "579027412780711966";
   const channel = bot.channels.get(vChannel);
+  // TESTING PURPOSE
 
   let embedmain = await textChannel.send(embedmusic);
   server.lastmusicembed = embedmain;
@@ -157,10 +160,10 @@ async function embedmusic(info, duration, who, message, server) {
       return;
 
     //bot.voiceConnections.map(voiceConnection => console.log(voiceConnection));
-    console.log(channel.guild.me.voiceChannel.members.size);
-
+    //console.log(channel.guild.me.voiceChannel.members.size);
     //var channel_users = message.guild.me.voiceChannel.members.size - 1;
-    var channel_users = 3;
+
+    var channel_users = channel.guild.me.voiceChannel.members.size - 1;
 
     var votes = reaction.users.size - 1;
 
@@ -180,7 +183,11 @@ async function embedmusic(info, duration, who, message, server) {
 } // embedMusic
 
 async function play(connection, message) {
-  var server = servers["422091347198214144"];
+  if(message)
+    var server = servers[message.guild.id];
+  else
+    var server = servers["422091347198214144"];
+
   /*
   var streamOptions = {
     volume: guilds[message.guild.id].volume
