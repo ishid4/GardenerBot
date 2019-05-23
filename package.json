@@ -8,10 +8,10 @@
     "node": "8.11.3"
   },
   "description": "Just trying the Github with Heroku",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
