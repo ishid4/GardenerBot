@@ -85,7 +85,7 @@ function videoPush3(vUrl) {
         let addedqueue = new Discord.RichEmbed()
           .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
           .setColor(16098851)
-        textChannel.channel.send(addedqueue);
+        textChannel.send(addedqueue);
       }
 
       server.queue.push(vUrl);
