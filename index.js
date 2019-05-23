@@ -94,7 +94,7 @@ function videoPush3(vUrl) {
       server.videotitle.push(video.title);
 
 
-      if (!channel.guild.voiceConnection)
+      if (!voiceChannel.guild.voiceConnection)
         voiceChannel.join().then(function(connection) {
           play(connection);
         }).catch(console.error);
