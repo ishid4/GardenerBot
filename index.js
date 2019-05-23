@@ -60,7 +60,7 @@ app.post ('/', function(req, res) {
         console.log(body);
         var post = body.split("=");
         if (post[0]=="link") {
-          videoPush(post[1]+post[2]);
+          videoPush(post[1]+"="+post[2]);
           res.end('Added que.');
         }
     });
