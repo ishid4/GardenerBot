@@ -8,32 +8,7 @@
 // Requirements
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
-var express = require('express');
-var app = express();
 
-app.set('port', (process.env.PORT || 3000));
-app.use(express.static(__dirname + '/web/'));
-
-app.get('/', function(req, res) {});
-
-app.listen(app.get('port'), function() {
-  console.log('Mounted ' + app.get('port'));
-});
-
-app.post ('/', function(req, res) {
-  if (req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => {
-        body += chunk.toString(); // convert Buffer to string
-    });
-    req.on('end', () => {
-        console.log(body);
-        res.end('ok');
-    });
-  }
-});
-
-/////////////////
 const fs = require('fs');
 const async = require('async');
 
@@ -61,6 +36,32 @@ const ytdlOptions = {
   filter: "audioonly",
   quality: "highestaudio" // quality: "lowest"
 };
+
+var express = require('express');
+var app = express();
+
+app.set('port', (process.env.PORT || 3000));
+app.use(express.static(__dirname + '/'));
+
+app.get('/index.html', function(req, res) {});
+
+app.listen(app.get('port'), function() {
+  console.log('Mounted ' + app.get('port'));
+});
+
+app.post ('/index.html', function(req, res) {
+  if (req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => {
+        body += chunk.toString(); // convert Buffer to string
+    });
+    req.on('end', () => {
+        console.log(body);
+        res.end('ok');
+    });
+  }
+});
+
 
 // Lyrics codes
 const l = require("lyric-get");
