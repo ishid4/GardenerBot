@@ -22,7 +22,7 @@ const Discord = require('discord.js');
 
 // Youtube Token
 const YouTube = require('simple-youtube-api');
-const youtube = new YouTube(process.env.YOUTUBE_TOKEN);
+const youtube = new YouTube(configs.youtubeToken);
 
 // Youtube downloader framework
 const YTDL = require('ytdl-core-discord');
@@ -45,65 +45,22 @@ app.get('/', function(req, res) {});
 app.listen(app.get('port'), function() {
   console.log('Mounted ' + app.get('port'));
 });
-app.post ('/', function(req, res) {
+app.post('/', function(req, res) {
   if (req.method === 'POST') {
     let body = '';
     req.on('data', chunk => {
-        body += chunk.toString();
+      body += chunk.toString();
     });
     req.on('end', () => {
-        console.log(body);
-        var post = body.split("=");
-        if (post[0]=="link") {
-
-          videoPush(post[1]+"="+post[2]);
-
-          res.end('Added queue.');
-        }
+      console.log(body);
+      var post = body.split("=");
+      if (post[0] == "link") {
+        videoPush(post[1] + "=" + post[2]);
+        res.end('Added queue.');
+      }
     });
   }
 });
-
-function videoPush(vUrl) {
-    servers[422091347198214144] = {
-      queue: [],
-      whoputdis: [],
-      videolength: [],
-      videotitle: [],
-      channel: [],
-      lastmusicembed: []
-    };
-  var server = servers[422091347198214144];
-
-  youtube.getVideo(vUrl)
-    .then(video => {
-      if (video.durationSeconds < 1)
-        return console.log("live attı");
-
-      if (server.queue.indexOf(vUrl) >= 0)
-        return console.log('Already in the queue. ');
-
-      var duration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
-
-      server.queue.push(vUrl);
-      server.channel.push(message.channel.id);
-      server.videolength.push(duration);
-      server.whoputdis.push(message.author.username);
-      server.videotitle.push(video.title);
-
-      const channel = client.channels.get("422091347693010951");
-      if (!channel) return console.error("The channel does not exist!");
-      channel.join().then(connection => {
-        // Yay, it worked!
-        console.log("Successfully connected.");
-        play(connection, message);
-      }).catch(e => {
-        // Oh no, it errored! Let's log it to console :)
-        console.error(e);
-      });
-
-    }).catch(console.error);
-}
 
 // Lyrics codes
 const l = require("lyric-get");
@@ -166,6 +123,7 @@ async function embedmusic(info, duration, who, message, server) {
 
 async function play(connection, message) {
   var server = servers[message.guild.id];
+
   var streamOptions = {
     volume: guilds[message.guild.id].volume
   };
@@ -201,12 +159,47 @@ async function play(connection, message) {
   });
 }
 
+async function play_web(connection) {
+
+  var server = servers[422091347198214144];
+  var streamOptions = {
+    volume: 100
+  };
+
+  youtube.getVideo(server.queue[0])
+    .then(video => {
+      var videoDuration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
+      embedmusic(video, videoDuration, "Web_user", message, server); // run function & pass required information
+    }).catch(console.error);
+
+  server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions), streamOptions);
+  server.dispatcher.on("end", function() {
+    if (server.lastmusicembed) {
+      server.lastmusicembed.delete();
+      server.lastmusicembed = [];
+    }
+    server.queue.shift();
+    server.whoputdis.shift();
+    server.videotitle.shift();
+    server.videolength.shift();
+
+    if (server.queue[0]) {
+      play_web(connection);
+    } else {
+      server.channel = [422091347198214144];
+      connection.disconnect();
+    }
+  });
+}
+
+
+
 bot.on('uncaughtException', (err) => {
   console.error(err);
 });
 
 bot.on('ready', function() {
-  console.log("Bot is up and running in " + bot.guilds.size + " servers");
+  console.log("And Loaded " + bot.guilds.size + " servers");
   bot.user.setActivity("help", {
     type: "WATCHING"
   });
@@ -571,6 +564,56 @@ bot.on('message', message => {
         });
         break;
 
+        case "try":
+
+            //////////////////
+          function videoPush2(vUrl) {
+            var guildid = "422091347198214144";
+            var kanal = "422091347693010951";
+
+            servers[guildid] = {
+              queue: [],
+              whoputdis: [],
+              videolength: [],
+              videotitle: [],
+              channel: [],
+              lastmusicembed: []
+            };
+
+            var server = servers[guildid];
+
+            youtube.getVideo(vUrl)
+              .then(video => {
+                if (!server.queue[0]) {
+                  const addedqueue = new Discord.RichEmbed()
+                    .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
+                    .setColor(16098851)
+                  message.channel.send(addedqueue);
+                } else if (server.queue[0]) {
+                  const addedqueue = new Discord.RichEmbed()
+                    .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
+                    .setColor(16098851)
+                  message.channel.send(addedqueue);
+                }
+
+                server.queue.push(vUrl);
+                server.channel.push(kanal);
+                server.whoputdis.push("Web_user");
+                server.videotitle.push(video.title);
+
+
+                const channel = bot.channels.get(kanal);
+                if (!channel.guild.voiceConnection)
+                  channel.join().then(function(connection) {
+                    play_web(connection,message);
+                  }).catch(console.error);
+              }).catch(console.error);
+          }
+
+          videoPush2("https://www.youtube.com/watch?v=wd1vXQJ0XVY");
+
+          break;
+
       default:
         message.reply("Command doesn't exist.");
     }
@@ -578,4 +621,4 @@ bot.on('message', message => {
 
 });
 
-bot.login(process.env.BOT_TOKEN);
+bot.login(configs.token);
