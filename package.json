@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/ishid4/GardenerBot#readme",
   "dependencies": {
-    "express": "4.13.4",
-    
+    "express": "4.13.4"
+
   }
 }
