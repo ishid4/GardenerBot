@@ -10,7 +10,8 @@
   "description": "Just trying the Github with Heroku",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
   },
   "homepage": "https://github.com/ishid4/GardenerBot#readme",
   "dependencies": {
+    "express": "4.13.4",
     "async": "^2.6.2",
     "discord.js": "^11.5.0",
     "ffmpeg-binaries": "^4.0.0",
@@ -31,7 +33,6 @@
     "lyric-get": "^1.0.3",
     "opusscript": "0.0.6",
     "simple-youtube-api": "^5.1.1",
-    "ytdl-core-discord": "^1.0.3",
-    "express": "4.13.4"
+    "ytdl-core-discord": "^1.0.3"
   }
 }
