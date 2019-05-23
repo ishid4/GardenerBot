@@ -59,7 +59,7 @@ var servers = {};
 
 function videoPush3(vUrl) {
   var guildid = "422091347198214144";
-  var kanal = "579027412780711966";
+  var vChannel = "579027412780711966";
 
   if (!servers[guildid])
     servers[guildid] = {
@@ -72,10 +72,10 @@ function videoPush3(vUrl) {
     };
   var server = servers[guildid];
 
+  const textChannel = bot.channels.get("519468740325408789"); // TESTING PURPOSE
+
   youtube.getVideo(vUrl)
     .then(video => {
-      const textChannel = bot.channels.get("519468740325408789"); // TESTING PURPOSE
-
       if (!server.queue[0]) {
         let addedqueue = new Discord.RichEmbed()
           .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
@@ -89,11 +89,11 @@ function videoPush3(vUrl) {
       }
 
       server.queue.push(vUrl);
-      server.channel.push(kanal);
+      server.channel.push(vChannel);
       server.whoputdis.push("Web_user");
       server.videotitle.push(video.title);
 
-      const channel = bot.channels.get(kanal);
+      const channel = bot.channels.get(vChannel);
       if (!channel.guild.voiceConnection)
         channel.join().then(function(connection) {
           play(connection);
@@ -153,7 +153,7 @@ async function embedmusic(info, duration, who, message, server) {
     if (bot.user.id == reaction.users.last().id)
       return;
 
-    var channel_users = message.guild.me.voiceChannel.members.size - 1;
+    var channel_users = bot.user.guild.me.voiceChannel.members.size - 1;
 
     var votes = reaction.users.size - 1;
 
