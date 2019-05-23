@@ -83,18 +83,6 @@ function videoPush(vUrl) {
       if (server.queue.indexOf(vUrl) >= 0)
         return console.log('Already in the queue. ');
 
-      if (!server.queue[0]) {
-        const addedqueue = new Discord.RichEmbed()
-          .setDescription("**[" + video.title + "](" + vUrl + ")** started firstly.")
-          .setColor(16098851)
-        message.channel.send(addedqueue);
-      } else if (server.queue[0]) {
-        const addedqueue = new Discord.RichEmbed()
-          .setDescription("**[" + video.title + "](" + vUrl + ")** has been added to the queue.")
-          .setColor(16098851)
-        message.channel.send(addedqueue);
-      }
-
       var duration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
 
       server.queue.push(vUrl);
