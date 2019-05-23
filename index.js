@@ -22,7 +22,7 @@ const Discord = require('discord.js');
 
 // Youtube Token
 const YouTube = require('simple-youtube-api');
-const youtube = new YouTube(configs.youtubeToken);
+const youtube = new YouTube(process.env.YOUTUBE_TOKEN);
 
 // Youtube downloader framework
 const YTDL = require('ytdl-core-discord');
@@ -508,4 +508,4 @@ bot.on('message', message => {
 
 });
 
-bot.login(configs.token);
+bot.login(process.env.BOT_TOKEN);

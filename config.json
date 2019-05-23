@@ -1,6 +1,6 @@
 {
     "prefix": "!",
-    "token": process.env.BOT_TOKEN,
-    "youtubeToken": process.env.YOUTUBE_TOKEN,
+    "token": "process.env.BOT_TOKEN",
+    "youtubeToken": "process.env.YOUTUBE_TOKEN",
     "language": "en"
 }
