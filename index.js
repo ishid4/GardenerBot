@@ -74,7 +74,7 @@ function videoPush3(vUrl) {
 
   youtube.getVideo(vUrl)
     .then(video => {
-      const textChannel = bot.channels.get("519468740325408789");
+      const textChannel = bot.channels.get("519468740325408789"); // TESTING PURPOSE
 
       if (!server.queue[0]) {
         const addedqueue = new Discord.RichEmbed()
@@ -96,7 +96,7 @@ function videoPush3(vUrl) {
       const channel = bot.channels.get(kanal);
       if (!channel.guild.voiceConnection)
       channel.join().then(function(connection) {
-        play(connection, server);
+        play(connection);
       }).catch(console.error);
     }).catch(console.error);
 }
@@ -134,7 +134,9 @@ async function embedmusic(info, duration, who, message, server) {
     .addField("Duration", duration, true)
     .addField("Who Put Dis?", who, true);
 
-  let embedmain = await bot.user.channel.send(embedmusic);
+  const textChannel = bot.channels.get("519468740325408789"); // TESTING PURPOSE
+
+  let embedmain = await textChannel.send(embedmusic);
   server.lastmusicembed = embedmain;
   embedmain.react('⏭');
 
