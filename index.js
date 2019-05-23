@@ -41,11 +41,8 @@ var express = require('express');
 var app = express();
 
 app.set('port', (process.env.PORT || 3000));
-<<<<<<< HEAD
-app.use(express.static(__dirname + '/web/'));
-=======
-app.use(express.static(__dirname + '/web'));
->>>>>>> bd54e0c304deea1c870ba742ee924f3d9a7614c9
+
+app.use(express.static(__dirname + '/web/'));  
 
 app.get('/', function(req, res) {});
 
