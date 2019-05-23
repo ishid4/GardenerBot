@@ -170,7 +170,7 @@ async function embedmusic(info, duration, who, message, server) {
 } // embedMusic
 
 async function play(connection, message) {
-  var server = servers[422091347198214144];
+  var server = servers["422091347198214144"];
   /*
   var streamOptions = {
     volume: guilds[message.guild.id].volume
