@@ -99,7 +99,7 @@ function videoPush3(vUrl) {
         channel.join().then(function(connection) {
             play(connection, message);
           }).catch(console.error);
-        }).catch(console.error);
+        });
     }).catch(console.error);
 }
 
