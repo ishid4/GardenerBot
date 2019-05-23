@@ -141,21 +141,18 @@ async function embedmusic(info, duration, who, message, server) {
     const textChannel = bot.channels.get("519468740325408789");
     var vChannel = "579027412780711966";
     const voiceChannel = bot.channels.get(vChannel);
-    let embedmain = await textChannel.send(embedmusic);
+    var embedmain = textChannel.send(embedmusic);
 
-    server.lastmusicembed = embedmain;
-    embedmain.react('⏭');
+
   }
   else{
-    let embedmain = await message.channel.send(embedmusic);
-
-    server.lastmusicembed = embedmain;
-    embedmain.react('⏭');
+    var embedmain = message.channel.send(embedmusic);
   }
 
   // TESTING PURPOSE
 
-
+  server.lastmusicembed = await embedmain;
+  embedmain.react('⏭');
 
 
   const filter = (reaction) => reaction.emoji.name === '⏭';
