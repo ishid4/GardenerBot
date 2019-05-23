@@ -141,10 +141,10 @@ async function embedmusic(info, duration, who, message, server) {
     const textChannel = bot.channels.get("519468740325408789");
     var vChannel = "579027412780711966";
     const voiceChannel = bot.channels.get(vChannel);
-    let embedmain = textChannel.send(embedmusic);
+    var embedmain = textChannel.send(embedmusic);
   }
   else
-    let embedmain = message.channel.send(embedmusic);
+    var embedmain = message.channel.send(embedmusic);
   // TESTING PURPOSE
 
 
