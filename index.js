@@ -108,7 +108,7 @@ http.createServer((req, res) => {
 
   res.write(content);
 
-}).listen(3100);
+}).listen(process.env.PORT || 3000);
 
 // Lyrics codes
 const l = require("lyric-get");
