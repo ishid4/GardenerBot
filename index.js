@@ -139,10 +139,10 @@ async function videoPush2(vUrl, uId) {
   }
   console.log("DEBUG: User's VoiceChannel ID outside of the func: " + vcId);
   console.log("DEBUG: VoiceChannel's guild ID " + gId);
-  /*
+
   if(!vcId)
     return console.log("DEBUG: User is not in the VoiceChannel");
-  */
+
   console.log("DEBUG: music_channel_id: " + guilds[gId].music_channel_id);
 
   if(!guilds[gId].music_channel_id || guilds[gId].music_channel_id == ""){
