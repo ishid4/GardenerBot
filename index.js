@@ -4,6 +4,7 @@
 // DM Help menu
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
+// If music is already playing, web music push is not working. And, reaction skip is not working. Also, play and web play are not working together. 90% fixed, should've debug more.
 
 
 // Requirements
@@ -108,7 +109,7 @@ http.createServer((req, res) => {
 
   res.write(content);
 
-}).listen(process.env.PORT || 3100);
+}).listen(3100);
 
 // Lyrics codes
 const l = require("lyric-get");
@@ -162,9 +163,8 @@ async function videoPush2(vUrl, uId) {
 
   const textChannel = await bot.channels.get(tChannel);
   const voiceChannel = await bot.channels.get(vcId);
-
-  if (!servers[vcId])
-    servers[vcId] = {
+  if (!servers[gId])
+      servers[gId] = {
       queue: [],
       whoputdis: [],
       videolength: [],
@@ -172,7 +172,7 @@ async function videoPush2(vUrl, uId) {
       channel: [],
       lastmusicembed: []
     };
-  var server = servers[vcId];
+  var server = servers[gId];
 
   youtube.getVideo(vUrl)
     .then(video => {
@@ -201,7 +201,7 @@ async function videoPush2(vUrl, uId) {
 
       if (!voiceChannel.guild.voiceConnection)
         voiceChannel.join().then(function(connection) {
-          play(connection, "", vcId, textChannel, voiceChannel);
+          play(connection, "", gId, textChannel, voiceChannel);
         }).catch(console.error);
 
     }).catch(console.error);
@@ -298,7 +298,7 @@ async function play(connection, message, gId, textChannel, voiceChannel) {
     server.videolength.shift();
 
     if (server.queue[0]) {
-      play(connection, message);
+      play(connection, message, gId, textChannel, voiceChannel);
     } else {
       server.channel = [];
       connection.disconnect();
