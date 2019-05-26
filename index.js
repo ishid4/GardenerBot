@@ -37,15 +37,77 @@ const ytdlOptions = {
   filter: "audioonly",
   quality: "highestaudio" // quality: "lowest"
 };
-//Server html kodları
+
+// Server Port listening
 var express = require('express');
 var app = express();
 app.set('port', (process.env.PORT || 3000));
 app.use(express.static(__dirname + '/web/'));
-app.get('/', function(req, res) {});
+
+app.use(express.json());       // to support JSON-encoded bodies
+app.use(express.urlencoded({extended: true})); // to support URL-encoded bodies
+
 app.listen(app.get('port'), function() {
   console.log('Mounted ' + app.get('port'));
 });
+
+//OAuth2 TESTING
+const DiscordOauth2 = require("discord-oauth2");
+const oauth = new DiscordOauth2();
+
+const http = require('http');
+const url = require('url');
+const FormData = require('form-data');
+
+http.createServer((req, res) => {
+  let responseCode = 404;
+  let content = '404 Error';
+
+  const urlObj = url.parse(req.url, true);
+
+  if (urlObj.pathname === '/') {
+    responseCode = 200;
+    content = fs.readFileSync('./web/index.html');
+  }
+  else if(urlObj.pathname === '/login'){
+      var accessCode = urlObj.query.code;
+      content = '';
+      oauth.tokenRequest({
+        client_id: "581431951005843458",
+        client_secret: "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
+        grant_type: "authorization_code",
+        code: accessCode,
+        redirect_uri: "http://localhost:3100/login",
+        scope: "identify guilds"
+      }).then(tokenReq => {
+
+          oauth.getUser(tokenReq.access_token).then(userInfo => {
+            //console.log(userInfo.username + "#" + userInfo.discriminator);
+            //res.write(JSON.stringify(userInfo));
+            res.write("Welcome back! " + userInfo.username + "#" + userInfo.discriminator);
+          });
+
+          oauth.getUserGuilds(tokenReq.access_token).then(userGuildsInfo => {
+            res.write('<br><select>')
+            for(k in userGuildsInfo){
+              if(guilds[userGuildsInfo[k].id])
+                res.write('<option><a href="localhost:3000/?link=alolao?gid=' + userGuildsInfo[k].id + '">' + userGuildsInfo[k].name + '</a></option>')
+            }
+            res.write('</select>')
+            res.end();
+          });
+
+      });
+
+  }
+
+  res.writeHead(responseCode, {
+    'content-type': 'text/html;charset=utf-8',
+  });
+
+  res.write(content);
+
+}).listen(3100);
 
 // Lyrics codes
 const l = require("lyric-get");
@@ -58,14 +120,55 @@ var bot = new Discord.Client({
 
 var servers = {};
 
-function videoPush2(vUrl) {
-  var guildid = "422091347198214144";
-  var vChannel = "579027412780711966";
-  var tChannel = "519468740325408789";
-  const textChannel = bot.channels.get("519468740325408789"); // TESTING PURPOSE
-  const voiceChannel = bot.channels.get(vChannel);
-  if (!servers[guildid])
-    servers[guildid] = {
+async function videoPush2(vUrl, uId) {
+  // TESTING PURPOSE
+  var vcId;
+  var gId;
+  for(var findGuild in guilds){
+    var guild = bot.guilds.get(findGuild);
+
+    await guild.fetchMember(uId).then(info => {
+      console.log("DEBUG: User's VoiceChannel ID: " + info.voiceChannelID);
+      if(info.voiceChannelID != undefined){
+        vcId = info.voiceChannelID;
+        gId = findGuild;
+      }
+    }).catch(console.error);
+    if(vcId)
+      break;
+  }
+  console.log("DEBUG: User's VoiceChannel ID outside of the func: " + vcId);
+  console.log("DEBUG: VoiceChannel's guild ID " + gId);
+  /*
+  if(!vcId)
+    return console.log("DEBUG: User is not in the VoiceChannel");
+  */
+  console.log("DEBUG: music_channel_id: " + guilds[gId].music_channel_id);
+
+  if(!guilds[gId].music_channel_id || guilds[gId].music_channel_id == ""){
+
+    let channelID;
+    let channels = guild.channels;
+    channelLoop:
+    for (let c of channels) {
+        let channelType = c[1].type;
+        if (channelType === "text") {
+            channelID = c[0];
+            break channelLoop;
+        }
+    }
+    var tChannel = channelID;
+  }
+  else
+    var tChannel = guilds[gId].music_channel_id;
+
+
+  const textChannel = await bot.channels.get(tChannel);
+  const voiceChannel = await bot.channels.get(vcId);
+  // TESTING PURPOSE
+
+  if (!servers[vcId])
+    servers[vcId] = {
       queue: [],
       whoputdis: [],
       videolength: [],
@@ -73,7 +176,7 @@ function videoPush2(vUrl) {
       channel: [],
       lastmusicembed: []
     };
-  var server = servers[guildid];
+  var server = servers[vcId];
 
   youtube.getVideo(vUrl)
     .then(video => {
@@ -100,37 +203,23 @@ function videoPush2(vUrl) {
       server.whoputdis.push("Web_user");
       server.videotitle.push(video.title);
 
-
       if (!voiceChannel.guild.voiceConnection)
         voiceChannel.join().then(function(connection) {
-          play(connection);
+          play(connection, "", vcId, textChannel, voiceChannel);
         }).catch(console.error);
 
     }).catch(console.error);
 }
 
 app.post('/', function(req, res) {
-  if (req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    req.on('end', () => {
-      //console.log(body);
-      var post = body.split("=");
-      if (post[0] == "link") {
-        var vUrl = post[1] + "=" + post[2];
-        videoPush2(vUrl);
-        console.log(vUrl);
-        //play_web(post[1] + "=" + post[2]);
-        //play_web(vUrl);
-      }
-    });
-  }
+    var vUrl = req.body.link;
+    var uId = req.body.uid;
+    console.log("DEBUG: uId: " + uId + " vUrl: " + vUrl);
+    videoPush2(vUrl, uId);
 });
 
 // Playing now music
-async function embedmusic(info, duration, who, message, server) {
+async function embedmusic(info, duration, who, message, server, textChannel, voiceChannel) {
   var embedmusic = new Discord.RichEmbed()
     .setAuthor("Playing Now", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
     .setColor(16098851)
@@ -145,9 +234,6 @@ async function embedmusic(info, duration, who, message, server) {
 
   // TESTING PURPOSE
   if (!message) {
-    const textChannel = bot.channels.get("519468740325408789");
-    var vChannel = "579027412780711966";
-    const voiceChannel = bot.channels.get(vChannel);
     var embedmain = await textChannel.send(embedmusic);
   } else {
     var embedmain = await message.channel.send(embedmusic);
@@ -174,7 +260,6 @@ async function embedmusic(info, duration, who, message, server) {
     //console.log(channel.guild.me.voiceChannel.members.size);
     //var channel_users = message.guild.me.voiceChannel.members.size - 1;
 
-    const voiceChannel = bot.channels.get(vChannel);
     if (!message)
       var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
     else
@@ -197,11 +282,11 @@ async function embedmusic(info, duration, who, message, server) {
   });
 } // embedMusic
 
-async function play(connection, message) {
+async function play(connection, message, gId, textChannel, voiceChannel) {
   if (message)
     var server = servers[message.guild.id];
   else
-    var server = servers["422091347198214144"];
+    var server = servers[gId];
 
   /*
   var streamOptions = {
@@ -216,7 +301,7 @@ async function play(connection, message) {
       } else {
         var videoDuration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
       }
-      embedmusic(video, videoDuration, server.whoputdis[0], message, server); // run function & pass required information
+      embedmusic(video, videoDuration, server.whoputdis[0], message, server, textChannel, voiceChannel); // run function & pass required information
     }).catch(console.error);
 
   server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions));
