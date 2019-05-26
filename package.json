@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
   "name": "gardenerbot",
@@ -9,10 +10,6 @@
   },
   "description": "Just trying the Github with Heroku",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ishid4/GardenerBot.git"
@@ -24,15 +21,21 @@
   },
   "homepage": "https://github.com/ishid4/GardenerBot#readme",
   "dependencies": {
-    "express": "4.13.4",
     "async": "^2.6.2",
+    "discord-oauth2": "^1.2.3",
     "discord.js": "^11.5.0",
+    "express": "^4.17.0",
     "ffmpeg-binaries": "^4.0.0",
     "fs": "0.0.1-security",
     "get-artist-title": "^1.1.1",
+    "http": "0.0.0",
+    "install": "^0.12.2",
     "lyric-get": "^1.0.3",
+    "node-fetch": "^2.6.0",
+    "npm": "^6.9.0",
     "opusscript": "0.0.6",
     "simple-youtube-api": "^5.1.1",
+    "url": "^0.11.0",
     "ytdl-core-discord": "^1.0.3"
   }
 }
