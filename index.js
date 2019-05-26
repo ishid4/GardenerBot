@@ -91,7 +91,7 @@ http.createServer((req, res) => {
             res.write('<br><select>')
             for(k in userGuildsInfo){
               if(guilds[userGuildsInfo[k].id])
-                res.write('<option><a href="localhost:3000/?link=alolao?gid=' + userGuildsInfo[k].id + '">' + userGuildsInfo[k].name + '</a></option>')
+                res.write('<option>' + userGuildsInfo[k].id + ' ' + userGuildsInfo[k].name + '</option>')
             }
             res.write('</select>')
             res.end();
