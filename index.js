@@ -77,7 +77,7 @@ app.get('/login', (req, res) => {
     client_secret: "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
     grant_type: "authorization_code",
     code: accessCode,
-    redirect_uri: "https://gardeningthymebot.herokuapp.com/login",
+    redirect_uri: "https://discordapp.com/api/oauth2/authorize?client_id=581431951005843458&redirect_uri=http%3A%2F%2Fgardener.erdem.in%2Flogin&response_type=code&scope=identify",
     scope: "identify guilds"
   }).then(tokenReq => {
 
