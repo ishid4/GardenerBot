@@ -22,7 +22,7 @@ var defaultLang = "en";
 // Discord framework
 const Discord = require('discord.js');
 
-// Youtube Token
+// Youtube API
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(configs.youtubeToken);
 
@@ -33,30 +33,99 @@ const YTDL = require('ytdl-core-discord');
 const roles = JSON.parse(fs.readFileSync('./roles.json'));
 const guilds = JSON.parse(fs.readFileSync('./guilds.json'));
 
-// Options
+// Music Audio Options
 const ytdlOptions = {
   filter: "audioonly",
   quality: "highestaudio" // quality: "lowest"
 };
 
+// Discord Auth
+const DiscordOauth2 = require("discord-oauth2");
+const oauth = new DiscordOauth2();
+
 // Server Port listening
 var express = require('express');
 var app = express();
+
+
+
 app.set('port', (process.env.PORT || 3000));
+//app.set("view engine", "pug"); // to pulling html
 app.use(express.static(__dirname + '/web/'));
 
 app.use(express.json()); // to support JSON-encoded bodies
 app.use(express.urlencoded({
-  extended: true
-})); // to support URL-encoded bodies
+  extended: true // to support URL-encoded bodies
+}));
 
 app.listen(app.get('port'), function() {
   console.log('Mounted ' + app.get('port'));
 });
 
+app.post('/', function(req, res) {
+  var vUrl = req.body.link;
+  var uId = req.body.uid;
+  console.log("DEBUG: uId: " + uId + "/ vUrl: " + vUrl);
+  videoPush2(vUrl, uId);
+});
+
+app.get('/login', (req, res) => {
+  var accessCode = req.query.code;
+  content = '';
+  oauth.tokenRequest({
+    client_id: "581431951005843458",
+    client_secret: "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
+    grant_type: "authorization_code",
+    code: accessCode,
+    redirect_uri: "http://localhost:3000/login",
+    scope: "identify guilds"
+  }).then(tokenReq => {
+
+    console.log(tokenReq);
+
+    oauth.getUser(tokenReq.access_token).then(userInfo => {
+      //console.log(userInfo.username + "#" + userInfo.discriminator);
+      //res.write(JSON.stringify(userInfo));
+      res.write("Welcome back! " + userInfo.username + "#" + userInfo.discriminator);
+
+      videoPush2(req.query.link, userInfo.id);
+
+      res.end();
+    });
+
+    /*
+    oauth.getUserGuilds(tokenReq.access_token).then(userGuildsInfo => {
+      res.write('<br><select>')
+      for (k in userGuildsInfo) {
+        if (guilds[userGuildsInfo[k].id])
+          res.write('<option>' + userGuildsInfo[k].id + ' ' + userGuildsInfo[k].name + '</option>')
+      }
+      res.write('</select>')
+    });
+    */
+
+  });
+})
+
+app.get('/logout', function(req, res) {
+    req.logout();
+    res.redirect('/');
+});
+
+/*
+app.get("/profile", (req, res) => {
+  const person = people.profiles.find(p => p.id === req.query.id);
+  res.render("profile", {
+    title: `About ${person.firstname} ${person.lastname}`,
+    person
+  });
+});
+*/
+
+
+
 //OAuth2 TESTING
-const DiscordOauth2 = require("discord-oauth2");
-const oauth = new DiscordOauth2();
+/*
 
 const http = require('http');
 const url = require('url');
@@ -110,6 +179,9 @@ http.createServer((req, res) => {
   res.write(content);
 
 }).listen(3100);
+*/
+
+
 
 // Lyrics codes
 const l = require("lyric-get");
@@ -138,7 +210,6 @@ async function videoPush2(vUrl, uId) {
     if (vcId)
       break;
   }
-  console.log("DEBUG: User's VoiceChannel ID outside of the func: " + vcId);
   console.log("DEBUG: VoiceChannel's guild ID " + gId);
 
   if (!vcId)
@@ -160,9 +231,9 @@ async function videoPush2(vUrl, uId) {
   } else
     var tChannel = guilds[gId].music_channel_id;
 
-
   const textChannel = await bot.channels.get(tChannel);
   const voiceChannel = await bot.channels.get(vcId);
+
   if (!servers[gId])
       servers[gId] = {
       queue: [],
@@ -207,14 +278,7 @@ async function videoPush2(vUrl, uId) {
     }).catch(console.error);
 }
 
-app.post('/', function(req, res) {
-  var vUrl = req.body.link;
-  var uId = req.body.uid;
-  console.log("DEBUG: uId: " + uId + " vUrl: " + vUrl);
-  videoPush2(vUrl, uId);
-});
-
-// Playing now music
+// Music Embed Show + Reaction Collect
 async function embedmusic(info, duration, who, message, server, textChannel, voiceChannel) {
   var embedmusic = new Discord.RichEmbed()
     .setAuthor("Playing Now", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
@@ -253,7 +317,6 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
       var channel_users = message.guild.me.voiceChannel.members.size - 1;
 
     var votes = reaction.users.size - 1;
-
     var votes_need = Math.ceil(channel_users * 2 / 10) - votes;
 
     if (votes >= votes_need) {
@@ -269,6 +332,7 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
   });
 } // embedMusic
 
+// Main Play Function
 async function play(connection, message, gId, textChannel, voiceChannel) {
   if (message)
     var server = servers[message.guild.id];
