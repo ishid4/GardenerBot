@@ -77,7 +77,7 @@ app.get('/login', (req, res) => {
     client_secret: "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
     grant_type: "authorization_code",
     code: accessCode,
-    redirect_uri: "http://localhost:3000/login",
+    redirect_uri: "https://gardeningthymebot.herokuapp.com/login",
     scope: "identify guilds"
   }).then(tokenReq => {
 
