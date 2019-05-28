@@ -95,7 +95,7 @@ app.use(passport.session());
 
 app.get('/', checkAuth, function(req, res) {
   //res.json(req.user.id);
-  res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
+  res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br> For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
   sessionUserId = req.user.id;
 });
 
@@ -273,12 +273,20 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
     }
   });
 
-  let r2 = await embedmain.createReactionCollector(filter);
+  let r2 = await embedmain.createReactionCollector(filter, {
+    maxUsers: 10,
+    time: 700000
+  });
   // Lyrics (using_hand) emoji collect
   r2.on('collect', (reaction, reactionCollector, user) => {
 
     if (bot.user.id == reaction.users.last().id)
       return;
+
+    if (!message)
+      textChannel.send(reaction.users.last().id);
+    else
+      message.channel.send(reaction.users.last().id);
 
     let [artist, title] = getArtistTitle(server.videotitle[0], {
       defaultArtist: "null"
