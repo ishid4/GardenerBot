@@ -94,7 +94,7 @@ app.get('/', checkAuth, function(req, res) {
   //res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br> For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
   sessionUserId = req.user.id;
 
-  res.type('javascript');
+  res.type('js');
   res.send("window.close();");
 });
 
