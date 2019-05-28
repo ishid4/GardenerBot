@@ -30,42 +30,41 @@ const configs    = require('./config.json');
 const fs = require('fs')
     , async = require('async')
     , Discord = require('discord.js')
-    , YouTube = require('simple-youtube-api')
-    , youtube = new YouTube(configs.youtubeToken)
     , YTDL = require('ytdl-core-discord')
-    , roles = JSON.parse(fs.readFileSync('./roles.json'))
-    , guilds = JSON.parse(fs.readFileSync('./guilds.json'))
     , express = require('express')
     , app = express()
     , session = require('express-session')
     , passport = require('passport')
     , Strategy = require('./lib').Strategy
     , l = require("lyric-get")
-    , getArtistTitle = require('get-artist-title')
-    , ytdlOptions = {
-      filter: "audioonly",
-      quality: "highestaudio"
-    };
+    , getArtistTitle = require('get-artist-title');
 
-    var sessionUserId = false
-      , scopes = ['identify']
-      , servers = {}
-      , bot = new Discord.Client({
-        autoReconnect: true,
-        max_message_cache: 0
-      });
+const roles = JSON.parse(fs.readFileSync('./roles.json'));
+const guilds = JSON.parse(fs.readFileSync('./guilds.json'));
 
-      app.set('port', (process.env.PORT || 3000));
+const YouTube = require('simple-youtube-api');
+const youtube = new YouTube(configs.youtubeToken);
 
-      app.use(express.json());
-      app.use(express.urlencoded({extended: true}));
-      app.listen(app.get('port'), function() {
-        console.log('Mounted ' + app.get('port'));
-      });
+const ytdlOptions = {
+  filter: "audioonly",
+  quality: "highestaudio"
+};
 
+var sessionUserId = false
+  , scopes = ['identify']
+  , servers = {}
+  , bot = new Discord.Client({
+    autoReconnect: true,
+    max_message_cache: 0
+  });
 
+  app.set('port', (process.env.PORT || 3000));
 
-
+  app.use(express.json());
+  app.use(express.urlencoded({extended: true}));
+  app.listen(app.get('port'), function() {
+    console.log('Mounted ' + app.get('port'));
+});
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -73,7 +72,6 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
-
 
 passport.use(new Strategy({
   clientID: '581431951005843458',
@@ -97,6 +95,7 @@ app.use(passport.session());
 
 app.get('/', checkAuth, function(req, res) {
   //res.json(req.user.id);
+  res.write("Welcome " + req.user.username + "#" + req.user.discriminator);
   res.send('For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
   sessionUserId = req.user.id;
 });
@@ -124,8 +123,6 @@ function checkAuth(req, res, next) {
   res.redirect('/login');
 }
 
-
-
 app.post('/', function(req, res) {
   var vUrl = req.body.link;
   //var uId = req.body.uid;
@@ -137,8 +134,6 @@ app.post('/', function(req, res) {
     console.log("giriş yap");
   }
 });
-
-
 
 async function videoPush2(vUrl, uId, userName) {
   var vcId;
@@ -243,15 +238,17 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
     var embedmain = await message.channel.send(embedmusic);
 
   server.lastmusicembed = await embedmain;
-  embedmain.react('⏭');
+  await embedmain.react('⏭');
+  embedmain.react('✍');
 
   const filter = (reaction) => reaction.emoji.name === '⏭';
+  const filter2 = (reaction) => reaction.emoji.name === '✍';
 
   let r = await embedmain.createReactionCollector(filter, {
     maxUsers: 10,
     time: 700000
   });
-  // emoji collecting
+  // Skip emoji collect
   r.on('collect', (reaction, reactionCollector, user) => {
 
     if (bot.user.id == reaction.users.last().id)
@@ -276,6 +273,37 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
       vote_info();
     }
   });
+
+  let r2 = await embedmain.createReactionCollector(filter);
+  // Lyrics (using_hand) emoji collect
+  r2.on('collect', (reaction, reactionCollector, user) => {
+
+    if (bot.user.id == reaction.users.last().id)
+      return;
+
+    let [artist, title] = getArtistTitle(server.videotitle[0], {
+      defaultArtist: "null"
+    });
+
+    l.get(artist, title, function(err, res) {
+      if (err)
+        return bot.users.get(reaction.users.last().id).send("Bot couldn't find the lyrics of that song...");
+
+      const song_lyrics = new Discord.RichEmbed()
+        .setColor(16098851)
+        .setTitle("**Lyrics:** " + server.videotitle[0])
+        .setDescription(res.substring(0, 2048))
+      bot.users.get(reaction.users.last().id).send(song_lyrics);
+      if (res.length > 2048) {
+        const song_lyrics2 = new Discord.RichEmbed()
+          .setColor(16098851)
+          .setDescription(res.substring(2048, 4096))
+        bot.users.get(reaction.users.last().id).send(song_lyrics);
+      }
+    });
+
+  });
+
 } // embedMusic
 
 // Main Play Function
@@ -450,7 +478,7 @@ bot.on('message', message => {
               server.queue.push(vUrl);
               server.channel.push(message.channel.id);
               server.videolength.push(duration);
-              server.whoputdis.push(message.author.username);
+              server.whoputdis.push("<@" + message.author.id + ">");
               server.videotitle.push(video.title);
 
               if (!message.guild.voiceConnection)
