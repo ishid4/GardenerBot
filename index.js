@@ -95,7 +95,7 @@ app.get('/', checkAuth, function(req, res) {
   sessionUserId = req.user.id;
 
   res.type('.js');
-  res.send("window.onload = function(){window.close();}");
+  res.send("window.close();");
 });
 
 app.get('/callback', passport.authenticate('discord', {
@@ -126,7 +126,7 @@ app.post('/', function(req, res) {
   //var uId = req.body.uid;
   console.log("DEBUG: vUrl: " + vUrl);
   if (!(sessionUserId == false)) {
-    var userName = "Web <@" + sessionUserId + ">";
+    var userName = "🇼 <@" + sessionUserId + ">";
     videoPush2(vUrl, sessionUserId, userName);
   }
 });
