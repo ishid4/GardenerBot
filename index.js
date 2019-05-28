@@ -127,11 +127,11 @@ app.post('/', function(req, res) {
   //var uId = req.body.uid;
   console.log("DEBUG: vUrl: " + vUrl);
   if (!(sessionUserId == false)) {
-    var userName = "Web-<@" + sessionUserId + ">";
+    var userName = "Web <@" + sessionUserId + ">";
     videoPush2(vUrl, sessionUserId, userName);
-  } else {
-    console.log("giriş yap");
   }
+  else
+    res.redirect('/login');
 });
 
 async function videoPush2(vUrl, uId, userName) {
