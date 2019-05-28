@@ -36,6 +36,9 @@
     "opusscript": "0.0.6",
     "simple-youtube-api": "^5.1.1",
     "url": "^0.11.0",
-    "ytdl-core-discord": "^1.0.3"
+    "ytdl-core-discord": "^1.0.3",
+    "express-session": "^1.13.0",
+    "passport": "^0.3.2",
+    "passport-oauth2": "^1.5.0"
   }
 }
