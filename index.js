@@ -123,7 +123,8 @@ app.post('/', function(req, res) {
   //var uId = req.body.uid;
   console.log("DEBUG: vUrl: " + vUrl);
   if (!(sessionUserId == false)) {
-    videoPush2(vUrl, sessionUserId);
+    var userName = "Web(#<" + sessionUserId + ">)";
+    videoPush2(vUrl, sessionUserId, username);
   } else {
     console.log("giriş yap");
   }
@@ -141,7 +142,7 @@ var bot = new Discord.Client({
 
 var servers = {};
 
-async function videoPush2(vUrl, uId) {
+async function videoPush2(vUrl, uId, userName) {
   var vcId;
   var gId;
   for (var findGuild in guilds) {
@@ -214,7 +215,7 @@ async function videoPush2(vUrl, uId) {
 
       server.queue.push(vUrl);
       server.channel.push(tChannel);
-      server.whoputdis.push("Web_user");
+      server.whoputdis.push(userName);
       server.videotitle.push(video.title);
 
       if (!voiceChannel.guild.voiceConnection)
