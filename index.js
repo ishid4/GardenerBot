@@ -130,13 +130,10 @@ app.post('/', function(req, res) {
     var userName = "Web <@" + sessionUserId + ">";
     videoPush2(vUrl, sessionUserId, userName);
   }
-  else
-    res.redirect('/login');
 });
 
 async function videoPush2(vUrl, uId, userName) {
-  var vcId;
-  var gId;
+  var vcId, gId;
   for (var findGuild in guilds) {
     var guild = bot.guilds.get(findGuild);
 
