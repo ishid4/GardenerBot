@@ -127,7 +127,7 @@ app.post('/', function(req, res) {
   //var uId = req.body.uid;
   console.log("DEBUG: vUrl: " + vUrl);
   if (!(sessionUserId == false)) {
-    var userName = "Web(<@" + sessionUserId + ">)";
+    var userName = "Web-<@" + sessionUserId + ">";
     videoPush2(vUrl, sessionUserId, userName);
   } else {
     console.log("giriş yap");
@@ -240,23 +240,50 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
   await embedmain.react('⏭');
   embedmain.react('✍');
 
-  const filter = (reaction) => reaction.emoji.name === '⏭';
-  const filter2 = (reaction) => reaction.emoji.name === '✍';
+  const filter = (reaction) => reaction.emoji.name === '⏭' || reaction.emoji.name === '✍';
 
   let r = await embedmain.createReactionCollector(filter, {
     maxUsers: 10,
     time: 700000
   });
-  // Skip emoji collect
+
+  // Skip and Lyrics (using_hand) emoji collect
   r.on('collect', (reaction, reactionCollector, user) => {
 
     if (bot.user.id == reaction.users.last().id)
       return;
 
+    if(reaction.emoji.name === '✍'){
+      let [artist, title] = getArtistTitle(server.videotitle[0], {
+        defaultArtist: "null"
+      });
+
+      l.get(artist, title, function(err, res) {
+        if (err)
+          return bot.users.get(reaction.users.last().id).send("Bot couldn't find the lyrics of that song...");
+
+        const song_lyrics = new Discord.RichEmbed()
+          .setColor(16098851)
+          .setTitle("**Lyrics:** " + server.videotitle[0])
+          .setDescription(res.substring(0, 2048))
+        bot.users.get(reaction.users.last().id).send(song_lyrics);
+        if (res.length > 2048) {
+          const song_lyrics2 = new Discord.RichEmbed()
+            .setColor(16098851)
+            .setDescription(res.substring(2048, 4096))
+          bot.users.get(reaction.users.last().id).send(song_lyrics);
+        }
+      });
+      return;
+    }
+
     if (!message)
       var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
-    else
+    else{
       var channel_users = message.guild.me.voiceChannel.members.size - 1;
+      textChannel = message.channel;
+    }
+
 
     var votes = reaction.users.size - 1;
     var votes_need = Math.ceil(channel_users * 2 / 10) - votes;
@@ -266,49 +293,11 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
         server.dispatcher.end();
     } else {
       async function vote_info() {
-        let inf = await message.channel.send("<@" + reaction.users.last().id + "> wants to skip. **" + votes_need + " votes** need to skip.");
+        let inf = await textChannel.send("<@" + reaction.users.last().id + "> wants to skip. **" + votes_need + " votes** need to skip.");
         await inf.delete(10000);
       }
       vote_info();
     }
-  });
-
-  let r2 = await embedmain.createReactionCollector(filter, {
-    maxUsers: 10,
-    time: 700000
-  });
-  // Lyrics (using_hand) emoji collect
-  r2.on('collect', (reaction, reactionCollector, user) => {
-
-    if (bot.user.id == reaction.users.last().id)
-      return;
-
-    if (!message)
-      textChannel.send(reaction.users.last().id);
-    else
-      message.channel.send(reaction.users.last().id);
-
-    let [artist, title] = getArtistTitle(server.videotitle[0], {
-      defaultArtist: "null"
-    });
-
-    l.get(artist, title, function(err, res) {
-      if (err)
-        return bot.users.get(reaction.users.last().id).send("Bot couldn't find the lyrics of that song...");
-
-      const song_lyrics = new Discord.RichEmbed()
-        .setColor(16098851)
-        .setTitle("**Lyrics:** " + server.videotitle[0])
-        .setDescription(res.substring(0, 2048))
-      bot.users.get(reaction.users.last().id).send(song_lyrics);
-      if (res.length > 2048) {
-        const song_lyrics2 = new Discord.RichEmbed()
-          .setColor(16098851)
-          .setDescription(res.substring(2048, 4096))
-        bot.users.get(reaction.users.last().id).send(song_lyrics);
-      }
-    });
-
   });
 
 } // embedMusic
