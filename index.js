@@ -57,7 +57,9 @@ app.set('port', (process.env.PORT || 3000));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(express.static(__dirname + '/web'));
+
+app.use(express.static('/web'));
+app.use('/', express.static(__dirname + '/web'));
 
 app.listen(app.get('port'), function() {
     console.log('Mounted ' + app.get('port'));
