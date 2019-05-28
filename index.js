@@ -5,11 +5,15 @@
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
 // If music is already playing, web music push is not working. And, reaction skip is not working. Also, play and web play are not working together. 90% fixed, should've debug more.
-
+// kişileri etiketlesin
+// lyrics emojisi
+// login olduysa sayfayı kapatsın.
 
 // Requirements
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
+
+
 
 
 const guilds_dir = require('./guilds.json');
