@@ -124,7 +124,7 @@ app.post('/', function(req, res) {
   console.log("DEBUG: vUrl: " + vUrl);
   if (!(sessionUserId == false)) {
     var userName = "Web(#<" + sessionUserId + ">)";
-    videoPush2(vUrl, sessionUserId, username);
+    videoPush2(vUrl, sessionUserId, userName);
   } else {
     console.log("giriş yap");
   }
