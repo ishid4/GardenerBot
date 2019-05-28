@@ -4,13 +4,10 @@
 // DM Help menu
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
-// If music is already playing, web music push is not working. And, reaction skip is not working. Also, play and web play are not working together. 90% fixed, should've debug more.
-//
+// MAIN PROBLEM: Server can not change JSON files due to Heroku. Need to fix ASAP
 
 /*
 bot beleş buton paralı
-kişileri etiketlesin
-lyrics emojisi
 login olduysa sayfayı kapatsın.
 
 yetkileri azalt
@@ -20,8 +17,6 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 // Requirements
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
-
-
 
 
 const guilds_dir = require('./guilds.json');
@@ -97,6 +92,7 @@ app.get('/', checkAuth, function(req, res) {
   //res.json(req.user.id);
   res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br> For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
   sessionUserId = req.user.id;
+  res.close();
 });
 
 app.get('/callback', passport.authenticate('discord', {
@@ -220,7 +216,7 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
   var embedmusic = new Discord.RichEmbed()
     .setAuthor("Playing Now", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
     .setColor(16098851)
-    .setFooter("Click ⏭ to Skip")
+    .setFooter("Click ⏭ to Skip / ✍ to Lyrics")
     .setImage(info.maxRes.url)
     .setThumbnail("https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
     .setTimestamp()
