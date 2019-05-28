@@ -56,13 +56,13 @@ var sessionUserId = false
   , bot = new Discord.Client({
     autoReconnect: true,
     max_message_cache: 0
-  });
+});
 
-  app.set('port', (process.env.PORT || 3000));
+app.set('port', (process.env.PORT || 3000));
 
-  app.use(express.json());
-  app.use(express.urlencoded({extended: true}));
-  app.listen(app.get('port'), function() {
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.listen(app.get('port'), function() {
     console.log('Mounted ' + app.get('port'));
 });
 
@@ -95,8 +95,7 @@ app.use(passport.session());
 
 app.get('/', checkAuth, function(req, res) {
   //res.json(req.user.id);
-  res.write("Welcome " + req.user.username + "#" + req.user.discriminator);
-  res.send('For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
+  res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
   sessionUserId = req.user.id;
 });
 
