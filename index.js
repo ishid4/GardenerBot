@@ -60,7 +60,7 @@ var scopes = ['identify'];
 passport.use(new Strategy({
   clientID: '581431951005843458',
   clientSecret: 'p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K',
-  callbackURL: 'http://localhost:3000/callback',
+  callbackURL: 'http://gardener.erdem.in/callback',
   scope: scopes
 }, function(accessToken, refreshToken, profile, done) {
   process.nextTick(function() {
