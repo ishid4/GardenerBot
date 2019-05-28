@@ -5,9 +5,17 @@
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
 // If music is already playing, web music push is not working. And, reaction skip is not working. Also, play and web play are not working together. 90% fixed, should've debug more.
-// kişileri etiketlesin
-// lyrics emojisi
-// login olduysa sayfayı kapatsın.
+//
+
+/*
+bot beleş buton paralı
+kişileri etiketlesin
+lyrics emojisi
+login olduysa sayfayı kapatsın.
+
+yetkileri azalt
+https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417
+*/
 
 // Requirements
 //const opus = require('opusscript'); // nodeopus is better
