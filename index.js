@@ -57,6 +57,8 @@ app.set('port', (process.env.PORT || 3000));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(express.static(__dirname + '/web'));
+
 app.listen(app.get('port'), function() {
     console.log('Mounted ' + app.get('port'));
 });
@@ -92,7 +94,6 @@ app.get('/', checkAuth, function(req, res) {
   //res.json(req.user.id);
   res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br> For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
   sessionUserId = req.user.id;
-  res.close();
 });
 
 app.get('/callback', passport.authenticate('discord', {
