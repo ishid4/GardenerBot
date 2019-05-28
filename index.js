@@ -11,42 +11,49 @@
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
 
-const fs = require('fs');
-const async = require('async');
 
-const guilds_dir = './guilds.json';
-const configs = require('./config.json');
-const lang = JSON.parse(fs.readFileSync('./language.json'));
-var defaultLang = "en";
-var sessionUserId = false;
-// Discord framework
-const Discord = require('discord.js');
+const guilds_dir = require('./guilds.json');
+const configs    = require('./config.json');
 
-// Youtube API
-const YouTube = require('simple-youtube-api');
-const youtube = new YouTube(configs.youtubeToken);
+const fs = require('fs')
+    , async = require('async')
+    , Discord = require('discord.js')
+    , YouTube = require('simple-youtube-api')
+    , youtube = new YouTube(configs.youtubeToken)
+    , YTDL = require('ytdl-core-discord')
+    , roles = JSON.parse(fs.readFileSync('./roles.json'))
+    , guilds = JSON.parse(fs.readFileSync('./guilds.json'))
+    , express = require('express')
+    , app = express()
+    , session = require('express-session')
+    , passport = require('passport')
+    , Strategy = require('./lib').Strategy
+    , l = require("lyric-get")
+    , getArtistTitle = require('get-artist-title')
+    , ytdlOptions = {
+      filter: "audioonly",
+      quality: "highestaudio"
+    };
 
-// Youtube downloader framework
-const YTDL = require('ytdl-core-discord');
+    var sessionUserId = false
+      , scopes = ['identify']
+      , servers = {}
+      , bot = new Discord.Client({
+        autoReconnect: true,
+        max_message_cache: 0
+      });
 
-// Role configs
-const roles = JSON.parse(fs.readFileSync('./roles.json'));
-const guilds = JSON.parse(fs.readFileSync('./guilds.json'));
+      app.set('port', (process.env.PORT || 3000));
 
-// Music Audio Options
-const ytdlOptions = {
-  filter: "audioonly",
-  quality: "highestaudio" // quality: "lowest"
-};
+      app.use(express.json());
+      app.use(express.urlencoded({extended: true}));
+      app.listen(app.get('port'), function() {
+        console.log('Mounted ' + app.get('port'));
+      });
 
-// Server Port listening
-var express = require('express');
-var app = express();
 
-// Session + Discord Auth
-var session = require('express-session')
-var passport = require('passport')
-var Strategy = require('./lib').Strategy
+
+
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -55,7 +62,6 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
-var scopes = ['identify'];
 
 passport.use(new Strategy({
   clientID: '581431951005843458',
@@ -73,9 +79,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 app.get('/', checkAuth, function(req, res) {
   res.json(req.user.id);
@@ -86,7 +92,7 @@ app.get('/callback', passport.authenticate('discord', {
   failureRedirect: '/'
 }), function(req, res) {
   res.redirect('/');
-}); // auth success
+});
 
 app.get('/logout', function(req, res) {
   req.logout();
@@ -104,43 +110,22 @@ function checkAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
   res.redirect('/login');
 }
-// Session
 
-app.set('port', (process.env.PORT || 3000));
-app.use(express.static(__dirname + '/web/'));
 
-app.use(express.json()); // to support JSON-encoded bodies
-app.use(express.urlencoded({
-  extended: true // to support URL-encoded bodies
-}));
-
-app.listen(app.get('port'), function() {
-  console.log('Mounted ' + app.get('port'));
-});
 
 app.post('/', function(req, res) {
   var vUrl = req.body.link;
   //var uId = req.body.uid;
   console.log("DEBUG: vUrl: " + vUrl);
   if (!(sessionUserId == false)) {
-    var userName = "Web(#<" + sessionUserId + ">)";
+    var userName = "Web(<@" + sessionUserId + ">)";
     videoPush2(vUrl, sessionUserId, userName);
   } else {
     console.log("giriş yap");
   }
-
 });
 
-// Lyrics codes
-const l = require("lyric-get");
-const getArtistTitle = require('get-artist-title');
 
-var bot = new Discord.Client({
-  autoReconnect: true,
-  max_message_cache: 0
-});
-
-var servers = {};
 
 async function videoPush2(vUrl, uId, userName) {
   var vcId;
@@ -691,5 +676,6 @@ bot.on('message', message => {
   } // Channel messages END
 
 });
+
 
 bot.login(configs.token);
