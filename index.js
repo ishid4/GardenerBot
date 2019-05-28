@@ -18,7 +18,7 @@ const guilds_dir = './guilds.json';
 const configs = require('./config.json');
 const lang = JSON.parse(fs.readFileSync('./language.json'));
 var defaultLang = "en";
-
+var sessionUserId = false;
 // Discord framework
 const Discord = require('discord.js');
 
@@ -39,18 +39,74 @@ const ytdlOptions = {
   quality: "highestaudio" // quality: "lowest"
 };
 
-// Discord Auth
-const DiscordOauth2 = require("discord-oauth2");
-const oauth = new DiscordOauth2();
-
 // Server Port listening
 var express = require('express');
 var app = express();
 
+// Session + Discord Auth
+var session = require('express-session')
+var passport = require('passport')
+var Strategy = require('./lib').Strategy
 
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+var scopes = ['identify'];
+
+passport.use(new Strategy({
+  clientID: '581431951005843458',
+  clientSecret: 'p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K',
+  callbackURL: 'http://localhost:3000/callback',
+  scope: scopes
+}, function(accessToken, refreshToken, profile, done) {
+  process.nextTick(function() {
+    return done(null, profile);
+  });
+}));
+
+app.use(session({
+  secret: 'ozkan kalp yag',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('/', checkAuth, function(req, res) {
+  res.json(req.user.id);
+  sessionUserId = req.user.id;
+});
+
+app.get('/callback', passport.authenticate('discord', {
+  failureRedirect: '/'
+}), function(req, res) {
+  res.redirect('/');
+}); // auth success
+
+app.get('/logout', function(req, res) {
+  req.logout();
+  sessionUserId = false;
+  res.redirect('/');
+});
+
+app.get('/login', passport.authenticate('discord', {
+  scope: scopes
+}), function(req, res) {
+  res.redirect('/');
+});
+
+function checkAuth(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  res.redirect('/login');
+}
+// Session
 
 app.set('port', (process.env.PORT || 3000));
-//app.set("view engine", "pug"); // to pulling html
 app.use(express.static(__dirname + '/web/'));
 
 app.use(express.json()); // to support JSON-encoded bodies
@@ -64,124 +120,15 @@ app.listen(app.get('port'), function() {
 
 app.post('/', function(req, res) {
   var vUrl = req.body.link;
-  var uId = req.body.uid;
-  console.log("DEBUG: uId: " + uId + "/ vUrl: " + vUrl);
-  videoPush2(vUrl, uId);
-});
-
-app.get('/login', (req, res) => {
-  var accessCode = req.query.code;
-  content = '';
-  oauth.tokenRequest({
-    client_id: "581431951005843458",
-    client_secret: "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
-    grant_type: "authorization_code",
-    code: accessCode,
-    redirect_uri: "http://gardener.erdem.in/login",
-    scope: "identify guilds"
-  }).then(tokenReq => {
-
-    console.log(tokenReq);
-
-    oauth.getUser(tokenReq.access_token).then(userInfo => {
-      //console.log(userInfo.username + "#" + userInfo.discriminator);
-      //res.write(JSON.stringify(userInfo));
-      res.write("Welcome back! " + userInfo.username + "#" + userInfo.discriminator);
-
-      videoPush2(req.query.link, userInfo.id);
-
-      res.end();
-    });
-
-    /*
-    oauth.getUserGuilds(tokenReq.access_token).then(userGuildsInfo => {
-      res.write('<br><select>')
-      for (k in userGuildsInfo) {
-        if (guilds[userGuildsInfo[k].id])
-          res.write('<option>' + userGuildsInfo[k].id + ' ' + userGuildsInfo[k].name + '</option>')
-      }
-      res.write('</select>')
-    });
-    */
-
-  });
-})
-
-app.get('/logout', function(req, res) {
-    req.logout();
-    res.redirect('/');
-});
-
-/*
-app.get("/profile", (req, res) => {
-  const person = people.profiles.find(p => p.id === req.query.id);
-  res.render("profile", {
-    title: `About ${person.firstname} ${person.lastname}`,
-    person
-  });
-});
-*/
-
-
-
-//OAuth2 TESTING
-/*
-
-const http = require('http');
-const url = require('url');
-const FormData = require('form-data');
-
-http.createServer((req, res) => {
-  let responseCode = 404;
-  let content = '404 Error';
-
-  const urlObj = url.parse(req.url, true);
-
-  if (urlObj.pathname === '/') {
-    responseCode = 200;
-    content = fs.readFileSync('./web/index.html');
-  } else if (urlObj.pathname === '/login') {
-    var accessCode = urlObj.query.code;
-    content = '';
-    oauth.tokenRequest({
-      client_id: "581431951005843458",
-      client_secret: "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
-      grant_type: "authorization_code",
-      code: accessCode,
-      redirect_uri: "http://localhost:3100/login",
-      scope: "identify guilds"
-    }).then(tokenReq => {
-
-      oauth.getUser(tokenReq.access_token).then(userInfo => {
-        //console.log(userInfo.username + "#" + userInfo.discriminator);
-        //res.write(JSON.stringify(userInfo));
-        res.write("Welcome back! " + userInfo.username + "#" + userInfo.discriminator);
-      });
-
-      oauth.getUserGuilds(tokenReq.access_token).then(userGuildsInfo => {
-        res.write('<br><select>')
-        for (k in userGuildsInfo) {
-          if (guilds[userGuildsInfo[k].id])
-            res.write('<option>' + userGuildsInfo[k].id + ' ' + userGuildsInfo[k].name + '</option>')
-        }
-        res.write('</select>')
-        res.end();
-      });
-
-    });
-
+  //var uId = req.body.uid;
+  console.log("DEBUG: vUrl: " + vUrl);
+  if (!(sessionUserId == false)) {
+    videoPush2(vUrl, sessionUserId);
+  } else {
+    console.log("giriş yap");
   }
 
-  res.writeHead(responseCode, {
-    'content-type': 'text/html;charset=utf-8',
-  });
-
-  res.write(content);
-
-}).listen(3100);
-*/
-
-
+});
 
 // Lyrics codes
 const l = require("lyric-get");
@@ -235,7 +182,7 @@ async function videoPush2(vUrl, uId) {
   const voiceChannel = await bot.channels.get(vcId);
 
   if (!servers[gId])
-      servers[gId] = {
+    servers[gId] = {
       queue: [],
       whoputdis: [],
       videolength: [],
