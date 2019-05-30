@@ -96,7 +96,7 @@ app.get('/', checkAuth, function(req, res) {
 
   res.type('js');
   //res.send("<script>window.close();</script>");
-  res.sendFile(path.join(__dirname+'/template/close.html'));
+  res.sendFile(path.join('./template/close.html'));
 });
 
 app.get('/callback', passport.authenticate('discord', {
