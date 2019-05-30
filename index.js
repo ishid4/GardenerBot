@@ -32,7 +32,8 @@ const fs = require('fs')
     , passport = require('passport')
     , Strategy = require('./lib').Strategy
     , l = require("lyric-get")
-    , getArtistTitle = require('get-artist-title');
+    , getArtistTitle = require('get-artist-title')
+    , path = require('path');
 
 const roles = JSON.parse(fs.readFileSync('./roles.json'));
 const guilds = JSON.parse(fs.readFileSync('./guilds.json'));
@@ -98,7 +99,7 @@ app.get('/', checkAuth, function(req, res) {
 });
 
 app.get('/close', function(req, res) {
-  res.sendFile('./public/close.html');
+  res.sendFile(path.join(__dirname+'/close.html'));
 });
 
 app.get('/callback', passport.authenticate('discord', {

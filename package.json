@@ -39,6 +39,7 @@
     "ytdl-core-discord": "^1.0.3",
     "express-session": "^1.13.0",
     "passport": "^0.3.2",
-    "passport-oauth2": "^1.5.0"
+    "passport-oauth2": "^1.5.0",
+    "path": "^0.12.7"
   }
 }
