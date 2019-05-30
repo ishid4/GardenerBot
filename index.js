@@ -98,9 +98,10 @@ app.get('/', checkAuth, function(req, res) {
 
 
 });
-app.use('/site', express.static('public'));
+app.use('/public', express.static('public'));
+
 app.get('/close', function(req, res) {
-  res.sendFile('./close.html');
+  res.sendFile('public/close.html');
 });
 
 app.get('/callback', passport.authenticate('discord', {
