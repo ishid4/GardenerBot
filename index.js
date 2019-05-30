@@ -99,7 +99,7 @@ app.get('/', checkAuth, function(req, res) {
 
 });
 
-app.get('/close', checkAuth, function(req, res) {
+app.get('/close', function(req, res) {
   res.sendFile('./template/close.html');
 });
 
