@@ -32,8 +32,7 @@ const fs = require('fs')
     , passport = require('passport')
     , Strategy = require('./lib').Strategy
     , l = require("lyric-get")
-    , getArtistTitle = require('get-artist-title')
-    , path = require('path');
+    , getArtistTitle = require('get-artist-title');
 
 const roles = JSON.parse(fs.readFileSync('./roles.json'));
 const guilds = JSON.parse(fs.readFileSync('./guilds.json'));
@@ -95,12 +94,9 @@ app.get('/', checkAuth, function(req, res) {
   //res.json(req.user.id);
   //res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br> For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
   sessionUserId = req.user.id;
-  res.redirect('/close');
+  res.redirect('/public/close.html');
 });
 
-app.get('/close', function(req, res) {
-  res.sendFile(path.join(__dirname+'/close.html'));
-});
 
 app.get('/callback', passport.authenticate('discord', {
   failureRedirect: '/'
