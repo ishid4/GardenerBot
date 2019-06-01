@@ -96,14 +96,31 @@ app.use('/public', express.static('public'));
 
 app.listen(app.get('port'), function() {
   console.log('Mounted ' + app.get('port'));
-
-  request('https://api.erdem.in/api/guilds.json.php?api=' + configs[2], function(error, response, body) {
+/*
+  request('https://api.erdem.in/api/guilds.json.php', function(error, response, body) {
     if (!error && response.statusCode == 200) {
       const guildsJson = JSON.parse(body);
       console.log("Guilds data: OK!");
       guilds = guildsJson;
     }
+  });*/
+
+  request({
+    method: 'post',
+    url: 'https://api.erdem.in/api/guilds.json.php',
+    form: {api:configs[2]},
+    headers: {
+      "content-type": "application/json"
+    },
+    json: true,
+  }, function (error, response, body) {
+      if (!error && response.statusCode === 200) {
+          const guildsJson = JSON.parse(body);
+          console.log("Guilds data: OK!");
+          guilds = guildsJson;
+      }
   });
+
 });
 
 passport.serializeUser(function(user, done) {
