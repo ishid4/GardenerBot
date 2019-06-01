@@ -39,7 +39,7 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 }
 */
 
-const configs[
+const configs = [
   process.env.BOT_TOKEN,
   process.env.YOUTUBE_TOKEN,
   process.env.API,
