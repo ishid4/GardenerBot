@@ -100,7 +100,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new Strategy({
   clientID: configs[3],
   clientSecret: configs[4],
-  callbackURL: 'http://localhost:3000/callback',
+  callbackURL: 'https://gardener.erdem.in/callback',
   scope: scopes
 }, function(accessToken, refreshToken, profile, done) {
   process.nextTick(function() {
