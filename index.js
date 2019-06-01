@@ -115,10 +115,9 @@ app.listen(app.get('port'), function() {
     json: true,
   }, function (error, response, body) {
       if (!error && response.statusCode === 200) {
-          /*const guildsJson = JSON.parse(body);
+          const guildsJson = JSON.parse(body);
           console.log("Guilds data: OK!");
-          guilds = guildsJson;*/
-          console.log(body);
+          guilds = guildsJson;
       }
   });
 
