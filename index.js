@@ -93,7 +93,7 @@ app.use(passport.session());
 app.get('/', checkAuth, function(req, res) {
   //res.json(req.user.id);
   //res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br> For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
-  res.sendFile('../public/index.html');
+  res.sendFile('public/index.html', {root: __dirname });
   sessionUserId = req.user.id;
   //res.redirect('/public/close.html');
 });
