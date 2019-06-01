@@ -4,6 +4,7 @@
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
 // MAIN PROBLEM: Server can not change JSON files due to Heroku. Need to fix ASAP
+// Get volume from JSON when first play
 
 /*
 bot beleş buton paralı
@@ -38,26 +39,27 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 }
 */
 
-// DATA LOAD PROCEDURES: GET SERVERS.
 
 const request = require('request');
 //const guilds_dir = require('./guilds.json');
-const configs    = require('./config.json');
+const configs = require('./config.json');
 //const roles = JSON.parse(fs.readFileSync('./roles.json'));
 
 
-const fs = require('fs')
-    , async = require('async')
-    , Discord = require('discord.js')
-    , YTDL = require('ytdl-core-discord')
-    , prism = require('prism-media') // For volume
-    , express = require('express')
-    , app = express()
-    , session = require('express-session')
-    , passport = require('passport')
-    , Strategy = require('./lib').Strategy
-    , l = require("lyric-get")
-    , getArtistTitle = require('get-artist-title');
+const fs = require('fs'),
+  async = require('async'),
+    Discord = require('discord.js'),
+    l = require("lyric-get"),
+    getArtistTitle = require('get-artist-title');
+
+const YTDL = require('ytdl-core-discord'),
+  prism = require('prism-media'); // For volume
+
+const express = require('express'),
+  session = require('express-session'),
+  passport = require('passport'),
+  Strategy = require('./lib').Strategy,
+  app = express();
 
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(configs.youtubeToken);
@@ -67,89 +69,122 @@ const ytdlOptions = {
   quality: "highestaudio"
 };
 
-var sessionUserId = false
-  , scopes = ['identify']
-  , servers = {}
-  , bot = new Discord.Client({
+var sessionUserId = false,
+  scopes = ['identify'],
+  servers = {},
+  bot = new Discord.Client({
     autoReconnect: true,
     max_message_cache: 0
-});
+  });
 
 let guilds;
 
-  app.set('port', (process.env.PORT || 3000));
+app.set('port', (process.env.PORT || 3000));
 
-  app.use(express.json());
-  app.use(express.urlencoded({extended: true}));
-  app.use('/public', express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true
+}));
+app.use('/public', express.static('public'));
 
-  app.listen(app.get('port'), function() {
-      console.log('Mounted ' + app.get('port'));
+app.listen(app.get('port'), function() {
+  console.log('Mounted ' + app.get('port'));
 
-      request('http://api.erdem.in/api/guilds.json.php?api=D230K23D9J2398JQOEDK2OID1', function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-           const guildsJson = JSON.parse(body);
-           console.log("Guilds data: OK!");
-           guilds = guildsJson;
-        }
-      });
+  request('http://api.erdem.in/api/guilds.json.php?api=D230K23D9J2398JQOEDK2OID1', function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      const guildsJson = JSON.parse(body);
+      console.log("Guilds data: OK!");
+      guilds = guildsJson;
+    }
   });
+});
 
-  passport.serializeUser(function(user, done) {
-    done(null, user);
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+passport.use(new Strategy({
+  clientID: '581431951005843458',
+  clientSecret: 'p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K',
+  callbackURL: 'http://localhost:3000/callback',
+  scope: scopes
+}, function(accessToken, refreshToken, profile, done) {
+  process.nextTick(function() {
+    return done(null, profile);
   });
-  passport.deserializeUser(function(obj, done) {
-    done(null, obj);
-  });
+}));
 
-  passport.use(new Strategy({
-    clientID: '581431951005843458',
-    clientSecret: 'p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K',
-    callbackURL: 'http://localhost:3000/callback',
-    scope: scopes
-  }, function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function() {
-      return done(null, profile);
-    });
-  }));
-
-  app.use(session({
-    secret: 'ozkan kalp yag',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: (1000*60*60*24*7) }
-  }));
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-
-
-
-
+app.use(session({
+  secret: 'ozkan kalp yag',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: (1000 * 60 * 60 * 24 * 7)
+  }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 //////////////////////////////////////
 
-function insertServer(data){
-  request.post('http://api.erdem.in/procedure.php', {
-    json: {
-      data
-    }
-  }, (error, res, body) => {
-    if (error) {
-      console.error(error)
-      return
-    }
-    console.log(`statusCode: ${res.statusCode}`)
-    console.log(body)
+function insertServer(data) {
+  request({
+    method: 'post',
+    url: 'https://api.erdem.in/api/procedure.php',
+    form: data,
+    headers: {
+      "content-type": "application/json"
+    },
+    json: true,
   });
 }
 
+function prefixUpdate(data) {
+  request({
+    method: 'post',
+    url: 'https://api.erdem.in/api/procedure2.php',
+    form: data,
+    headers: {
+      "content-type": "application/json"
+    },
+    json: true,
+  });
+}
+
+function channelUpdate(data) {
+  request({
+    method: 'post',
+    url: 'https://api.erdem.in/api/procedure3.php',
+    form: data,
+    headers: {
+      "content-type": "application/json"
+    },
+    json: true,
+  });
+}
+
+function volumeUpdate(data) {
+  request({
+    method: 'post',
+    url: 'https://api.erdem.in/api/procedure4.php',
+    form: data,
+    headers: {
+      "content-type": "application/json"
+    },
+    json: true,
+  });
+}
 
 app.get('/', checkAuth, function(req, res) {
   //res.json(req.user.id);
   //res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br> For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
-  res.sendFile('public/index.html', {root: __dirname });
+  res.sendFile('public/index.html', {
+    root: __dirname
+  });
   sessionUserId = req.user.id;
   //res.redirect('/public/close.html');
 });
@@ -305,7 +340,7 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
     if (bot.user.id == reaction.users.last().id)
       return;
 
-    if(reaction.emoji.name === '✍'){
+    if (reaction.emoji.name === '✍') {
       let [artist, title] = getArtistTitle(server.videotitle[0], {
         defaultArtist: "null"
       });
@@ -329,7 +364,7 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
       return;
     }
 
-    if (!message){
+    if (!message) {
       var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
       var IsUserinVC = 0;
     } else {
@@ -342,7 +377,7 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
       }).catch(console.error);
     }
 
-    if(IsUserinVC == 0)
+    if (IsUserinVC == 0)
       return;
 
     var votes = reaction.users.size - 1;
@@ -381,7 +416,11 @@ async function play(connection, message, gId, textChannel, voiceChannel) {
 
 
   const input = await YTDL(server.queue[0])
-  const pcm = input.pipe(new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 }));
+  const pcm = input.pipe(new prism.opus.Decoder({
+    rate: 48000,
+    channels: 2,
+    frameSize: 960
+  }));
 
   server.dispatcher = connection.playConvertedStream(pcm); // For fixing volume
 
@@ -412,9 +451,19 @@ bot.on('uncaughtException', (err) => {
 
 bot.on('ready', function() {
   console.log("And Loaded " + bot.guilds.size + " servers");
-  bot.user.setActivity("help", {
-    type: "WATCHING"
-  });
+  var times = 1;
+  const activities_list = [
+    "help",
+    bot.guilds.size + " servers",
+  ];
+
+  setInterval(() => {
+    var index = times % 2;
+    times++;
+    bot.user.setActivity(activities_list[index], {
+      type: "WATCHING"
+    });
+  }, 10000);
 });
 
 bot.on('message', message => {
@@ -425,95 +474,94 @@ bot.on('message', message => {
     var prefix = "";
     var args = message.content.substring(prefix.length).split(" ");
 
-  switch (args[0].toLowerCase()) {
-    case "help":
-      if (!args[1]) {
-        const help_main = [];
+    switch (args[0].toLowerCase()) {
+      case "help":
+        if (!args[1]) {
+          const help_main = [];
 
-        help_main.push('\nHere\'s a list of all my commands:\n');
-        help_main.push("**Main**\n");
-        help_main.push("`settings`\n");
-        help_main.push("**Music**\n");
-        help_main.push("`play, skip, stop, volume, pause, resume, queue, playlist, shuffle, lyrics`");
-        help_main.push("\n**Others**\n");
-        help_main.push("`ping, serverinfo, bug, feedback`");
-        help_main.push(`\nYou can send \`help \` to get info on a specific command! (example: \`help playlist\`)`);
-        help_main.push(`\nIf you want to check prefix, just mention bot in the server.`);
+          help_main.push('\nHere\'s a list of all my commands:\n');
+          help_main.push("**Main**\n");
+          help_main.push("`settings`\n");
+          help_main.push("**Music**\n");
+          help_main.push("`play, skip, stop, volume, pause, resume, queue, playlist, shuffle, lyrics`");
+          help_main.push("\n**Others**\n");
+          help_main.push("`ping, serverinfo, bug, feedback`");
+          help_main.push(`\nYou can send \`help \` to get info on a specific command! (example: \`help playlist\`)`);
+          help_main.push(`\nIf you want to check prefix, just mention bot in the server.`);
 
-        message.author.send(help_main, {
-            split: true
-          })
-          .catch(() => console.log("ERROR: help couldn't send."));
-        return
-      }
-      switch (args[1].toLowerCase()) {
-        case "play":
-          const help_play = [];
-
-          help_play.push("\n**" + prefix + "Play**\n");
-          help_play.push("`play <url>, play <name_of_the_song>`");
-          help_play.push("\n**Examples**");
-          help_play.push("**1** " + prefix + "play **<https://www.youtube.com/watch?v=eH4F1Tdb040>**");
-          help_play.push("**2** " + prefix + "play **Stephen - Crossfire**");
-
-          message.author.send(help_play, {
+          message.author.send(help_main, {
               split: true
             })
-            .then(() => {
-              if (message.channel.type !== 'dm') {
-                message.reply('I\'ve sent you a DM with all my commands!');
-              }
-            })
-            .catch(() => console.log("DM Error"));
-          break;
-        case "settings":
-          const help_settings = [];
-
-          help_settings.push("\n**" + prefix + "Settings**\n");
-          help_settings.push("`settings setprefix, settings setchannel`");
-          help_settings.push("\n**Description**");
-          help_settings.push("**-** If you don't know the Server's current prefix, just Mention the bot.");
-          help_settings.push("**-** If you want to remove channel rule, run the command twice.");
-
-          message.author.send(help_settings, {
-              split: true
-            })
-            .then(() => {
-              if (message.channel.type !== 'dm') {
-                message.reply('I\'ve sent you a DM with all my commands!');
-              }
-            })
-            .catch(() => console.log("DM Error"));
-          break;
-        case "playlist":
-          const help_playlist = [];
-
-          help_playlist.push("\n**" + prefix + "Playlist**\n");
-          help_playlist.push("`playlist mylist, playlist create <playlist_name>, playlist add <playlist_name> <url>, playlist songs <playlist_name>, playlist start <playlist_name>`");
-          help_playlist.push("`playlist clear <playlist_name>, playlist delete <playlist_name>`");
-          help_playlist.push("\n**Examples**");
-          help_playlist.push("**1** " + prefix + "playlist create **example**");
-          help_playlist.push("**2** " + prefix + "playlist add **example** **<https://www.youtube.com/watch?v=eH4F1Tdb040>**");
-          help_playlist.push("**3** " + prefix + "playlist songs **example**");
-          help_playlist.push("**4** You need to be in the Voice Channel for use, " + prefix + "playlist start **example**");
-          help_playlist.push(`\nFor better use, you can try DM.`);
-
-          message.author.send(help_playlist, {
-              split: true
-            })
-            .then(() => {
-              if (message.channel.type !== 'dm') {
-                message.reply('I\'ve sent you a DM!');
-              }
-            })
-            .catch(() => console.log("DM Error"));
-          break;
-        default:
-          message.author.send("It's easy to find out! You can do it with your brain!");
+            .catch(() => console.log("ERROR: help couldn't send."));
+          return
         }
-      }
-  }
-  else { // Channel messages
+        switch (args[1].toLowerCase()) {
+          case "play":
+            const help_play = [];
+
+            help_play.push("\n**" + prefix + "Play**\n");
+            help_play.push("`play <url>, play <name_of_the_song>`");
+            help_play.push("\n**Examples**");
+            help_play.push("**1** " + prefix + "play **<https://www.youtube.com/watch?v=eH4F1Tdb040>**");
+            help_play.push("**2** " + prefix + "play **Stephen - Crossfire**");
+
+            message.author.send(help_play, {
+                split: true
+              })
+              .then(() => {
+                if (message.channel.type !== 'dm') {
+                  message.reply('I\'ve sent you a DM with all my commands!');
+                }
+              })
+              .catch(() => console.log("DM Error"));
+            break;
+          case "settings":
+            const help_settings = [];
+
+            help_settings.push("\n**" + prefix + "Settings**\n");
+            help_settings.push("`settings setprefix, settings setchannel`");
+            help_settings.push("\n**Description**");
+            help_settings.push("**-** If you don't know the Server's current prefix, just Mention the bot.");
+            help_settings.push("**-** If you want to remove channel rule, run the command twice.");
+
+            message.author.send(help_settings, {
+                split: true
+              })
+              .then(() => {
+                if (message.channel.type !== 'dm') {
+                  message.reply('I\'ve sent you a DM with all my commands!');
+                }
+              })
+              .catch(() => console.log("DM Error"));
+            break;
+          case "playlist":
+            const help_playlist = [];
+
+            help_playlist.push("\n**" + prefix + "Playlist**\n");
+            help_playlist.push("`playlist mylist, playlist create <playlist_name>, playlist add <playlist_name> <url>, playlist songs <playlist_name>, playlist start <playlist_name>`");
+            help_playlist.push("`playlist clear <playlist_name>, playlist delete <playlist_name>`");
+            help_playlist.push("\n**Examples**");
+            help_playlist.push("**1** " + prefix + "playlist create **example**");
+            help_playlist.push("**2** " + prefix + "playlist add **example** **<https://www.youtube.com/watch?v=eH4F1Tdb040>**");
+            help_playlist.push("**3** " + prefix + "playlist songs **example**");
+            help_playlist.push("**4** You need to be in the Voice Channel for use, " + prefix + "playlist start **example**");
+            help_playlist.push(`\nFor better use, you can try DM.`);
+
+            message.author.send(help_playlist, {
+                split: true
+              })
+              .then(() => {
+                if (message.channel.type !== 'dm') {
+                  message.reply('I\'ve sent you a DM!');
+                }
+              })
+              .catch(() => console.log("DM Error"));
+            break;
+          default:
+            message.author.send("It's easy to find out! You can do it with your brain!");
+        }
+    }
+  } else { // Channel messages
 
     if (!servers[message.guild.id])
       servers[message.guild.id] = {
@@ -533,17 +581,17 @@ bot.on('message', message => {
         prefix: "!",
         volume: "1",
         music_channel_id: "",
-        music_channel_name: ""
+        server_id: message.guild.id,
+        api: "D230K23D9J2398JQOEDK2OID1"
       };
       //let guildUpdate = JSON.stringify(guilds, null, 2);
       //fs.writeFileSync(guilds_dir, guildUpdate);
-
+      insertServer(guilds[message.guild.id]);
     }
 
     var prefix = guilds[message.guild.id].prefix;
     var music_channel_id = guilds[message.guild.id].music_channel_id;
     var music_channel_id_fix = "<#" + music_channel_id + ">";
-    var music_channel_name = guilds[message.guild.id].music_channel_name;
 
     if (server.queue[0])
       if (message.channel.id == server.channel[0])
@@ -670,9 +718,20 @@ bot.on('message', message => {
         } else {
           if (args[1] <= 100) {
             guilds[message.guild.id].volume = Math.max(args[1] / 100);
-            let settingMusicVolume = JSON.stringify(guilds, null, 2);
+            //let settingMusicVolume = JSON.stringify(guilds, null, 2);
             //fs.writeFileSync(guilds_dir, settingMusicVolume);
-            server.dispatcher.setVolume(guilds[message.guild.id].volume);
+
+            var postdata = {
+              server_id: message.guild.id,
+              volume: guilds[message.guild.id].volume,
+              api: "D230K23D9J2398JQOEDK2OID1"
+            };
+            console.log(postdata);
+            volumeUpdate(postdata);
+
+            if (server.queue[0])
+              server.dispatcher.setVolume(guilds[message.guild.id].volume);
+
             settingvolume();
           } else if (args[1] > 100) {
             server.dispatcher.setVolume(args[1] / 100);
@@ -828,10 +887,15 @@ bot.on('message', message => {
               return message.channel.send("Prefix should be between 1-3 characters.");
             } else {
               guilds[message.guild.id].prefix = args[2];
-              message.channel.send("Prefix changed to `" + args[2] + "`");
+
               bot.users.get(message.guild.owner.user.id).send("Prefix changed to `" + args[2] + "` in **" + message.guild.name + "**");
-              let settingPrefix = JSON.stringify(guilds, null, 2);
-              fs.writeFileSync(guilds_dir, settingPrefix);
+              var postdata = {
+                server_id: message.guild.id,
+                prefix: args[2],
+                api: "D230K23D9J2398JQOEDK2OID1"
+              };
+              prefixUpdate(postdata);
+              message.channel.send("Prefix changed to `" + args[2] + "`");
             }
             break;
 
@@ -840,18 +904,29 @@ bot.on('message', message => {
               return message.author.send("Insufficient permission.");
             if (message.channel.id == guilds[message.guild.id].music_channel_id) {
               guilds[message.guild.id].music_channel_id = "";
-              guilds[message.guild.id].music_channel_name = "";
               message.channel.send("Music Channel changed to `all`");
-              let settingMusicChannel = JSON.stringify(guilds, null, 2);
-              fs.writeFileSync(guilds_dir, settingMusicChannel);
+
+              var postdata = {
+                server_id: message.guild.id,
+                music_channel_id: "all"
+              };
+              channelUpdate(postdata);
+              //let settingMusicChannel = JSON.stringify(guilds, null, 2);
+              //fs.writeFileSync(guilds_dir, settingMusicChannel);
               return;
             }
             guilds[message.guild.id].music_channel_id = message.channel.id;
-            guilds[message.guild.id].music_channel_name = message.channel.name;
             message.channel.send("Music Channel changed to `" + message.channel.name + "`");
             bot.users.get(message.guild.owner.user.id).send("Music Channel changed to `" + message.channel.name + "` in **" + message.guild.name + "**");
-            let settingMusicChannel = JSON.stringify(guilds, null, 2);
-            fs.writeFileSync(guilds_dir, settingMusicChannel);
+
+            var postdata = {
+              server_id: message.guild.id,
+              music_channel_id: message.channel.id,
+              api: "D230K23D9J2398JQOEDK2OID1"
+            };
+            //let settingMusicChannel = JSON.stringify(guilds, null, 2);
+            //fs.writeFileSync(guilds_dir, settingMusicChannel);
+            channelUpdate(postdata);
             break;
           default:
             message.author.send("Try help!");
