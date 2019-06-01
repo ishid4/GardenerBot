@@ -1,0 +1,39 @@
+// @author: Erdem
+
+.body{
+  padding: 0;
+}
+.beyaz{
+  background-color: #FFFFFF !important;
+}
+.grimor{
+  background-color: #99AAB5 !important;
+}
+.gri{
+  background-color: #2C2F33 !important;
+}
+.siyah{
+  background-color: #23272A !important;
+}
+.mavimor{
+  background-color: #7289DA !important;
+}
+.mavimor-text{
+  color: #7289DA !important;
+}
+.bosluk{
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+.bosluk-2{
+  padding-top: 8rem !important;
+  padding-bottom: 8rem !important;
+}
+.temiz{
+  background-color: transparent !important;
+  -webkit-box-shadow: 0 0 0 0 rgba(0,0,0,0.14), 0 0 0 0 rgba(0,0,0,0.12), 0 0 0 0 rgba(0,0,0,0.2) !important;
+  box-shadow: 0 0 0 0 rgba(0,0,0,0.14), 0 0 0 0 rgba(0,0,0,0.12), 0 0 0 0 rgba(0,0,0,0.2) !important;
+}
+.govde{
+  margin-top: -4rem;
+}

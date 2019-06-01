@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <title>Gardener Bot</title>
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="res/css/materialize.min.css"  media="screen,projection"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="res/css/gardener.css"  media="screen,projection"/>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  </head>
+  <body class="siyah">
+    <nav class="nav-extended mavimor">
+      <div class="nav-wrapper container">
+        <a href="#!" class="brand-logo">Gardener Bot</a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="res/zip/gardener.zip">İndir<i class="material-icons right">file_download</i></a></li>
+          <li><a href="https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417 ">Ekle<i class="material-icons right">add</i></a></li>
+          <li><a href="login">Giriş Yap<i class="material-icons right">account_box</i></a></li>
+        </ul>
+      </div>
+      <div class="nav-content container">
+        <div class="row">
+          <div class="col s10 offset-s1">
+            <div class="col s4 bosluk-2">
+              <h5>Chrome için Gardener'i indir</h5>
+              <a href="res/zip/gardener.zip" class="btn beyaz mavimor-text">Şimdi İndir</a>
+              <p>Sadece chrome için.</p>
+            </div>
+            <div class="col s8">
+              <div class="carousel">
+                <a class="carousel-item" href="#1!"><img src="res/heroku.jpg"></a>
+                <a class="carousel-item" href="#2!"><img src="res/node.jpg"></a>
+                <a class="carousel-item" href="#3!"><img src="res/php.jpg"></a>
+                <a class="carousel-item" href="#4!"><img src="res/mysql.png"></a>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </nav>
+    <div class="container govde">
+        <div class="col s12">
+          <div class="card-panel beyaz z-depth-5 mavimor-text">
+            <div class="row">
+              <div class="col s6 bosluk">
+                <h1>Gardener bot</h1>
+                <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo ante pharetra ex pharetra ullamcorper. Pellentesque vel convallis velit, vel consectetur leo. Duis a diam et sem convallis pellentesque. Fusce quis velit eget tortor faucibus dictum. Integer porta, metus quis vehicula feugiat, lectus nibh imperdiet erat, ut tempus felis odio sed augue. Nulla a nisl finibus enim viverra finibus. Donec vel nisl massa. Donec nulla quam, aliquet at erat at, facilisis eleifend urna.
+                </span>
+              </div>
+              <div class="col s6">
+                <img class="responsive-img" src="res/dc.png">
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="res/js/materialize.min.js"></script>
+    <script type="text/javascript">
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var options = {numVisible:3}
+       var elems = document.querySelectorAll('.carousel');
+       var instances = M.Carousel.init(elems, options);
+     });
+
+    </script>
+  </body>
+</html>
