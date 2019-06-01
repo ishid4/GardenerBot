@@ -246,6 +246,9 @@ async function videoPush2(vUrl, uId, userName) {
   console.log("DEBUG: User's VoiceChannel ID: " + vcId);
   console.log("DEBUG: VoiceChannel's guild ID " + gId);
 
+  if (!bot.users.get(uId).hasPermission("MANAGE_GUILD"))
+    return console.log("DEBUG: Insufficient permission.");
+
   if (!vcId)
     return console.log("DEBUG: User is not in the VoiceChannel");
 
@@ -620,6 +623,9 @@ bot.on('message', message => {
 
     switch (args[0].toLowerCase()) {
       case "play":
+        if (!message.member.hasPermission("MANAGE_GUILD"))
+          return message.author.send("Insufficient permission.");
+
         if (!args[1])
           return message.reply("Where is the **Thing** you want to play?");
 
