@@ -39,10 +39,17 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 }
 */
 
+const configs[
+  process.env.BOT_TOKEN,
+  process.env.YOUTUBE_TOKEN,
+  process.env.API,
+  process.env.CLIENTID,
+  process.env.CLIENTSECRET
+];
 
 const request = require('request');
 //const guilds_dir = require('./guilds.json');
-const configs = require('./config.json');
+//const configs = require('./config.json');
 //const roles = JSON.parse(fs.readFileSync('./roles.json'));
 
 
@@ -62,7 +69,7 @@ const express = require('express'),
   app = express();
 
 const YouTube = require('simple-youtube-api');
-const youtube = new YouTube(configs.youtubeToken);
+const youtube = new YouTube(configs[1]);
 
 const ytdlOptions = {
   filter: "audioonly",
@@ -90,7 +97,7 @@ app.use('/public', express.static('public'));
 app.listen(app.get('port'), function() {
   console.log('Mounted ' + app.get('port'));
 
-  request('http://api.erdem.in/api/guilds.json.php?api=D230K23D9J2398JQOEDK2OID1', function(error, response, body) {
+  request('https://api.erdem.in/api/guilds.json.php?api=' + configs[2], function(error, response, body) {
     if (!error && response.statusCode == 200) {
       const guildsJson = JSON.parse(body);
       console.log("Guilds data: OK!");
@@ -107,9 +114,9 @@ passport.deserializeUser(function(obj, done) {
 });
 
 passport.use(new Strategy({
-  clientID: '581431951005843458',
-  clientSecret: 'p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K',
-  callbackURL: 'http://localhost:3000/callback',
+  clientID: configs[3],
+  clientSecret: configs[4],
+  callbackURL: 'https://gardener.erdem.in/callback',
   scope: scopes
 }, function(accessToken, refreshToken, profile, done) {
   process.nextTick(function() {
@@ -582,7 +589,7 @@ bot.on('message', message => {
         volume: "1",
         music_channel_id: "",
         server_id: message.guild.id,
-        api: "D230K23D9J2398JQOEDK2OID1"
+        api: configs[2]
       };
       //let guildUpdate = JSON.stringify(guilds, null, 2);
       //fs.writeFileSync(guilds_dir, guildUpdate);
@@ -724,7 +731,7 @@ bot.on('message', message => {
             var postdata = {
               server_id: message.guild.id,
               volume: guilds[message.guild.id].volume,
-              api: "D230K23D9J2398JQOEDK2OID1"
+              api: configs[2]
             };
             console.log(postdata);
             volumeUpdate(postdata);
@@ -892,7 +899,7 @@ bot.on('message', message => {
               var postdata = {
                 server_id: message.guild.id,
                 prefix: args[2],
-                api: "D230K23D9J2398JQOEDK2OID1"
+                api: configs[2]
               };
               prefixUpdate(postdata);
               message.channel.send("Prefix changed to `" + args[2] + "`");
@@ -908,7 +915,8 @@ bot.on('message', message => {
 
               var postdata = {
                 server_id: message.guild.id,
-                music_channel_id: "all"
+                music_channel_id: "all",
+                api: configs[2]
               };
               channelUpdate(postdata);
               //let settingMusicChannel = JSON.stringify(guilds, null, 2);
@@ -922,7 +930,7 @@ bot.on('message', message => {
             var postdata = {
               server_id: message.guild.id,
               music_channel_id: message.channel.id,
-              api: "D230K23D9J2398JQOEDK2OID1"
+              api: configs[2]
             };
             //let settingMusicChannel = JSON.stringify(guilds, null, 2);
             //fs.writeFileSync(guilds_dir, settingMusicChannel);
@@ -952,4 +960,4 @@ bot.on('message', message => {
 });
 
 
-bot.login(configs.token);
+bot.login(configs[0]);
