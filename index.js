@@ -3,8 +3,9 @@
 // DM Help menu
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
-// MAIN PROBLEM: Server can not change JSON files due to Heroku. Need to fix ASAP
+// MAIN PROBLEM: Server can not change JSON files due to Heroku. Need to fix ASAP. 90% fixed
 // Get volume from JSON when first play
+// Play + Web Play should be permission strict
 
 /*
 bot beleş buton paralı
@@ -18,26 +19,6 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
 
-
-
-/*
-"422091347198214144": {
-  "name": "Developing Thyme",
-  "owner": "139144182794027009",
-  "prefix": "!",
-  "volume": 1,
-  "music_channel_id": "519468740325408789",
-  "music_channel_name": "music"
-},
-"139771037486153728": {
-  "name": "Konoha Merkez",
-  "owner": "139146539900600320",
-  "prefix": "!",
-  "volume": "100",
-  "music_channel_id": "",
-  "music_channel_name": ""
-}
-*/
 
 const configs = [
   process.env.BOT_TOKEN,
@@ -119,7 +100,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new Strategy({
   clientID: configs[3],
   clientSecret: configs[4],
-  callbackURL: 'https://gardener.erdem.in/callback',
+  callbackURL: 'http://localhost:3000/callback',
   scope: scopes
 }, function(accessToken, refreshToken, profile, done) {
   process.nextTick(function() {
@@ -249,11 +230,8 @@ async function videoPush2(vUrl, uId, userName) {
   console.log("DEBUG: User's VoiceChannel ID: " + vcId);
   console.log("DEBUG: VoiceChannel's guild ID " + gId);
 
-  if (!bot.users.get(uId).hasPermission("MANAGE_GUILD"))
-    return console.log("DEBUG: Insufficient permission.");
-
   if (!vcId)
-    return console.log("DEBUG: User is not in the VoiceChannel");
+    return bot.users.get(uId).send("You're not in a VoiceChannel");
 
   if (!guilds[gId].music_channel_id || guilds[gId].music_channel_id == "") {
 
