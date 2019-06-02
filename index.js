@@ -1,5 +1,4 @@
 // TODOS
-// Reaction collector rework. Check if user in the voicechannel..
 // DM Help menu
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
@@ -7,7 +6,6 @@
 // Get volume from JSON when first play
 // Play + Web Play should be permission strict
 // Web Play who put dis fix
-// FIXME: Web play skip reaction
 
 /*
 bot beleş buton paralı
@@ -21,14 +19,15 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
 
-
 const configs = [
   process.env.BOT_TOKEN,
   process.env.YOUTUBE_TOKEN,
   process.env.API,
   process.env.CLIENTID,
-  process.env.CLIENTSECRET
+  process.env.CLIENTSECRET,
+  "https://gardener.erdem.in/callback"
 ];
+
 
 const request = require('request');
 //const guilds_dir = require('./guilds.json');
@@ -59,8 +58,7 @@ const ytdlOptions = {
   quality: "highestaudio"
 };
 
-var sessionUserId = false,
-  scopes = ['identify'],
+var sessionUserId,
   servers = {},
   bot = new Discord.Client({
     autoReconnect: true,
@@ -102,8 +100,8 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new Strategy({
   clientID: configs[3],
   clientSecret: configs[4],
-  callbackURL: 'https://gardener.erdem.in/callback',
-  scope: scopes
+  callbackURL: configs[5],
+  scope: ['identify']
 }, function(accessToken, refreshToken, profile, done) {
   process.nextTick(function() {
     return done(null, profile);
@@ -195,9 +193,7 @@ app.get('/logout', function(req, res) {
   res.redirect('/');
 });
 
-app.get('/login', passport.authenticate('discord', {
-  scope: scopes
-}), function(req, res) {
+app.get('/login', passport.authenticate('discord'), function(req, res) {
   res.redirect('/');
 });
 
@@ -209,7 +205,7 @@ function checkAuth(req, res, next) {
 app.post('/', function(req, res) {
   var vUrl = req.body.link;
   //console.log("DEBUG: vUrl: " + vUrl);
-  if (!(sessionUserId == false)) {
+  if (sessionUserId) {
     var userName = "🔸 <@" + sessionUserId + ">";
     videoPush2(vUrl, sessionUserId, userName);
   }
@@ -229,11 +225,11 @@ async function videoPush2(vUrl, uId, userName) {
     if (vcId)
       break;
   }
-  console.log("DEBUG: User's VoiceChannel ID: " + vcId);
-  console.log("DEBUG: VoiceChannel's guild ID " + gId);
+  //console.log("DEBUG: User's VoiceChannel ID: " + vcId);
+  //console.log("DEBUG: VoiceChannel's guild ID " + gId);
 
   if (!vcId)
-    return bot.users.get(uId).send("You're not in a VoiceChannel");
+    return bot.users.get(uId).send("You must be in a VoiceChannel for `Play on Discord`");
 
   if (!guilds[gId].music_channel_id || guilds[gId].music_channel_id == "") {
 
@@ -363,6 +359,10 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
       var channel_users = message.guild.me.voiceChannel.members.size - 1;
       textChannel = message.channel;
     }
+
+    //console.log(reaction.users.last().lastMessage.member.voiceChannelID);
+    if(!reaction.users.last().lastMessage.member.voiceChannelID)
+      return bot.users.get(reaction.users.last().id).send("You must be in the VoiceChannel for `skip` reaction");
 
     var votes = reaction.users.size - 1;
     var votes_need = Math.ceil(channel_users * 2 / 10) - votes;
