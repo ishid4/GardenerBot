@@ -6,6 +6,8 @@
 // MAIN PROBLEM: Server can not change JSON files due to Heroku. Need to fix ASAP. 90% fixed
 // Get volume from JSON when first play
 // Play + Web Play should be permission strict
+// Web Play who put dis fix
+// FIXME: Web play skip reaction
 
 /*
 bot beleş buton paralı
@@ -357,19 +359,10 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
 
     if (!message) {
       var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
-      var IsUserinVC = 0;
     } else {
       var channel_users = message.guild.me.voiceChannel.members.size - 1;
       textChannel = message.channel;
-
-      message.guild.fetchMember(reaction.users.last().id).then(info => {
-        if (info.voiceChannelID != undefined)
-          var IsUserinVC = 1;
-      }).catch(console.error);
     }
-
-    if (IsUserinVC == 0)
-      return;
 
     var votes = reaction.users.size - 1;
     var votes_need = Math.ceil(channel_users * 2 / 10) - votes;
