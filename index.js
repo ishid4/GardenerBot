@@ -18,15 +18,8 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 // Requirements
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
-const configs = [
-  "NDIyMDkwNjE5ODU5NjMyMTY4.DYWuDA.k_H-WcDTB_Df672iG-LaX4tY9NM",
-  "AIzaSyBMW9D6z_8wOQKqxsCSiL7_DQJXr3Oi_zY",
-  "E76BD785C402214A2DB4909F0AD62FEE633CBB789E03ABE8795AD2FF699F2A1B",
-  "581431951005843458",
-  "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
-  "http://localhost:3000/callback"
-];
-/*
+
+
 const configs = [
   process.env.BOT_TOKEN,
   process.env.YOUTUBE_TOKEN,
@@ -35,13 +28,8 @@ const configs = [
   process.env.CLIENTSECRET,
   "https://gardener.erdem.in/callback"
 ];
-*/
 
 const request = require('request');
-//const guilds_dir = require('./guilds.json');
-//const configs = require('./config.json');
-//const roles = JSON.parse(fs.readFileSync('./roles.json'));
-
 
 const fs = require('fs'),
   async = require('async'),
@@ -86,15 +74,13 @@ app.use('/public', express.static('public'));
 app.listen(app.get('port'), function() {
   console.log('Mounted ' + app.get('port'));
 
-  request('https://api.erdem.in/api/guilds.json.php?api='+configs[2], function(error, response, body) {
+  request('https://api.erdem.in/api/guilds.json.php?api=' + configs[2], function(error, response, body) {
     if (!error && response.statusCode == 200) {
       const guildsJson = JSON.parse(body);
       console.log("Guilds data: OK!");
       guilds = guildsJson;
     }
   });
-
-
 
 });
 
@@ -181,7 +167,7 @@ function volumeUpdate(data) {
 
 
 // Node.js Swig Template Engine
-var swig  = require('swig-templates');
+var swig = require('swig-templates');
 var template = swig.compileFile('public/index.html');
 
 app.set('view engine', 'html');
@@ -385,7 +371,7 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
     }
 
     //console.log(reaction.users.last().lastMessage.member.voiceChannelID);
-    if(!reaction.users.last().lastMessage.member.voiceChannelID)
+    if (!reaction.users.last().lastMessage.member.voiceChannelID)
       return bot.users.get(reaction.users.last().id).send("You must be in the VoiceChannel for `skip` reaction");
 
     var votes = reaction.users.size - 1;
