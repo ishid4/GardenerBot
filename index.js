@@ -18,16 +18,7 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
 
-const configs = [
-  "NDIyMDkwNjE5ODU5NjMyMTY4.DYWuDA.k_H-WcDTB_Df672iG-LaX4tY9NM",
-  "AIzaSyBMW9D6z_8wOQKqxsCSiL7_DQJXr3Oi_zY",
-  "E76BD785C402214A2DB4909F0AD62FEE633CBB789E03ABE8795AD2FF699F2A1B",
-  "581431951005843458",
-  "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
-  "http://localhost:3000/callback"
-];
 
-/*
 const configs = [
   process.env.BOT_TOKEN,
   process.env.YOUTUBE_TOKEN,
@@ -36,7 +27,7 @@ const configs = [
   process.env.CLIENTSECRET,
   "https://gardener.erdem.in/callback"
 ];
-*/
+
 const request = require('request');
 
 const fs = require('fs'),
