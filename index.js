@@ -369,15 +369,17 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
 
     if (!message) {
       var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
+      var bot_vcId = voiceChannel.guild.me.voiceChannel.id;
       var guild = bot.guilds.get(gId);
       var vcId = guild.member(reaction.users.last().id).voiceChannelID
     } else {
       var channel_users = message.guild.me.voiceChannel.members.size - 1;
       textChannel = message.channel;
+      var bot_vcId = message.guild.me.voiceChannel.id;
       var vcId = reaction.users.last().lastMessage.member.voiceChannelID;
     }
 
-    if (!vcId || vcId != voiceChannel.guild.me.voiceChannel.id)
+    if (!vcId || vcId != bot_vcId)
       return bot.users.get(reaction.users.last().id).send("You must be in the VoiceChannel for `skip` reaction");
 
     var votes = reaction.users.size - 1;
