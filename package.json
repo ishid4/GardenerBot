@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/ishid4/GardenerBot#readme",
   "dependencies": {
+    "swig-templates": "2.0.3",
     "async": "^2.6.2",
     "discord-oauth2": "^1.2.3",
     "discord.js": "^11.5.0",
