@@ -205,6 +205,22 @@ app.get('/', function(req, res) {
 });
 
 
+app.get('/link', function(req, res) {
+  if (req.isAuthenticated()){
+    if(req.query.link){
+      var vUrl = req.query.link;
+      var userName = "🔸 <@" + req.user.id + ">";
+      console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
+      videoPush2(vUrl, req.user.id, userName);
+      return;
+    }
+  }
+  res.end();
+  //res.redirect('/public/close.html');
+});
+
+
+
 app.get('/callback', passport.authenticate('discord', {
   failureRedirect: '/'
 }), function(req, res) {
