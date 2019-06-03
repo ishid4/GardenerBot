@@ -18,7 +18,15 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 // Requirements
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
-
+const configs = [
+  "NDIyMDkwNjE5ODU5NjMyMTY4.DYWuDA.k_H-WcDTB_Df672iG-LaX4tY9NM",
+  "AIzaSyBMW9D6z_8wOQKqxsCSiL7_DQJXr3Oi_zY",
+  "E76BD785C402214A2DB4909F0AD62FEE633CBB789E03ABE8795AD2FF699F2A1B",
+  "581431951005843458",
+  "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
+  "http://localhost:3000/callback"
+];
+/*
 const configs = [
   process.env.BOT_TOKEN,
   process.env.YOUTUBE_TOKEN,
@@ -27,7 +35,7 @@ const configs = [
   process.env.CLIENTSECRET,
   "https://gardener.erdem.in/callback"
 ];
-
+*/
 
 const request = require('request');
 //const guilds_dir = require('./guilds.json');
@@ -170,13 +178,25 @@ function volumeUpdate(data) {
   });
 }
 
+
+
+// Node.js Swig Template Engine
+var swig  = require('swig-templates');
+var template = swig.compileFile('public/index.html');
+
+app.set('view engine', 'html');
+app.set('views', __dirname + '/public');
+app.engine('html', swig.renderFile);
+// Node.js Swig Template Engine
+
+
 app.get('/', checkAuth, function(req, res) {
   //res.json(req.user.id);
-  //res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br> For use, invite bot <a href=\"https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417\">click.</a>');
-  res.sendFile('public/index.html', {
-    root: __dirname
-  });
   sessionUserId = req.user.id;
+  res.render('index.html', {
+    userLogin: req.user.username,
+    userLink: 'info'
+  });
   //res.redirect('/public/close.html');
 });
 
@@ -191,6 +211,10 @@ app.get('/logout', function(req, res) {
   req.logout();
   sessionUserId = false;
   res.redirect('/');
+});
+
+app.get('/info', checkAuth, function(req, res) {
+  res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br>');
 });
 
 app.get('/login', passport.authenticate('discord'), function(req, res) {
