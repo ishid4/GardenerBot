@@ -5,6 +5,8 @@
 // MAIN PROBLEM: Server can not change JSON files due to Heroku. 90% fixed
 // Play + Web Play should be permission strict
 // remove Skip reaction after wrong reaction
+// Music recommendation
+// FIXME: Web play whoputdis full same as first
 
 /*
 bot beleş buton paralı
@@ -17,7 +19,6 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 // Requirements
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
-
 
 const configs = [
   process.env.BOT_TOKEN,
@@ -177,13 +178,19 @@ app.engine('html', swig.renderFile);
 // Node.js Swig Template Engine
 
 
-app.get('/', checkAuth, function(req, res) {
-  //res.json(req.user.id);
-  sessionUserId = req.user.id;
-  res.render('index.html', {
-    userLogin: req.user.username,
-    userLink: 'info'
-  });
+app.get('/', function(req, res) {
+  if (req.isAuthenticated()){
+    res.render('index.html', {
+      userLogin: req.user.username,
+      userLink: 'info'
+    });
+  }
+  else {
+    res.render('index.html', {
+      userLogin: "Giriş Yap",
+      userLink: 'login'
+    });
+  }
   res.end();
   //res.redirect('/public/close.html');
 });
@@ -202,7 +209,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/info', checkAuth, function(req, res) {
-  res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br>');
+  res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br><a href="/logout">Logout</a>');
   res.end();
 });
 
@@ -215,13 +222,11 @@ function checkAuth(req, res, next) {
   res.redirect('/login');
 }
 
-app.post('/', function(req, res) {
+app.post('/', checkAuth, function(req, res) {
   var vUrl = req.body.link;
   //console.log("DEBUG: vUrl: " + vUrl);
-  if (sessionUserId) {
-    var userName = "🔸 <@" + sessionUserId + ">";
-    videoPush2(vUrl, sessionUserId, userName);
-  }
+  var userName = "🔸 <@" + req.user.id + ">";
+  videoPush2(vUrl, req.user.id, userName);
   res.end();
 });
 
