@@ -177,15 +177,18 @@ app.set('views', __dirname + '/public');
 app.engine('html', swig.renderFile);
 // Node.js Swig Template Engine
 
+var sessionUserId;
 
 app.get('/', function(req, res) {
   if (req.isAuthenticated()){
+    sessionUserId = req.user.id;
     res.render('index.html', {
       userLogin: req.user.username,
       userLink: 'info'
     });
   }
   else {
+    sessionUserId = false;
     res.render('index.html', {
       userLogin: "Giriş Yap",
       userLink: 'login'
@@ -204,7 +207,6 @@ app.get('/callback', passport.authenticate('discord', {
 
 app.get('/logout', function(req, res) {
   req.logout();
-  sessionUserId = false;
   res.redirect('/');
 });
 
@@ -214,6 +216,7 @@ app.get('/info', checkAuth, function(req, res) {
 });
 
 app.get('/login', passport.authenticate('discord'), function(req, res) {
+  var userId = req.user.id;
   res.redirect('/');
 });
 
@@ -222,11 +225,16 @@ function checkAuth(req, res, next) {
   res.redirect('/login');
 }
 
-app.post('/', checkAuth, function(req, res) {
+app.post('/', function(req, res) {
   var vUrl = req.body.link;
-  //console.log("DEBUG: vUrl: " + vUrl);
-  var userName = "🔸 <@" + req.user.id + ">";
-  videoPush2(vUrl, req.user.id, userName);
+
+  if(sessionUserId){
+    var userName = "🔸 <@" + sessionUserId + ">";
+    console.log(sessionUserId);
+    videoPush2(vUrl, sessionUserId, userName);
+  }
+  console.log("DEBUG: vUrl: " + vUrl + " userId: " +  sessionUserId );
+
   res.end();
 });
 
