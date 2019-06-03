@@ -7,6 +7,12 @@
 // remove Skip reaction after wrong reaction
 // Music recommendation
 // FIXME: Web play whoputdis full same as first
+/*
+https://gardener.erdem.in/link/?link=https://www.youtube.com/watch?v=k4CB2jd6_GE
+https://gardener.erdem.in/link/https://www.youtube.com/watch?v=k4CB2jd6_GE
+rewrite düzelt
+
+*/
 
 /*
 bot beleş buton paralı
