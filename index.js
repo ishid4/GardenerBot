@@ -3,7 +3,7 @@
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
 // MAIN PROBLEM: Server can not change JSON files due to Heroku. Need to fix ASAP. 90% fixed
-// Get volume from JSON when first play
+// *** Get volume from JSON when first play
 // Play + Web Play should be permission strict
 // Web Play who put dis fix
 
@@ -41,7 +41,7 @@ const YTDL = require('ytdl-core-discord'),
   prism = require('prism-media'); // For volume
 
 const express = require('express'),
-  session = require('express-session'),
+  //session = require('express-session'),
   passport = require('passport'),
   Strategy = require('./lib').Strategy,
   app = express();
@@ -113,6 +113,7 @@ app.use(cookieSession({
 }));
 
 /*
+// Causing Memory Leak
 app.use(session({
   secret: 'ozkan kalp yag',
   resave: false,
@@ -122,6 +123,7 @@ app.use(session({
   }
 }));
 */
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -195,6 +197,7 @@ app.get('/', checkAuth, function(req, res) {
     userLogin: req.user.username,
     userLink: 'info'
   });
+  res.end();
   //res.redirect('/public/close.html');
 });
 
@@ -213,6 +216,7 @@ app.get('/logout', function(req, res) {
 
 app.get('/info', checkAuth, function(req, res) {
   res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br>');
+  res.end();
 });
 
 app.get('/login', passport.authenticate('discord'), function(req, res) {
@@ -231,6 +235,7 @@ app.post('/', function(req, res) {
     var userName = "🔸 <@" + sessionUserId + ">";
     videoPush2(vUrl, sessionUserId, userName);
   }
+  res.end();
 });
 
 async function videoPush2(vUrl, uId, userName) {
@@ -317,7 +322,7 @@ async function videoPush2(vUrl, uId, userName) {
 }
 
 // Music Embed Show + Reaction Collect
-async function embedmusic(info, duration, who, message, server, textChannel, voiceChannel) {
+async function embedmusic(info, duration, who, message, server, textChannel, voiceChannel, gId) {
   var embedmusic = new Discord.RichEmbed()
     .setAuthor("Playing Now", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
     .setColor(16098851)
@@ -377,14 +382,16 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
 
     if (!message) {
       var channel_users = voiceChannel.guild.me.voiceChannel.members.size - 1;
+      var guild = bot.guilds.get(gId);
+      var vcId = guild.member(reaction.users.last().id).voiceChannelID
     } else {
       var channel_users = message.guild.me.voiceChannel.members.size - 1;
       textChannel = message.channel;
+      var vcId = reaction.users.last().lastMessage.member.voiceChannelID;
     }
 
-    //console.log(reaction.users.last().lastMessage.member.voiceChannelID);
-    if (!reaction.users.last().lastMessage.member.voiceChannelID)
-      return bot.users.get(reaction.users.last().id).send("You must be in the VoiceChannel for `skip` reaction");
+    if (!vcId || vcId != voiceChannel.guild.me.voiceChannel.id)
+        return bot.users.get(reaction.users.last().id).send("You must be in the VoiceChannel for `skip` reaction");
 
     var votes = reaction.users.size - 1;
     var votes_need = Math.ceil(channel_users * 2 / 10) - votes;
@@ -405,10 +412,15 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
 
 // Main Play Function
 async function play(connection, message, gId, textChannel, voiceChannel) {
-  if (message)
+  if (message) {
     var server = servers[message.guild.id];
-  else
+    var streamVolume = { volume: guilds[message.guild.id].volume };
+  }
+  else {
     var server = servers[gId];
+    var streamVolume = { volume: guilds[gId].volume };
+  }
+
 
   youtube.getVideo(server.queue[0])
     .then(video => {
@@ -417,7 +429,7 @@ async function play(connection, message, gId, textChannel, voiceChannel) {
       } else {
         var videoDuration = Math.floor(video.durationSeconds / 60) + " mins " + Math.floor(video.durationSeconds % 60) + " secs";
       }
-      embedmusic(video, videoDuration, server.whoputdis[0], message, server, textChannel, voiceChannel); // run function & pass required information
+      embedmusic(video, videoDuration, server.whoputdis[0], message, server, textChannel, voiceChannel, gId); // run function & pass required information
     }).catch(console.error);
 
 
@@ -428,7 +440,7 @@ async function play(connection, message, gId, textChannel, voiceChannel) {
     frameSize: 960
   }));
 
-  server.dispatcher = connection.playConvertedStream(pcm); // For fixing volume
+  server.dispatcher = connection.playConvertedStream(pcm, streamVolume); // For fixing volume
 
   //server.dispatcher = connection.playOpusStream(await YTDL(server.queue[0], ytdlOptions));
 
@@ -735,7 +747,6 @@ bot.on('message', message => {
               volume: guilds[message.guild.id].volume,
               api: configs[2]
             };
-            console.log(postdata);
             volumeUpdate(postdata);
 
             if (server.queue[0])
