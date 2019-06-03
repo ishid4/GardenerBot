@@ -49,6 +49,8 @@ const express = require('express'),
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(configs[1]);
 
+var cookieSession = require('cookie-session')
+
 const ytdlOptions = {
   filter: "audioonly",
   quality: "highestaudio"
@@ -102,6 +104,15 @@ passport.use(new Strategy({
   });
 }));
 
+app.use(cookieSession({
+  name: 'session',
+  keys: ['ozkan kalp yag'],
+
+  // Cookie Options
+  maxAge: 1000 * 60 * 60 * 24 * 7
+}));
+
+/*
 app.use(session({
   secret: 'ozkan kalp yag',
   resave: false,
@@ -110,6 +121,7 @@ app.use(session({
     maxAge: (1000 * 60 * 60 * 24 * 7)
   }
 }));
+*/
 app.use(passport.initialize());
 app.use(passport.session());
 
