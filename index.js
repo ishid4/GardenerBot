@@ -2,10 +2,9 @@
 // DM Help menu
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
-// MAIN PROBLEM: Server can not change JSON files due to Heroku. Need to fix ASAP. 90% fixed
-// *** Get volume from JSON when first play
+// MAIN PROBLEM: Server can not change JSON files due to Heroku. 90% fixed
 // Play + Web Play should be permission strict
-// Web Play who put dis fix
+// remove Skip reaction after wrong reaction
 
 /*
 bot beleş buton paralı
@@ -19,7 +18,16 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 //const opus = require('opusscript'); // nodeopus is better
 //const ffmepg = require('ffmpeg-binaries');
 
+const configs = [
+  "NDIyMDkwNjE5ODU5NjMyMTY4.DYWuDA.k_H-WcDTB_Df672iG-LaX4tY9NM",
+  "AIzaSyBMW9D6z_8wOQKqxsCSiL7_DQJXr3Oi_zY",
+  "E76BD785C402214A2DB4909F0AD62FEE633CBB789E03ABE8795AD2FF699F2A1B",
+  "581431951005843458",
+  "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
+  "http://localhost:3000/callback"
+];
 
+/*
 const configs = [
   process.env.BOT_TOKEN,
   process.env.YOUTUBE_TOKEN,
@@ -28,7 +36,7 @@ const configs = [
   process.env.CLIENTSECRET,
   "https://gardener.erdem.in/callback"
 ];
-
+*/
 const request = require('request');
 
 const fs = require('fs'),
@@ -106,23 +114,11 @@ passport.use(new Strategy({
 
 app.use(cookieSession({
   name: 'session',
-  keys: ['ozkan kalp yag'],
+  keys: ['ozkan kalp yag', 'kalp', 'yag'],
 
   // Cookie Options
   maxAge: 1000 * 60 * 60 * 24 * 7
 }));
-
-/*
-// Causing Memory Leak
-app.use(session({
-  secret: 'ozkan kalp yag',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: (1000 * 60 * 60 * 24 * 7)
-  }
-}));
-*/
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -391,7 +387,7 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
     }
 
     if (!vcId || vcId != voiceChannel.guild.me.voiceChannel.id)
-        return bot.users.get(reaction.users.last().id).send("You must be in the VoiceChannel for `skip` reaction");
+      return bot.users.get(reaction.users.last().id).send("You must be in the VoiceChannel for `skip` reaction");
 
     var votes = reaction.users.size - 1;
     var votes_need = Math.ceil(channel_users * 2 / 10) - votes;
@@ -414,11 +410,14 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
 async function play(connection, message, gId, textChannel, voiceChannel) {
   if (message) {
     var server = servers[message.guild.id];
-    var streamVolume = { volume: guilds[message.guild.id].volume };
-  }
-  else {
+    var streamVolume = {
+      volume: guilds[message.guild.id].volume
+    };
+  } else {
     var server = servers[gId];
-    var streamVolume = { volume: guilds[gId].volume };
+    var streamVolume = {
+      volume: guilds[gId].volume
+    };
   }
 
 
