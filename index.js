@@ -177,11 +177,17 @@ app.set('views', __dirname + '/public');
 app.engine('html', swig.renderFile);
 // Node.js Swig Template Engine
 
-var sessionUserId;
-
 app.get('/', function(req, res) {
   if (req.isAuthenticated()){
-    sessionUserId = req.user.id;
+
+    if(req.query.link){
+      var vUrl = req.query.link;
+      var userName = "🔸 <@" + req.user.id + ">";
+      console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
+      videoPush2(vUrl, req.user.id, userName);
+      return;
+    }
+
     res.render('index.html', {
       userLogin: req.user.username,
       userLink: 'info'
@@ -225,6 +231,7 @@ function checkAuth(req, res, next) {
   res.redirect('/login');
 }
 
+/*
 app.post('/', function(req, res) {
   var vUrl = req.body.link;
 
@@ -237,6 +244,7 @@ app.post('/', function(req, res) {
 
   res.end();
 });
+*/
 
 async function videoPush2(vUrl, uId, userName) {
   var vcId, gId;
