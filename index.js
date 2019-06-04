@@ -233,7 +233,7 @@ app.get('/linkunsafe', function(req, res) {
       return;
 
   res.end();
-  //res.redirect('/public/close.html');
+  res.redirect('/public/close.html');
 });
 
 
