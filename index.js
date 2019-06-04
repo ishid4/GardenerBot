@@ -226,7 +226,7 @@ app.get('/link', function(req, res) {
 });
 app.get('/linkunsafe', function(req, res) {
 
-      var vUrl = req.query.link;
+      var vUrl = req.body.link;
       var userName = "🔸 <@" + req.user.id + ">";
       console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
       videoPush2(vUrl, req.user.id, userName);
