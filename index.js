@@ -222,6 +222,8 @@ app.get('/link', function(req, res) {
       res.send("Now playing.");
     }
   }
+  console.log("DEBUG: 1"+req.body);
+  console.log("DEBUG: 2"+req.query);
   res.end();
   //res.redirect('/public/close.html');
 });
