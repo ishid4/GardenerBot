@@ -222,13 +222,8 @@ app.get('/link', function(req, res) {
       res.send("Now playing.");
     }
   }
-<<<<<<< HEAD
   console.log("DEBUG: 1"+req.body.link);
   console.log("DEBUG: 2"+req.query.link);
-=======
-  console.log("DEBUG: 1"+req.body);
-  console.log("DEBUG: 2"+req.query);
->>>>>>> 0e669b4b73a381944a8663fdf7724835ac70528c
   res.end();
   //res.redirect('/public/close.html');
 });
