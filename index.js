@@ -219,6 +219,7 @@ app.get('/link', function(req, res) {
       console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
       videoPush2(vUrl, req.user.id, userName);
       //return;
+      res.send("Now playing.");
     }
   }
   res.end();
