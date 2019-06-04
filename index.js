@@ -224,6 +224,20 @@ app.get('/link', function(req, res) {
   res.end();
   //res.redirect('/public/close.html');
 });
+app.get('/linkunsafe/:link', function(req, res) {
+
+  console.log("DEBUG: "+req.params.link);
+      var vUrl = req.params;
+      var userName = "🔸 <@" + req.user.id + ">";
+      console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
+      videoPush2(vUrl, req.user.id, userName);
+      return;
+
+  res.end();
+  //res.redirect('/public/close.html');
+});
+
+
 
 
 
