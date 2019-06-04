@@ -225,6 +225,7 @@ app.get('/link', function(req, res) {
   //res.redirect('/public/close.html');
 });
 app.get('/linkunsafe/:link', function(req, res) {
+<<<<<<< HEAD
 
   console.log("DEBUG: "+req.params.link);
       var vUrl = req.params;
@@ -238,7 +239,24 @@ app.get('/linkunsafe/:link', function(req, res) {
 });
 
 
+=======
+>>>>>>> 179f7f9f9c766f0c9034e854b25c474ae5938a5a
 
+  console.log("DEBUG: "+req.params.link);
+      var vUrl = req.params;
+      var userName = "🔸 <@" + req.user.id + ">";
+      console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
+      videoPush2(vUrl, req.user.id, userName);
+      return;
+
+  res.end();
+  //res.redirect('/public/close.html');
+});
+
+
+Route path: /flights/:from-:to
+Request URL: http://localhost:3000/flights/LAX-SFO
+req.params: { "from": "LAX", "to": "SFO" }
 
 
 app.get('/callback', passport.authenticate('discord', {
