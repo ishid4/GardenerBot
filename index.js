@@ -189,12 +189,12 @@ app.get('/', function(req, res) {
       var userName = "🔸 <@" + req.user.id + ">";
       console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
       videoPush2(vUrl, req.user.id, userName);
-      return;
     }
 
     res.render('index.html', {
       userLogin: req.user.username,
-      userLink: 'info'
+      userLink: '#!',
+      userState: 'dropdown1'
     });
   }
   else {
@@ -235,7 +235,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/info', checkAuth, function(req, res) {
-  res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br><a href="/logout">Logout</a>');
+  res.send('Welcome ' + req.user.username + "#" + req.user.discriminator + '! <br>');
   res.end();
 });
 

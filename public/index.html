@@ -18,9 +18,21 @@
         <ul class="right hide-on-med-and-down">
           <li><a href="public/res/zip/gardener.zip">Chrome Eklentisi İndir<i class="material-icons right">file_download</i></a></li>
           <li><a href="https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&permissions=1341652417 ">Sunucuna Ekle<i class="material-icons right">add</i></a></li>
-          <li><a href={{ userLink|title }}>{{ userLogin|title }}<i class="material-icons right">account_box</i></a></li>
+          <!-- Dropdown Trigger -->
+          <li><a class="dropdown-trigger" href={{ userLink|title }} data-target="{{ userState }}">{{ userLogin|title }}<i class="material-icons right">account_box</i></a></li>
+                <!-- Dropdown Structure -->
+           <ul id="dropdown1" class="dropdown-content beyaz">
+             <li><a href="/info" class="mavimor-text">Info<i class="material-icons">account_box</i></a></li>
+             <li><a href="https://www.youtube.com/channel/UCTAkwLbVzHxsbgsp6cRsPDg" target="_blank" class="mavimor-text">Çukur<i class="material-icons">settings_ethernet</i></a></li>
+             <li class="divider"></li>
+             <li><a href="/logout" class="mavimor-text">exit<i class="material-icons">exit_to_app</i></a></li>
+           </ul>
+
         </ul>
       </div>
+
+<!--Dj Dikkat was here-->
+
       <div class="nav-content container">
         <div class="row">
           <div class="col s12 offset-l1 l10">
@@ -74,7 +86,11 @@
        var elems = document.querySelectorAll('.carousel');
        var instances = M.Carousel.init(elems, options);
      });
-
+     document.addEventListener('DOMContentLoaded', function() {
+      var options = {constrainWidth: false, coverTrigger: false, alignment: 'center'}
+      var elems = document.querySelectorAll('.dropdown-trigger');
+      var instances = M.Dropdown.init(elems, options);
+    });
     </script>
   </body>
 </html>
