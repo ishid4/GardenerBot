@@ -7,6 +7,7 @@
 // remove Skip reaction after wrong reaction
 // Music recommendation
 // Music embed with user's pic and youtube channel's pic
+// Reaction emoji menu for settings
 /*
 https://gardener.erdem.in/link/?link=https://www.youtube.com/watch?v=k4CB2jd6_GE
 https://gardener.erdem.in/link/https://www.youtube.com/watch?v=k4CB2jd6_GE
@@ -519,11 +520,11 @@ bot.on('guildCreate', guild => {
       }
     }
   })
-  
+
   const firstJoin = new Discord.RichEmbed()
     .setColor(16098851)
     .setTitle("First Steps")
-    .description("The prefix set \'!\' for the first time.")
+    .setDescription("The prefix set \'!\' for the first time.")
     .addField("If you mention the bot in a Text Channel, you can get current settings values.")
     .addField("The help command can guide you for usage of the commands.")
     .addField("Do not forget to change Music Channel for cleaning.")
