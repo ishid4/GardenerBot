@@ -47,7 +47,6 @@ const YTDL = require('ytdl-core-discord'),
   prism = require('prism-media'); // For volume
 
 const express = require('express'),
-  //session = require('express-session'),
   passport = require('passport'),
   Strategy = require('./lib').Strategy,
   app = express();
@@ -62,8 +61,7 @@ const ytdlOptions = {
   quality: "highestaudio"
 };
 
-var sessionUserId,
-  servers = {},
+var servers = {},
   bot = new Discord.Client({
     autoReconnect: true,
     max_message_cache: 0
@@ -200,7 +198,6 @@ app.get('/', function(req, res) {
     });
   }
   else {
-    sessionUserId = false;
     res.render('index.html', {
       userLogin: "Giriş Yap",
       userLink: 'login'
@@ -225,9 +222,6 @@ app.get('/link', function(req, res) {
   res.end();
   //res.redirect('/public/close.html');
 });
-
-
-
 
 app.get('/callback', passport.authenticate('discord', {
   failureRedirect: '/'
@@ -290,19 +284,14 @@ async function videoPush2(vUrl, uId, userName) {
   if (!vcId)
     return bot.users.get(uId).send("You must be in a VoiceChannel for `Play on Discord`");
 
-  if (!guilds[gId].music_channel_id || guilds[gId].music_channel_id == "") {
-
-    let channelID;
-    let channels = guild.channels;
-    channelLoop:
-      for (let c of channels) {
-        let channelType = c[1].type;
-        if (channelType === "text") {
-          channelID = c[0];
-          break channelLoop;
+  if (!guilds[gId].music_channel_id) {
+    for (let c of guild.channels) {
+      if (c[1].type === "text")
+        if(channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
+          var tChannel = c[0];
+          break;
         }
-      }
-    var tChannel = channelID;
+    }
   } else
     var tChannel = guilds[gId].music_channel_id;
 
@@ -323,10 +312,10 @@ async function videoPush2(vUrl, uId, userName) {
   youtube.getVideo(vUrl)
     .then(video => {
       if (video.durationSeconds < 1)
-        return textChannel.send("Live Videos are not allowed.");
+        return bot.users.get(uId).send("Live Videos are not allowed.");
 
       if (server.queue.indexOf(vUrl) >= 0)
-        return textChannel.send('Already in the queue. ');
+        return bot.users.get(uId).send("This music is already in the queue");
 
       if (!server.queue[0]) {
         let addedqueue = new Discord.RichEmbed()
@@ -378,7 +367,7 @@ async function embedmusic(info, duration, who, message, server, textChannel, voi
   const filter = (reaction) => reaction.emoji.name === '⏭' || reaction.emoji.name === '✍';
 
   let r = await embedmain.createReactionCollector(filter, {
-    maxUsers: 10,
+    //maxUsers: 10,
     time: 700000
   });
 
@@ -519,6 +508,42 @@ bot.on('ready', function() {
       type: "WATCHING"
     });
   }, 10000);
+});
+
+bot.on('guildCreate', guild => {
+  let defaultChannel = "";
+  guild.channels.forEach((channel) => {
+    if(channel.type == "text" && defaultChannel == "") {
+      if(channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
+        defaultChannel = channel;
+      }
+    }
+  })
+  defaultChannel.send(`Hello, I'm GardenerBot. Thanks for inviting me, here are a list of all my commands! :alien:`, {
+    embed:{
+        title: ':x: Prefix',
+        color: 0x2471a3,
+        description: "The prefix for commands set to \'!\' for the first time.",
+        fields:[
+            {
+                name: ':tada: Fun',
+                value: 'agree, dankrate, gayrate, 8ball, meme, pun, roll, coinflip, doge, kappa, lenny, lol, megusta, pepe, sanic, spiderman, spooderman, troll, wat, dolan, notsure, alone, pupper, kitty'
+            },
+            {
+                name: ':tools: Utilities',
+                value: 'help, ping, invite'
+            },
+            {
+                name: ':loud_sound: Sound Board - WARNING (EARRAPE)',
+                value: 'reee, airhorn, momgetthecamera, 20thcenturyfox, dedotatedwam, friendzoned, gofuckyourself, gottagofast, illuminati, ohmygod, pussy, sadviolin, smokeweed, ohbabyatriple, wombocombo, wow'
+            }
+        ],
+
+        footer: {
+            text: 'GardenerBot created and developed by Erdem/eren.'
+        }
+    }
+  });
 });
 
 bot.on('message', message => {
@@ -771,32 +796,35 @@ bot.on('message', message => {
           volumeset.delete(30000);
         }
 
-        if (!args[1]) {
+        if (!args[1])
+          return settingvolume();
+
+        if (args[1] <= 100) {
+          guilds[message.guild.id].volume = Math.max(args[1] / 100);
+          //let settingMusicVolume = JSON.stringify(guilds, null, 2);
+          //fs.writeFileSync(guilds_dir, settingMusicVolume);
+
+          var postdata = {
+            server_id: message.guild.id,
+            volume: guilds[message.guild.id].volume,
+            api: configs[2]
+          };
+          volumeUpdate(postdata);
+
+          if (server.queue[0])
+            server.dispatcher.setVolume(guilds[message.guild.id].volume);
+
           settingvolume();
-        } else {
-          if (args[1] <= 100) {
-            guilds[message.guild.id].volume = Math.max(args[1] / 100);
-            //let settingMusicVolume = JSON.stringify(guilds, null, 2);
-            //fs.writeFileSync(guilds_dir, settingMusicVolume);
+        }
+        else if (args[1] > 100) {
+          if (!server.dispatcher)
+            return;
 
-            var postdata = {
-              server_id: message.guild.id,
-              volume: guilds[message.guild.id].volume,
-              api: configs[2]
-            };
-            volumeUpdate(postdata);
-
-            if (server.queue[0])
+          server.dispatcher.setVolume(args[1] / 100);
+          setTimeout(function() {
               server.dispatcher.setVolume(guilds[message.guild.id].volume);
-
-            settingvolume();
-          } else if (args[1] > 100) {
-            server.dispatcher.setVolume(args[1] / 100);
-            setTimeout(function() {
-              server.dispatcher.setVolume(guilds[message.guild.id].volume);
-            }, 6500);
-            message.channel.send(`:speaker: vOlUmE: ${Math.round(server.dispatcher.volume*100)}%`);
-          }
+          }, 6500);
+          message.channel.send(`:speaker: vOlUmE: ${Math.round(server.dispatcher.volume*100)}%`);
         }
         break;
 
@@ -965,7 +993,7 @@ bot.on('message', message => {
 
               var postdata = {
                 server_id: message.guild.id,
-                music_channel_id: "all",
+                music_channel_id: "",
                 api: configs[2]
               };
               channelUpdate(postdata);
