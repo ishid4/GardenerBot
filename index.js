@@ -525,7 +525,7 @@ bot.on('guildCreate', guild => {
     .setColor(16098851)
     .setTitle("First Steps")
     .setDescription("The prefix set \'!\' for the first time.")
-    .addField("❣️", "If you mention the bot in a Text Channel, you can get current settings values.")
+    .addField("❣", "If you mention the bot in a Text Channel, you can get current settings values.")
     .addField("🤔", "The help command can guide you for usage of the commands.")
     .addField("♻", "Do not forget to change Music Channel for cleaning.")
     .setFooter("GardenerBot created and developed by Erdem/Eren.")
