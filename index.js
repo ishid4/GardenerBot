@@ -2,11 +2,11 @@
 // DM Help menu
 // Faster embedmusic. Nearly fixed
 // Maybe, playlist will rise again?
-// MAIN PROBLEM: Server can not change JSON files due to Heroku. 90% fixed
+// MAIN PROBLEM: Server can not change JSON files due to Heroku. 99% fixed
 // Play + Web Play should be permission strict
 // remove Skip reaction after wrong reaction
 // Music recommendation
-// FIXME: Web play whoputdis full same as first
+// Music embed with user's pic and youtube channel's pic
 /*
 https://gardener.erdem.in/link/?link=https://www.youtube.com/watch?v=k4CB2jd6_GE
 https://gardener.erdem.in/link/https://www.youtube.com/watch?v=k4CB2jd6_GE
@@ -519,31 +519,16 @@ bot.on('guildCreate', guild => {
       }
     }
   })
-  defaultChannel.send(`Hello, I'm GardenerBot. Thanks for inviting me, here are a list of all my commands! :alien:`, {
-    embed:{
-        title: ':x: Prefix',
-        color: 0x2471a3,
-        description: "The prefix for commands set to \'!\' for the first time.",
-        fields:[
-            {
-                name: ':tada: Fun',
-                value: 'agree, dankrate, gayrate, 8ball, meme, pun, roll, coinflip, doge, kappa, lenny, lol, megusta, pepe, sanic, spiderman, spooderman, troll, wat, dolan, notsure, alone, pupper, kitty'
-            },
-            {
-                name: ':tools: Utilities',
-                value: 'help, ping, invite'
-            },
-            {
-                name: ':loud_sound: Sound Board - WARNING (EARRAPE)',
-                value: 'reee, airhorn, momgetthecamera, 20thcenturyfox, dedotatedwam, friendzoned, gofuckyourself, gottagofast, illuminati, ohmygod, pussy, sadviolin, smokeweed, ohbabyatriple, wombocombo, wow'
-            }
-        ],
-
-        footer: {
-            text: 'GardenerBot created and developed by Erdem/eren.'
-        }
-    }
-  });
+  
+  const firstJoin = new Discord.RichEmbed()
+    .setColor(16098851)
+    .setTitle("First Steps")
+    .description("The prefix set \'!\' for the first time.")
+    .addField("If you mention the bot in a Text Channel, you can get current settings values.")
+    .addField("The help command can guide you for usage of the commands.")
+    .addField("Do not forget to change Music Channel for cleaning.")
+    .setFooter("GardenerBot created and developed by Erdem/eren.")
+  defaultChannel.send(firstJoin);
 });
 
 bot.on('message', message => {
