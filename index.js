@@ -35,6 +35,7 @@ const configs = [
   "https://gardener.erdem.in/callback"
 ];
 
+const newrelic = require('newrelic');
 const request = require('request');
 
 const fs = require('fs'),
