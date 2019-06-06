@@ -6,7 +6,6 @@
 // Play + Web Play should be permission strict
 // remove Skip reaction after wrong reaction
 // Music recommendation
-// Music embed with user's pic and youtube channel's pic
 // Reaction emoji menu for settings
 /*
 https://gardener.erdem.in/link/?link=https://www.youtube.com/watch?v=k4CB2jd6_GE
@@ -184,14 +183,6 @@ app.engine('html', swig.renderFile);
 
 app.get('/', function(req, res) {
   if (req.isAuthenticated()){
-
-    if(req.query.link){
-      var vUrl = req.query.link;
-      var userName = "🔸 <@" + req.user.id + ">";
-      console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
-      videoPush2(vUrl, req.user.id, userName);
-    }
-
     res.render('index.html', {
       userLogin: req.user.username,
       userLink: '#!',
@@ -213,11 +204,9 @@ app.get('/link', function(req, res) {
   if (req.isAuthenticated()){
     if(req.query.link){
       var vUrl = req.query.link;
-      var userName = "🔸 <@" + req.user.id + ">";
+      var userName = req.user.id;
       console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
       videoPush2(vUrl, req.user.id, userName);
-      //return;
-      res.send("Now playing.");
     }
   }
   res.end();
@@ -249,21 +238,6 @@ function checkAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
   res.redirect('/login');
 }
-
-/*
-app.post('/', function(req, res) {
-  var vUrl = req.body.link;
-
-  if(sessionUserId){
-    var userName = "🔸 <@" + sessionUserId + ">";
-    console.log(sessionUserId);
-    videoPush2(vUrl, sessionUserId, userName);
-  }
-  console.log("DEBUG: vUrl: " + vUrl + " userId: " +  sessionUserId );
-
-  res.end();
-});
-*/
 
 async function videoPush2(vUrl, uId, userName) {
   var vcId, gId;
@@ -345,16 +319,21 @@ async function videoPush2(vUrl, uId, userName) {
 
 // Music Embed Show + Reaction Collect
 async function embedmusic(info, duration, who, message, server, textChannel, voiceChannel, gId) {
+  if (!message)
+    var whoput = "🔸 <@" + who + ">";
+  else
+    var whoput = "<@" + who + ">";
+
   var embedmusic = new Discord.RichEmbed()
     .setAuthor("Playing Now", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
     .setColor(16098851)
     .setFooter("Click ⏭ to Skip / ✍ to Lyrics")
     .setImage(info.maxRes.url)
-    .setThumbnail("https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
+    .setThumbnail(bot.users.get(who).avatarURL)
     .setTimestamp()
     .addField("Title", "**[" + info.title + "](" + info.url + ")**")
     .addField("Duration", duration, true)
-    .addField("Who Put Dis?", who, true);
+    .addField("Who Put Dis?", whoput, true);
 
   if (!message)
     var embedmain = await textChannel.send(embedmusic);
@@ -727,10 +706,10 @@ bot.on('message', message => {
           youtube.getVideo(vUrl)
             .then(video => {
               if (video.durationSeconds < 1)
-                return message.reply("Live Videos are not allowed.");
+                return message.author.send("Live Videos are not allowed.");
 
               if (server.queue.indexOf(vUrl) >= 0)
-                return message.reply('Already in the queue. ');
+                return message.author.send('Already in the queue. ');
 
               if (!server.queue[0]) {
                 const addedqueue = new Discord.RichEmbed()
@@ -749,7 +728,7 @@ bot.on('message', message => {
               server.queue.push(vUrl);
               server.channel.push(message.channel.id);
               server.videolength.push(duration);
-              server.whoputdis.push("<@" + message.author.id + ">");
+              server.whoputdis.push(message.author.id);
               server.videotitle.push(video.title);
 
               if (!message.guild.voiceConnection)
@@ -903,7 +882,7 @@ bot.on('message', message => {
         if (server.queue[1]) {
           var tracksInfos = "";
           for (var i = 1; i < server.queue.length && i <= 7; i++) {
-            tracksInfos += i + ". [" + server.videotitle[i] + "](" + server.queue[i] + ") (by " + server.whoputdis[i] + ")\n";
+            tracksInfos += i + ". [" + server.videotitle[i] + "](" + server.queue[i] + ") (by <@" + server.whoputdis[i] + ">)\n";
           }
           if (server.queue.length > 8)
             tracksInfos += " **- " + (server.queue.length - 8) + " more in queue -**";
@@ -912,14 +891,14 @@ bot.on('message', message => {
             return message.reply("Too many characters...");
           const embedqueue = new Discord.RichEmbed()
             .setAuthor("Queue List", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
-            .addField("Playing Now", "[" + server.videotitle[0].substring(0, 40) + ".." + "](" + server.queue[0] + ") (by " + server.whoputdis[0] + ")")
+            .addField("Playing Now", "[" + server.videotitle[0].substring(0, 40) + ".." + "](" + server.queue[0] + ") (by <@" + server.whoputdis[0] + ">)")
             .setColor(16098851)
             .addField("Queue", tracksInfos)
           message.channel.send(embedqueue);
         } else {
           const embedqueue = new Discord.RichEmbed()
             .setAuthor("Queue List", "https://cdn.discordapp.com/avatars/422090619859632168/8ea8855a6d4459ffea5ff9aa261149c9.png?size=2048")
-            .addField("Playing Now", "[" + server.videotitle[0].substring(0, 40) + ".." + "](" + server.queue[0] + ") (by " + server.whoputdis[0] + ")")
+            .addField("Playing Now", "[" + server.videotitle[0].substring(0, 40) + ".." + "](" + server.queue[0] + ") (by <@" + server.whoputdis[0] + ">)")
             .setColor(16098851)
           message.channel.send(embedqueue);
         }
@@ -1014,6 +993,10 @@ bot.on('message', message => {
 
       case "help":
         message.author.send("Try `help` here.");
+        break;
+
+      case "try":
+        console.log(bot.users.get("139144182794027009").avatarURL);
         break;
 
       default:
