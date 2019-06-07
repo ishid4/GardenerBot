@@ -192,7 +192,7 @@ app.get('/', function(req, res) {
   }
   else {
     res.render('index.html', {
-      userLogin: "Giriş Yap",
+      userLogin: "Login",
       userLink: 'login'
     });
   }
