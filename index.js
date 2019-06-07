@@ -208,12 +208,13 @@ app.get('/link', function(req, res) {
     res.render('track.html', {
       code: name
     });
+    /*
     if(req.query.link){
       var vUrl = req.query.link;
       var userName = req.user.id;
       console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
       videoPush2(vUrl, req.user.id, userName);
-    }
+    }*/
   }
   res.end();
   //res.redirect('/public/close.html');
