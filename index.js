@@ -176,6 +176,7 @@ function volumeUpdate(data) {
 // Node.js Swig Template Engine
 var swig = require('swig-templates');
 var template = swig.compileFile('public/index.html');
+var template2 = swig.compileFile('public/track.html');
 
 app.set('view engine', 'html');
 app.set('views', __dirname + '/public');
