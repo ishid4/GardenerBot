@@ -202,7 +202,9 @@ app.get('/', function(req, res) {
 
 
 app.get('/link', function(req, res) {
-  res.render('track.html');
+  res.render('track.html', {
+    code: req.user.username
+  });
   if (req.isAuthenticated()){
     if(req.query.link){
       var vUrl = req.query.link;
