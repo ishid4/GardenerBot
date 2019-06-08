@@ -31,7 +31,6 @@
     "get-artist-title": "^1.1.1",
     "install": "^0.12.2",
     "lyric-get": "^1.0.3",
-    "newrelic": "^5.9.1",
     "node-opus": "0.3.2",
     "npm": "^6.9.0",
     "passport": "^0.3.2",

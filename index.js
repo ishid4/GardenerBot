@@ -7,6 +7,8 @@
 // remove Skip reaction after wrong reaction
 // Music recommendation
 // Reaction emoji menu for settings
+// FIXME: JSON update funcs to 1 func
+
 /*
 https://gardener.erdem.in/link/?link=https://www.youtube.com/watch?v=k4CB2jd6_GE
 https://gardener.erdem.in/link/https://www.youtube.com/watch?v=k4CB2jd6_GE
@@ -34,8 +36,6 @@ const configs = [
   process.env.CLIENTSECRET,
   "https://gardener.erdem.in/callback"
 ];
-
-const newrelic = require('newrelic');
 const request = require('request');
 
 const fs = require('fs'),
@@ -69,6 +69,8 @@ var servers = {},
   });
 
 let guilds;
+
+const latestVersion="1.1";
 
 app.set('port', (process.env.PORT || 3000));
 
@@ -207,6 +209,9 @@ app.get('/link', function(req, res) {
     state: 'Ok.'
   });
   if (req.isAuthenticated()){
+    if(req.query.ver != latestVersion)
+      return bot.users.get(req.user.id).send("You must upgrade your Chrome Extension for using `Play on Discord`. Check https://gardener.erdem.in/ for the latest version.")
+
     if(req.query.link){
       var vUrl = req.query.link;
       var userName = req.user.id;
