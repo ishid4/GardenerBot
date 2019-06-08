@@ -211,6 +211,7 @@ async function videoPush2(vUrl, uId, userName) {
 
 
   await bot.guilds.forEach((guild) => {
+    var guild = bot.guilds.get(guild.id);
     guild.fetchMember(uId).then(info => {
       if (info.voiceChannelID != undefined) {
         vcId = info.voiceChannelID;
