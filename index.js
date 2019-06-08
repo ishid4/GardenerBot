@@ -207,15 +207,15 @@ function checkAuth(req, res, next) {
 }
 
 async function videoPush2(vUrl, uId, userName) {
-  var vcId, gId;
+  var vcId, gId, guild;
 
 
-  await bot.guilds.forEach((guild) => {
-    var guild = bot.guilds.get(guild.id);
+  await bot.guilds.forEach((g) => {
+    guild = bot.guilds.get(g.id);
     guild.fetchMember(uId).then(info => {
       if (info.voiceChannelID != undefined) {
         vcId = info.voiceChannelID;
-        gId = guild.id;
+        gId = g.id;
       }
     }).catch(console.error);
     if (vcId)
