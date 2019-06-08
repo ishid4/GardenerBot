@@ -170,6 +170,7 @@ app.get('/link', function(req, res) {
       return bot.users.get(req.user.id).send("You must upgrade your Chrome Extension for using `Play on Discord`. Check `https://gardener.erdem.in` for the latest version.")
 
     if (req.query.link) {
+      console.log("get oldu");
       var vUrl = req.query.link;
       var userName = req.user.id;
       console.log("DEBUG: vUrl: " + vUrl + " userId: " + req.user.id);
