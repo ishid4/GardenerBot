@@ -475,12 +475,15 @@ bot.on('guildCreate', guild => {
     .addField("❣", "If you mention the bot in a Text Channel, you can get current settings values.")
     .addField("🤔", "The help command can guide you for usage of the commands.")
     .addField("♻", "Do not forget to change Music Channel for cleaning.")
-    .setFooter("GardenerBot created and developed by Erdem/Eren.")
-    if(!defaultChannel)
-      bot.users.get(guild.owner.user.id).send(firstJoin + "Bot couldn't send message to a channel. This bot only works perfectly with full permissons.");
+    .setFooter("GardenerBot created and developed by Erdem/Eren.");
+
+    if(!defaultChannel){
+      bot.users.get(guild.owner.user.id).send(firstJoin);
+      bot.users.get(guild.owner.user.id).send("Bot couldn't send message to a channel. This bot only works perfectly with full permissions.");
+    }
     else
       defaultChannel.send(firstJoin);
-  
+
 });
 
 bot.on('message', message => {
