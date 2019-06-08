@@ -219,7 +219,7 @@ async function videoPush2(vUrl, uId, userName) {
         vcId = info.voiceChannelID;
         gId = g.id;
       }
-    }).catch(e);
+    }).catch();
     if (vcId)
       throw BreakException;
 
