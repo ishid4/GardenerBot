@@ -161,7 +161,6 @@ app.get('/', function(req, res) {
   //res.redirect('/public/close.html');
 });
 
-
 app.get('/link', function(req, res) {
   res.render('track.html', {
     state: 'Ok.'
@@ -221,21 +220,6 @@ async function videoPush2(vUrl, uId, userName) {
       throw BreakException;
 
   });
-
-  /*
-  for (var findGuild in guilds) {
-    var guild = bot.guilds.get(findGuild);
-
-    await guild.fetchMember(uId).then(info => {
-      if (info.voiceChannelID != undefined) {
-        vcId = info.voiceChannelID;
-        gId = findGuild;
-      }
-    }).catch(console.error);
-    if (vcId)
-      break;
-  }*/
-
 
   //console.log("DEBUG: User's VoiceChannel ID: " + vcId);
   //console.log("DEBUG: VoiceChannel's guild ID " + gId);
@@ -477,11 +461,9 @@ bot.on('ready', function() {
 bot.on('guildCreate', guild => {
   let defaultChannel = "";
   guild.channels.forEach((channel) => {
-    if (channel.type == "text" && defaultChannel == "") {
-      if (channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
+    if (channel.type == "text" && defaultChannel == "")
+      if (channel.permissionsFor(guild.me).has("SEND_MESSAGES"))
         defaultChannel = channel;
-      }
-    }
   })
 
   const firstJoin = new Discord.RichEmbed()
