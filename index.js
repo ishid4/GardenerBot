@@ -219,7 +219,7 @@ async function videoPush2(vUrl, uId, userName) {
         vcId = info.voiceChannelID;
         gId = g.id;
       }
-    }).catch(console.error);
+    }).catch(e);
     if (vcId)
       throw BreakException;
 
@@ -233,10 +233,10 @@ async function videoPush2(vUrl, uId, userName) {
 
   if (!guilds[gId].music_channel_id) {
     for (let c of guild.channels) {
-      if (c[1].type === "text"){
-          var tChannel = c[0];
-          break;
-        }
+      if (c[1].type === "text") {
+        var tChannel = c[0];
+        break;
+      }
     }
   } else
     var tChannel = guilds[gId].music_channel_id;
@@ -478,12 +478,11 @@ bot.on('guildCreate', guild => {
     .addField("♻", "Do not forget to change Music Channel for cleaning.")
     .setFooter("GardenerBot created and developed by Erdem/Eren.");
 
-    if(!defaultChannel){
-      bot.users.get(guild.owner.user.id).send(firstJoin);
-      bot.users.get(guild.owner.user.id).send("Bot couldn't send message to a channel. This bot only works perfectly with full permissions.");
-    }
-    else
-      defaultChannel.send(firstJoin);
+  if (!defaultChannel) {
+    bot.users.get(guild.owner.user.id).send(firstJoin);
+    bot.users.get(guild.owner.user.id).send("Bot couldn't send message to a channel. This bot only works perfectly with full permissions.");
+  } else
+    defaultChannel.send(firstJoin);
 
 });
 
