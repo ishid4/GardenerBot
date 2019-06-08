@@ -209,7 +209,9 @@ function checkAuth(req, res, next) {
 async function videoPush2(vUrl, uId, userName) {
   var vcId, gId;
 
+
   await bot.guilds.forEach((guild) => {
+    var guild = bot.guilds.get(guild);
     guild.fetchMember(uId).then(info => {
       if (info.voiceChannelID != undefined) {
         vcId = info.voiceChannelID;
