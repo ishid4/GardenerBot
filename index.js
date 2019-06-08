@@ -1005,10 +1005,6 @@ bot.on('message', message => {
         message.author.send("Try `help` here.");
         break;
 
-      case "try":
-        console.log(bot.users.get("139144182794027009").avatarURL);
-        break;
-
       default:
         message.reply("Command doesn't exist.");
     }
