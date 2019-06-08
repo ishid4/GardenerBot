@@ -7,7 +7,6 @@
 // remove Skip reaction after wrong reaction
 // Music recommendation
 // Reaction emoji menu for settings
-// FIXME: JSON update funcs to 1 func
 
 /*
 https://gardener.erdem.in/link/?link=https://www.youtube.com/watch?v=k4CB2jd6_GE
@@ -36,6 +35,7 @@ const configs = [
   process.env.CLIENTSECRET,
   "https://gardener.erdem.in/callback"
 ];
+
 const request = require('request');
 
 const fs = require('fs'),
@@ -70,7 +70,7 @@ var servers = {},
 
 let guilds;
 
-const latestVersion="1.1";
+const latestVersion = "1.1";
 
 app.set('port', (process.env.PORT || 3000));
 
@@ -122,13 +122,10 @@ app.use(cookieSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-//////////////////////////////////////
-
-function insertServer(data) {
+function webSide(procedureName, data) {
   request({
     method: 'post',
-    url: 'https://api.erdem.in/api/procedure.php',
+    url: 'https://api.erdem.in/api/' + procedureName + '.php',
     form: data,
     headers: {
       "content-type": "application/json"
@@ -136,44 +133,6 @@ function insertServer(data) {
     json: true,
   });
 }
-
-function prefixUpdate(data) {
-  request({
-    method: 'post',
-    url: 'https://api.erdem.in/api/procedure2.php',
-    form: data,
-    headers: {
-      "content-type": "application/json"
-    },
-    json: true,
-  });
-}
-
-function channelUpdate(data) {
-  request({
-    method: 'post',
-    url: 'https://api.erdem.in/api/procedure3.php',
-    form: data,
-    headers: {
-      "content-type": "application/json"
-    },
-    json: true,
-  });
-}
-
-function volumeUpdate(data) {
-  request({
-    method: 'post',
-    url: 'https://api.erdem.in/api/procedure4.php',
-    form: data,
-    headers: {
-      "content-type": "application/json"
-    },
-    json: true,
-  });
-}
-
-
 
 // Node.js Swig Template Engine
 var swig = require('swig-templates');
@@ -186,14 +145,13 @@ app.engine('html', swig.renderFile);
 // Node.js Swig Template Engine
 
 app.get('/', function(req, res) {
-  if (req.isAuthenticated()){
+  if (req.isAuthenticated()) {
     res.render('index.html', {
       userLogin: req.user.username,
       userLink: '#!',
       userState: 'dropdown1'
     });
-  }
-  else {
+  } else {
     res.render('index.html', {
       userLogin: "Login",
       userLink: 'login'
@@ -205,17 +163,17 @@ app.get('/', function(req, res) {
 
 
 app.get('/link', function(req, res) {
-  res.render('track.html',{
+  res.render('track.html', {
     state: 'Ok.'
   });
-  if (req.isAuthenticated()){
-    if(req.query.ver != latestVersion)
-      return bot.users.get(req.user.id).send("You must upgrade your Chrome Extension for using `Play on Discord`. Check https://gardener.erdem.in/ for the latest version.")
+  if (req.isAuthenticated()) {
+    if (req.query.ver != latestVersion)
+      return bot.users.get(req.user.id).send("You must upgrade your Chrome Extension for using `Play on Discord`. Check `https://gardener.erdem.in` for the latest version.")
 
-    if(req.query.link){
+    if (req.query.link) {
       var vUrl = req.query.link;
       var userName = req.user.id;
-      console.log("DEBUG: vUrl: " + vUrl + " userId: " +  req.user.id );
+      console.log("DEBUG: vUrl: " + vUrl + " userId: " + req.user.id);
       videoPush2(vUrl, req.user.id, userName);
     }
   }
@@ -251,6 +209,20 @@ function checkAuth(req, res, next) {
 
 async function videoPush2(vUrl, uId, userName) {
   var vcId, gId;
+
+  await bot.guilds.forEach((guild) => {
+    guild.fetchMember(uId).then(info => {
+      if (info.voiceChannelID != undefined) {
+        vcId = info.voiceChannelID;
+        gId = guild.id;
+      }
+    }).catch(console.error);
+    if (vcId)
+      throw BreakException;
+
+  });
+
+  /*
   for (var findGuild in guilds) {
     var guild = bot.guilds.get(findGuild);
 
@@ -262,7 +234,9 @@ async function videoPush2(vUrl, uId, userName) {
     }).catch(console.error);
     if (vcId)
       break;
-  }
+  }*/
+
+
   //console.log("DEBUG: User's VoiceChannel ID: " + vcId);
   //console.log("DEBUG: VoiceChannel's guild ID " + gId);
 
@@ -272,7 +246,7 @@ async function videoPush2(vUrl, uId, userName) {
   if (!guilds[gId].music_channel_id) {
     for (let c of guild.channels) {
       if (c[1].type === "text")
-        if(channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
+        if (channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
           var tChannel = c[0];
           break;
         }
@@ -503,8 +477,8 @@ bot.on('ready', function() {
 bot.on('guildCreate', guild => {
   let defaultChannel = "";
   guild.channels.forEach((channel) => {
-    if(channel.type == "text" && defaultChannel == "") {
-      if(channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
+    if (channel.type == "text" && defaultChannel == "") {
+      if (channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
         defaultChannel = channel;
       }
     }
@@ -641,7 +615,8 @@ bot.on('message', message => {
       };
       //let guildUpdate = JSON.stringify(guilds, null, 2);
       //fs.writeFileSync(guilds_dir, guildUpdate);
-      insertServer(guilds[message.guild.id]);
+
+      webSide("procedure", guilds[message.guild.id]);
     }
 
     var prefix = guilds[message.guild.id].prefix;
@@ -784,20 +759,19 @@ bot.on('message', message => {
             volume: guilds[message.guild.id].volume,
             api: configs[2]
           };
-          volumeUpdate(postdata);
+          webSide("procedure4", postdata);
 
           if (server.queue[0])
             server.dispatcher.setVolume(guilds[message.guild.id].volume);
 
           settingvolume();
-        }
-        else if (args[1] > 100) {
+        } else if (args[1] > 100) {
           if (!server.dispatcher)
             return;
 
           server.dispatcher.setVolume(args[1] / 100);
           setTimeout(function() {
-              server.dispatcher.setVolume(guilds[message.guild.id].volume);
+            server.dispatcher.setVolume(guilds[message.guild.id].volume);
           }, 6500);
           message.channel.send(`:speaker: vOlUmE: ${Math.round(server.dispatcher.volume*100)}%`);
         }
@@ -954,7 +928,8 @@ bot.on('message', message => {
                 prefix: args[2],
                 api: configs[2]
               };
-              prefixUpdate(postdata);
+
+              webSide("procedure2", postdata)
               message.channel.send("Prefix changed to `" + args[2] + "`");
             }
             break;
@@ -971,7 +946,7 @@ bot.on('message', message => {
                 music_channel_id: "",
                 api: configs[2]
               };
-              channelUpdate(postdata);
+              webSide("procedure3", postdata);
               //let settingMusicChannel = JSON.stringify(guilds, null, 2);
               //fs.writeFileSync(guilds_dir, settingMusicChannel);
               return;
@@ -987,7 +962,7 @@ bot.on('message', message => {
             };
             //let settingMusicChannel = JSON.stringify(guilds, null, 2);
             //fs.writeFileSync(guilds_dir, settingMusicChannel);
-            channelUpdate(postdata);
+            webSide("procedure3", postdata);
             break;
           default:
             message.author.send("Try help!");
