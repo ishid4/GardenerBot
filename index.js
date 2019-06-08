@@ -209,7 +209,7 @@ function checkAuth(req, res, next) {
 async function videoPush2(vUrl, uId, userName) {
   var vcId, gId;
 
-/*
+
   await bot.guilds.forEach((guild) => {
     var guild = bot.guilds.get(guild);
     guild.fetchMember(uId).then(info => {
@@ -221,20 +221,7 @@ async function videoPush2(vUrl, uId, userName) {
     if (vcId)
       throw BreakException;
 
-  });*/
-
-  for (var findGuild in guilds) {
-    var guild = bot.guilds.get(findGuild);
-
-    await guild.fetchMember(uId).then(info => {
-      if (info.voiceChannelID != undefined) {
-        vcId = info.voiceChannelID;
-        gId = findGuild;
-      }
-    }).catch(console.error);
-    if (vcId)
-      break;
-    }
+  });
 
   //console.log("DEBUG: User's VoiceChannel ID: " + vcId);
   //console.log("DEBUG: VoiceChannel's guild ID " + gId);
