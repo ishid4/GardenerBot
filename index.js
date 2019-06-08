@@ -229,8 +229,7 @@ async function videoPush2(vUrl, uId, userName) {
 
   if (!guilds[gId].music_channel_id) {
     for (let c of guild.channels) {
-      if (c[1].type === "text")
-        if (channel.permissionsFor(guild.me).has("SEND_MESSAGES")) {
+      if (c[1].type === "text"){
           var tChannel = c[0];
           break;
         }
