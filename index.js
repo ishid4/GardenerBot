@@ -211,7 +211,8 @@ async function videoPush2(vUrl, uId, userName) {
 
 
   await bot.guilds.forEach((g) => {
-    guild = bot.guilds.get(g.id);
+    //guild = bot.guilds.get(g.id);
+    guild = g;
     guild.fetchMember(uId).then(info => {
       if (info.voiceChannelID != undefined) {
         vcId = info.voiceChannelID;
@@ -476,6 +477,8 @@ bot.on('guildCreate', guild => {
     .addField("♻", "Do not forget to change Music Channel for cleaning.")
     .setFooter("GardenerBot created and developed by Erdem/Eren.")
   defaultChannel.send(firstJoin);
+  if(!defaultChannel)
+    bot.users.get(guild.owner.user.id).send(firstJoin + "Bot couldn't send message to a channel. This bot only works perfectly with full permissons.");
 });
 
 bot.on('message', message => {
