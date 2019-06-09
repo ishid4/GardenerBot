@@ -161,6 +161,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/link', function(req, res) {
+
   if (req.isAuthenticated()) {
     console.log("Auth");
     if (req.query.ver != latestVersion)
