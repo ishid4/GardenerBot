@@ -161,10 +161,6 @@ app.get('/', function(req, res) {
 });
 
 app.get('/link', function(req, res) {
-  console.log("get");
-  res.render('track.html', {
-    state: 'Ok.'
-  });
   if (req.isAuthenticated()) {
     console.log("Auth");
     if (req.query.ver != latestVersion)
@@ -177,6 +173,9 @@ app.get('/link', function(req, res) {
       videoPush2(vUrl, req.user.id, userName);
     }
   }
+  res.render('track.html', {
+    state: 'Ok.'
+  });
   res.end();
   //res.redirect('/public/close.html');
 });
