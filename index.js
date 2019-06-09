@@ -218,6 +218,10 @@ async function videoPush2(vUrl, uId, userName) {
 
     guild.fetchMember(uId).then(info => {
       if (info.voiceChannelID != undefined) {
+
+        if (!guild.members.get(uId).hasPermission("MANAGE_GUILD"))
+          return bot.users.get(uId).send("Insufficient permission.");
+
         vcId = info.voiceChannelID;
         gId = g.id;
       }
