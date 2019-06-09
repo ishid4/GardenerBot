@@ -35,7 +35,7 @@ const configs = [
   process.env.CLIENTSECRET,
   "https://gardener.erdem.in/callback"
 ];
-const latestVersion = "1.3";
+const latestVersion = 1.4;
 
 const request = require('request');
 
@@ -161,11 +161,11 @@ app.get('/', function(req, res) {
 });
 
 app.get('/link', function(req, res) {
-  console.log("get oluyo");
-
+  res.render('track.html', {
+    state: 'Ok.'
+  });
   if (req.isAuthenticated()) {
-    console.log("Auth");
-    if (req.query.ver != latestVersion)
+    if (req.query.ver >= latestVersion)
       return bot.users.get(req.user.id).send("You must upgrade your Chrome Extension for using `Play on Discord`. Check `https://gardener.erdem.in` for the latest version.")
 
     if (req.query.link) {
@@ -173,10 +173,7 @@ app.get('/link', function(req, res) {
       var userName = req.user.id;
       console.log("DEBUG: vUrl: " + vUrl + " userId: " + req.user.id);
       videoPush2(vUrl, req.user.id, userName);
-
     }
-  }else{
-    console.log("auth yok köylü");
   }
 
   res.end();
@@ -225,7 +222,7 @@ async function videoPush2(vUrl, uId, userName) {
         gId = g.id;
       }
     }).catch((err) => {
-        //console.error(err);
+      //console.error(err);
     })
     if (vcId)
       throw BreakException;
