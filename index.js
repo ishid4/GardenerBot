@@ -35,6 +35,7 @@ const configs = [
   process.env.CLIENTSECRET,
   "https://gardener.erdem.in/callback"
 ];
+const latestVersion = "1.3";
 
 const request = require('request');
 
@@ -69,8 +70,6 @@ var servers = {},
   });
 
 let guilds;
-
-const latestVersion = "1.3";
 
 app.set('port', (process.env.PORT || 3000));
 
@@ -162,10 +161,12 @@ app.get('/', function(req, res) {
 });
 
 app.get('/link', function(req, res) {
+  console.log("get");
   res.render('track.html', {
     state: 'Ok.'
   });
   if (req.isAuthenticated()) {
+    console.log("Auth");
     if (req.query.ver != latestVersion)
       return bot.users.get(req.user.id).send("You must upgrade your Chrome Extension for using `Play on Discord`. Check `https://gardener.erdem.in` for the latest version.")
 
