@@ -165,7 +165,7 @@ app.get('/link', function(req, res) {
     state: 'Ok.'
   });
   if (req.isAuthenticated()) {
-    if (req.query.ver >= latestVersion)
+    if (req.query.ver != latestVersion)
       return bot.users.get(req.user.id).send("You must upgrade your Chrome Extension for using `Play on Discord`. Check `https://gardener.erdem.in` for the latest version.")
 
     if (req.query.link) {
