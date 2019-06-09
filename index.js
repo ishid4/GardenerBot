@@ -112,7 +112,7 @@ passport.use(new Strategy({
 
 app.use(cookieSession({
   name: 'session',
-  keys: ['ozkan kalp yag', 'kalp', 'yag'],
+  keys: ['ozkan kalp yag'],
 
   // Cookie Options
   maxAge: 1000 * 60 * 60 * 24 * 7
