@@ -161,6 +161,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/link', function(req, res) {
+  console.log("get oluyo");
 
   if (req.isAuthenticated()) {
     console.log("Auth");
@@ -172,11 +173,15 @@ app.get('/link', function(req, res) {
       var userName = req.user.id;
       console.log("DEBUG: vUrl: " + vUrl + " userId: " + req.user.id);
       videoPush2(vUrl, req.user.id, userName);
-      res.render('track.html', {
-        state: 'Ok.'
-      });
+
     }
+  }else{
+    console.log("auth yok köylü");
   }
+
+  res.render('track.html', {
+    state: 'Ok.'
+  });
 
   res.end();
   //res.redirect('/public/close.html');
