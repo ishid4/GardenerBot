@@ -35,7 +35,7 @@ const configs = [
   process.env.CLIENTSECRET,
   "https://gardener.erdem.in/callback"
 ];
-const latestVersion = 1.4;
+const latestVersion = "1.4";
 
 const request = require('request');
 
