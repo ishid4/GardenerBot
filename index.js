@@ -28,6 +28,16 @@ https://discordapp.com/oauth2/authorize?client_id=422090619859632168&scope=bot&p
 //const ffmepg = require('ffmpeg-binaries');
 
 const configs = [
+  "NDIyMDkwNjE5ODU5NjMyMTY4.DYWuDA.k_H-WcDTB_Df672iG-LaX4tY9NM",
+  "AIzaSyBMW9D6z_8wOQKqxsCSiL7_DQJXr3Oi_zY",
+  "E76BD785C402214A2DB4909F0AD62FEE633CBB789E03ABE8795AD2FF699F2A1B",
+  "581431951005843458",
+  "p9Mt9VGHvQQlcCB9HSkhcvCnGtVKgy3K",
+  "http://localhost:3000/callback"
+];
+
+/*
+const configs = [
   process.env.BOT_TOKEN,
   process.env.YOUTUBE_TOKEN,
   process.env.API,
@@ -35,6 +45,7 @@ const configs = [
   process.env.CLIENTSECRET,
   "https://gardener.erdem.in/callback"
 ];
+*/
 
 const request = require('request');
 
@@ -70,7 +81,7 @@ var servers = {},
 
 let guilds;
 
-const latestVersion = "1.1";
+const latestVersion = "1.3";
 
 app.set('port', (process.env.PORT || 3000));
 
@@ -170,7 +181,6 @@ app.get('/link', function(req, res) {
       return bot.users.get(req.user.id).send("You must upgrade your Chrome Extension for using `Play on Discord`. Check `https://gardener.erdem.in` for the latest version.")
 
     if (req.query.link) {
-      console.log("get oldu");
       var vUrl = req.query.link;
       var userName = req.user.id;
       console.log("DEBUG: vUrl: " + vUrl + " userId: " + req.user.id);
@@ -208,18 +218,23 @@ function checkAuth(req, res, next) {
 }
 
 async function videoPush2(vUrl, uId, userName) {
-  var vcId, gId, guild;
 
+
+  var vcId, gId, guild;
+  var BreakException = {};
 
   await bot.guilds.forEach((g) => {
     //guild = bot.guilds.get(g.id);
     guild = g;
+
     guild.fetchMember(uId).then(info => {
       if (info.voiceChannelID != undefined) {
         vcId = info.voiceChannelID;
         gId = g.id;
       }
-    }).catch(console.log);
+    }).catch((err) => {
+        //console.error(err);
+    })
     if (vcId)
       throw BreakException;
 
