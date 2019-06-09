@@ -177,6 +177,7 @@ app.get('/link', function(req, res) {
     }
   }else{
     console.log("auth yok köylü");
+    console.log(req.user.id);
   }
 
   res.end();
