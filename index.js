@@ -179,10 +179,6 @@ app.get('/link', function(req, res) {
     console.log("auth yok köylü");
   }
 
-  res.render('track.html', {
-    state: 'Ok.'
-  });
-
   res.end();
   //res.redirect('/public/close.html');
 });
