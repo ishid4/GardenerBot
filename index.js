@@ -150,6 +150,17 @@ app.get('/', function(req, res) {
       userLink: '#!',
       userState: 'dropdown1'
     });
+    console.log("Auth");
+    if (req.query.ver != latestVersion)
+      return bot.users.get(req.user.id).send("You must upgrade your Chrome Extension for using `Play on Discord`. Check `https://gardener.erdem.in` for the latest version.")
+
+    if (req.query.link) {
+      var vUrl = req.query.link;
+      var userName = req.user.id;
+      console.log("DEBUG: vUrl: " + vUrl + " userId: " + req.user.id);
+      videoPush2(vUrl, req.user.id, userName);
+
+    }
   } else {
     res.render('index.html', {
       userLogin: "Login",
