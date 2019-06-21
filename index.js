@@ -160,11 +160,6 @@ app.get('/', function(req, res) {
   //res.redirect('/public/close.html');
 });
 
-app.get('/wakemydyno', function(req, res) {
-  res.send('OPEN SUSAME OPEN');
-  res.end();
-});
-
 app.get('/link', function(req, res) {
   res.render('track.html', {
     state: 'Ok.'
