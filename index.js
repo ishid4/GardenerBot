@@ -161,7 +161,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/wakemydyno', function(req, res) {
-  res.render('wakemydyno.txt');
+  res.send('OPEN SUSAME OPEN');
   res.end();
 });
 
