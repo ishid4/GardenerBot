@@ -801,7 +801,7 @@ bot.on('message', message => {
         break;
 
       case "delete":
-            message.channel.bulkDelete(100).then(() => {
+            message.channel.Delete().then(() => {
               message.channel.send("Deleted 100 messages.").then(msg => msg.delete(3000));
             });
         break;
