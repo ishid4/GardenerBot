@@ -585,6 +585,12 @@ bot.on('message', message => {
               })
               .catch(() => console.log("DM Error"));
             break;
+            case "delete":
+                  //do something.
+                  message.channel.bulkDelete(100).then(() => {
+                    message.channel.send("Deleted 100 messages.").then(msg => msg.delete(3000));
+                  });
+              break;
           default:
             message.author.send("It's easy to find out! You can do it with your brain!");
         }
