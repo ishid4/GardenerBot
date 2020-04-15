@@ -804,11 +804,11 @@ bot.on('message', message => {
 
                   let fetched;
                   do {
-                  fetched = await channel.fetchMessages({limit: 100});
+                  fetched = channel.fetchMessages({limit: 100});
                   message.channel.bulkDelete(fetched);
                   }
                   while(fetched.size >= 2);
-                
+
         break;
 
       case "lyrics":
