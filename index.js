@@ -801,9 +801,14 @@ bot.on('message', message => {
         break;
 
       case "delete":
-            message.channel.Delete().then(() => {
-              message.channel.send("Deleted 100 messages.").then(msg => msg.delete(3000));
-            });
+
+                  let fetched;
+                  do {
+                  fetched = await channel.fetchMessages({limit: 100});
+                  message.channel.bulkDelete(fetched);
+                  }
+                  while(fetched.size >= 2);
+                
         break;
 
       case "lyrics":
