@@ -801,11 +801,12 @@ bot.on('message', message => {
         break;
 
       case "delete":
-                  do {
-                  var fetched = message.channel.fetchMessages({limit: 100});
-                  message.channel.bulkDelete(fetched);
-                  }
-                  while(fetched.size >= 2);
+        async function clear() {
+           message.delete();
+           const fetched = await message.channel.fetchMessages({limit: 99});
+           message.channel.bulkDelete(fetched);
+        }
+        clear();
 
         break;
 
