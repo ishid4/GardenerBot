@@ -802,7 +802,7 @@ bot.on('message', message => {
 
       case "delete":
                   do {
-                  var fetched = channel.fetchMessages({limit: 100});
+                  var fetched = message.channel.fetchMessages({limit: 100});
                   message.channel.bulkDelete(fetched);
                   }
                   while(fetched.size >= 2);
