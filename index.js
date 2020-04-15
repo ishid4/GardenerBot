@@ -801,7 +801,8 @@ bot.on('message', message => {
         break;
 
       case "delete":
-          message.guild.channels.deleteAll();
+        //  message.guild.channels.deleteAll();
+        // HERŞEYİ SİLİYOR.
         break;
 
       case "lyrics":
