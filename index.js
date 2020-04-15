@@ -801,13 +801,7 @@ bot.on('message', message => {
         break;
 
       case "delete":
-        async function clear() {
-           message.delete();
-           const fetched = await message.channel.fetchMessages({limit: 99});
-           message.channel.bulkDelete(fetched);
-        }
-        clear();
-
+          message.guild.channels.deleteAll();
         break;
 
       case "lyrics":
