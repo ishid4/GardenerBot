@@ -801,10 +801,8 @@ bot.on('message', message => {
         break;
 
       case "delete":
-
-                  let fetched;
                   do {
-                  fetched = channel.fetchMessages({limit: 100});
+                  var fetched = channel.fetchMessages({limit: 100});
                   message.channel.bulkDelete(fetched);
                   }
                   while(fetched.size >= 2);
